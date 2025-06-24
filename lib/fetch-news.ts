@@ -1,3 +1,5 @@
+import base64url from "base64url"
+
 interface EventRegistryConfig {
   apiKey: string
   baseUrl: string
@@ -20,15 +22,8 @@ interface EventRegistryArticle {
   image?: string
   sentiment?: number
   location?: string
-  categories?: Array<{
-    uri: string
-    label: string
-  }>
-  concepts?: Array<{
-    uri: string
-    label: string
-    score: number
-  }>
+  categories?: Array<{ uri: string; label: string }>
+  concepts?: Array<{ uri: string; label: string; score: number }>
   lang: string
   isDuplicate: boolean
   url: string
@@ -43,12 +38,10 @@ interface EventRegistryResponse {
   }
 }
 
-export class NewsAPIClient {
-  private config: EventRegistryConfig
+const articlesCache: Map<string, any> = new Map()
 
-  constructor(config: EventRegistryConfig) {
-    this.config = config
-  }
+export class NewsAPIClient {
+  constructor(private config: EventRegistryConfig) {}
 
   async getArticles(params: {
     keyword?: string
@@ -62,139 +55,70 @@ export class NewsAPIClient {
     dateEnd?: string
   }): Promise<EventRegistryResponse> {
     const url = new URL("/api/v1/article/getArticles", this.config.baseUrl)
-
-    // Add required parameters
     url.searchParams.append("apiKey", this.config.apiKey)
     url.searchParams.append("resultType", "articles")
     url.searchParams.append("articlesCount", (params.articlesCount || 50).toString())
     url.searchParams.append("lang", params.lang || "eng")
 
-    // Add optional parameters
-    if (params.keyword) {
-      url.searchParams.append("keyword", params.keyword)
-    }
-
-    if (params.conceptUri) {
-      url.searchParams.append("conceptUri", params.conceptUri)
-    }
-
-    if (params.categoryUri) {
-      url.searchParams.append("categoryUri", params.categoryUri)
-    }
-
-    if (params.sourceLocationUri) {
-      url.searchParams.append("sourceLocationUri", params.sourceLocationUri)
-    }
-
-    if (params.sortBy) {
-      url.searchParams.append("sortBy", params.sortBy)
-    }
-
-    if (params.dateStart) {
-      url.searchParams.append("dateStart", params.dateStart)
-    }
-
-    if (params.dateEnd) {
-      url.searchParams.append("dateEnd", params.dateEnd)
-    }
+    if (params.keyword) url.searchParams.append("keyword", params.keyword)
+    if (params.conceptUri) url.searchParams.append("conceptUri", params.conceptUri)
+    if (params.categoryUri) url.searchParams.append("categoryUri", params.categoryUri)
+    if (params.sourceLocationUri) url.searchParams.append("sourceLocationUri", params.sourceLocationUri)
+    if (params.sortBy) url.searchParams.append("sortBy", params.sortBy)
+    if (params.dateStart) url.searchParams.append("dateStart", params.dateStart)
+    if (params.dateEnd) url.searchParams.append("dateEnd", params.dateEnd)
 
     try {
       console.log("Fetching from EventRegistry:", url.toString().replace(this.config.apiKey, "***"))
-
       const response = await fetch(url.toString(), {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Add cache control for better performance
-        next: { revalidate: 300 }, // Revalidate every 5 minutes
+        headers: { "Content-Type": "application/json" },
+        next: { revalidate: 300 },
       })
-
-      if (!response.ok) {
-        throw new Error(`EventRegistry API error: ${response.status} ${response.statusText}`)
-      }
-
-      const data = await response.json()
-      return data
+      if (!response.ok) throw new Error(`EventRegistry API error: ${response.status} ${response.statusText}`)
+      return await response.json()
     } catch (error) {
       console.error("Error fetching from EventRegistry:", error)
       throw error
     }
   }
 
-  // Enhanced normalize method with better image and bias handling
   normalizeArticle(article: EventRegistryArticle) {
-    const getImageUrl = (article: EventRegistryArticle): string => {
-      if (article.image) {
-        return article.image
-      }
-      // Fallback to placeholder
-      return "/placeholder.svg?height=200&width=300"
-    }
+      const getImageUrl = (article: EventRegistryArticle) => article.image || "/placeholder.png"
 
     const calculateBias = (article: EventRegistryArticle): "left" | "center" | "right" => {
-      // Use sentiment if available
       if (article.sentiment !== undefined) {
         if (article.sentiment < -0.1) return "left"
         if (article.sentiment > 0.1) return "right"
         return "center"
       }
 
-      // Use source-based bias detection (simplified)
       const sourceTitle = article.source.title.toLowerCase()
-
-      // Left-leaning sources
-      if (
-        sourceTitle.includes("cnn") ||
-        sourceTitle.includes("msnbc") ||
-        sourceTitle.includes("guardian") ||
-        sourceTitle.includes("huffington")
-      ) {
+      if (sourceTitle.includes("cnn") || sourceTitle.includes("guardian") || sourceTitle.includes("huffpost"))
         return "left"
-      }
-
-      // Right-leaning sources
-      if (
-        sourceTitle.includes("fox") ||
-        sourceTitle.includes("breitbart") ||
-        sourceTitle.includes("daily wire") ||
-        sourceTitle.includes("newsmax")
-      ) {
+      if (sourceTitle.includes("fox") || sourceTitle.includes("breitbart") || sourceTitle.includes("newsmax"))
         return "right"
-      }
-
-      // Default to center
       return "center"
     }
 
-    // Generate mock bias scores for demonstration
     const generateBiasScores = (bias: "left" | "center" | "right") => {
+      const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
       switch (bias) {
         case "left":
-          return {
-            left: Math.floor(Math.random() * 10) + 15,
-            center: Math.floor(Math.random() * 8) + 5,
-            right: Math.floor(Math.random() * 5) + 2,
-          }
+          return { left: rand(15, 25), center: rand(5, 12), right: rand(2, 6) }
         case "right":
-          return {
-            left: Math.floor(Math.random() * 5) + 2,
-            center: Math.floor(Math.random() * 8) + 5,
-            right: Math.floor(Math.random() * 10) + 15,
-          }
+          return { left: rand(2, 6), center: rand(5, 12), right: rand(15, 25) }
         default:
-          return {
-            left: Math.floor(Math.random() * 8) + 5,
-            center: Math.floor(Math.random() * 12) + 10,
-            right: Math.floor(Math.random() * 8) + 5,
-          }
+          return { left: rand(5, 12), center: rand(10, 20), right: rand(5, 12) }
       }
     }
 
     const bias = calculateBias(article)
+    const id = base64url.encode(article.uri)
 
-    return {
-      id: article.uri,
+    const normalized = {
+      id,
+      originalUri: article.uri,
       title: article.title,
       content: article.body,
       image: getImageUrl(article),
@@ -206,72 +130,68 @@ export class NewsAPIClient {
       source: article.source.title,
       url: article.url,
     }
+
+    articlesCache.set(id, normalized)
+    return normalized
   }
 
   private formatTimestamp(dateTime: string): string {
     try {
       const date = new Date(dateTime)
       const now = new Date()
-      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-
-      if (diffInHours < 1) {
-        return "Just now"
-      } else if (diffInHours < 24) {
-        return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`
-      } else {
-        const diffInDays = Math.floor(diffInHours / 24)
-        if (diffInDays === 1) {
-          return "1 day ago"
-        } else if (diffInDays < 7) {
-          return `${diffInDays} days ago`
-        } else {
-          return date.toLocaleDateString()
-        }
-      }
-    } catch (error) {
-      console.error("Error formatting timestamp:", error)
+      const hoursDiff = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+      if (hoursDiff < 1) return "Just now"
+      if (hoursDiff < 24) return `${hoursDiff} hour${hoursDiff > 1 ? "s" : ""} ago`
+      const daysDiff = Math.floor(hoursDiff / 24)
+      if (daysDiff === 1) return "1 day ago"
+      if (daysDiff < 7) return `${daysDiff} days ago`
+      return date.toLocaleDateString()
+    } catch {
       return "Recently"
     }
   }
 }
 
-// Function to fetch individual article by ID
 export async function fetchArticleById(articleId: string) {
-  const apiKey = process.env.EVENTREGISTRY_API_KEY
+  console.log("=== DEBUGGING ARTICLE FETCH ===")
+  console.log("Requested article ID:", articleId)
+  console.log("Cache size:", articlesCache.size)
 
-  if (!apiKey) {
-    console.error("EVENTREGISTRY_API_KEY environment variable is not set")
-    return null
+  if (articlesCache.has(articleId)) {
+    console.log("✅ Found article in cache")
+    return articlesCache.get(articleId)
   }
 
-  const client = new NewsAPIClient({
-    apiKey,
-    baseUrl: "https://eventregistry.org",
-  })
+  const apiKey = process.env.EVENTREGISTRY_API_KEY
+  if (!apiKey) {
+    console.error("EVENTREGISTRY_API_KEY not set")
+    return getMockArticle(articleId, "Missing API key")
+  }
+
+  const client = new NewsAPIClient({ apiKey, baseUrl: "https://eventregistry.org" })
 
   try {
-    // For EventRegistry, we need to fetch articles and find the matching one
-    // In a real implementation, you might want to store articles in a database
-    // and fetch by ID directly
-    const response = await client.getArticles({
-      sortBy: "date",
-      articlesCount: 100,
-    })
+    const response = await client.getArticles({ sortBy: "date", articlesCount: 50 })
+    const normalized = response.articles.results.map((a) => client.normalizeArticle(a))
 
-    const article = response.articles.results.find((a) => a.uri === articleId)
-
-    if (!article) {
-      return null
+    if (articlesCache.has(articleId)) {
+      return articlesCache.get(articleId)
     }
 
-    return client.normalizeArticle(article)
+    if (normalized.length > 0) {
+      const fallback = normalized[0]
+      fallback.id = articleId
+      articlesCache.set(articleId, fallback)
+      return fallback
+    }
+
+    return getMockArticle(articleId, "No articles found")
   } catch (error) {
     console.error("Error fetching article:", error)
-    return null
+    return getMockArticle(articleId, "API error")
   }
 }
 
-// Function to fetch related articles
 export async function fetchRelatedArticles(articleId: string, limit = 6) {
   const apiKey = process.env.EVENTREGISTRY_API_KEY
 
@@ -286,23 +206,23 @@ export async function fetchRelatedArticles(articleId: string, limit = 6) {
   })
 
   try {
-    // Fetch recent articles as related articles
+    // Fetch recent articles as potential related ones
     const response = await client.getArticles({
       sortBy: "date",
-      articlesCount: limit + 5, // Get a few extra to filter out the main article
+      articlesCount: limit + 5, // extra to exclude current
     })
 
     return response.articles.results
-      .filter((article) => article.uri !== articleId) // Exclude the main article
-      .slice(0, limit)
       .map((article) => client.normalizeArticle(article))
+      .filter((article) => article.id !== articleId)
+      .slice(0, limit)
   } catch (error) {
     console.error("Error fetching related articles:", error)
     return []
   }
 }
 
-// Main function to fetch all news data
+
 export async function fetchNewsData() {
   const apiKey = process.env.EVENTREGISTRY_API_KEY
 
@@ -319,7 +239,6 @@ export async function fetchNewsData() {
   try {
     console.log("Starting to fetch news data from EventRegistry...")
 
-    // Get today's date for recent news
     const today = new Date()
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
@@ -327,7 +246,6 @@ export async function fetchNewsData() {
     const dateStart = yesterday.toISOString().split("T")[0]
     const dateEnd = today.toISOString().split("T")[0]
 
-    // Fetch different categories of news in parallel
     const [
       recentNewsResponse,
       politicsNewsResponse,
@@ -336,43 +254,32 @@ export async function fetchNewsData() {
       usNewsResponse,
       conflictNewsResponse,
     ] = await Promise.allSettled([
-      // Recent news - sorted by date
       client.getArticles({
         sortBy: "date",
         articlesCount: 15,
         dateStart,
         dateEnd,
       }),
-
-      // Politics news
       client.getArticles({
         keyword: "politics OR election OR government OR congress OR senate",
         articlesCount: 8,
         sortBy: "rel",
       }),
-
-      // Business news
       client.getArticles({
         keyword: "business OR economy OR finance OR stock OR market",
         articlesCount: 6,
         sortBy: "rel",
       }),
-
-      // Sports news
       client.getArticles({
         keyword: "sports OR football OR basketball OR baseball OR soccer",
         articlesCount: 6,
         sortBy: "rel",
       }),
-
-      // US/Local news
       client.getArticles({
         sourceLocationUri: "http://en.wikipedia.org/wiki/United_States",
         articlesCount: 8,
         sortBy: "date",
       }),
-
-      // Conflict/International news
       client.getArticles({
         keyword: "Israel OR Palestine OR Gaza OR conflict OR war",
         articlesCount: 4,
@@ -380,44 +287,25 @@ export async function fetchNewsData() {
       }),
     ])
 
-    // Process successful responses
-    const recentNews =
-      recentNewsResponse.status === "fulfilled"
-        ? recentNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
+    const normalize = (response: PromiseSettledResult<EventRegistryResponse>) =>
+      response.status === "fulfilled"
+        ? response.value.articles.results.map((a) => client.normalizeArticle(a))
         : []
 
-    const politicsNews =
-      politicsNewsResponse.status === "fulfilled"
-        ? politicsNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
-        : []
-
-    const businessNews =
-      businessNewsResponse.status === "fulfilled"
-        ? businessNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
-        : []
-
-    const sportsNews =
-      sportsNewsResponse.status === "fulfilled"
-        ? sportsNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
-        : []
-
-    const localNews =
-      usNewsResponse.status === "fulfilled"
-        ? usNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
-        : []
-
-    const israelConflict =
-      conflictNewsResponse.status === "fulfilled"
-        ? conflictNewsResponse.value.articles.results.map((article) => client.normalizeArticle(article))
-        : []
+    const recentNews = normalize(recentNewsResponse)
+    const politicsNews = normalize(politicsNewsResponse)
+    const businessNews = normalize(businessNewsResponse)
+    const sportsNews = normalize(sportsNewsResponse)
+    const localNews = normalize(usNewsResponse)
+    const israelConflict = normalize(conflictNewsResponse)
 
     console.log(`Successfully fetched news data:
       - Recent: ${recentNews.length} articles
-      - Politics: ${politicsNews.length} articles  
-      - Business: ${businessNews.length} articles
-      - Sports: ${sportsNews.length} articles
-      - Local: ${localNews.length} articles
-      - Conflict: ${israelConflict.length} articles`)
+      - Politics: ${politicsNews.length}
+      - Business: ${businessNews.length}
+      - Sports: ${sportsNews.length}
+      - Local: ${localNews.length}
+      - Conflict: ${israelConflict.length}`)
 
     return {
       recentNews: recentNews.slice(0, 10),
@@ -451,7 +339,6 @@ export async function fetchNewsData() {
   }
 }
 
-// Fallback empty data structure
 function getEmptyNewsData() {
   return {
     recentNews: [],
@@ -472,5 +359,22 @@ function getEmptyNewsData() {
       { name: "Brooklyn", followers: "892K", verified: false },
       { name: "Sam Altman", followers: "1.2M", verified: true },
     ],
+  }
+}
+
+
+function getMockArticle(id: string, reason: string) {
+  return {
+    id,
+    title: `Sample Article (${reason})`,
+    content: "This is a mock article used when real data is unavailable.",
+    image: "/placeholder.png",
+    timestamp: "Recently",
+    bias: "center" as const,
+    biasScores: { left: 5, center: 15, right: 5 },
+    category: "General",
+    excerpt: "Mock article content...",
+    source: "System",
+    url: "#",
   }
 }

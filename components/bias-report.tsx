@@ -42,11 +42,11 @@ export function BiasReport({ article }: BiasReportProps) {
   const ownershipScore = 92 // Mock ownership transparency score
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
+    <div className="bg-gray-50  p-6">
       {/* Bias Report */}
       <div className="mb-8">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">BIAS REPORT</h3>
-        <p className="text-sm text-gray-600 mb-4">News Sentiment based on 82 resources</p>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">BIAS REPORT</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">News Sentiment based on 82 resources</p>
 
         {/* Pie Chart */}
         <div className="h-48 mb-4">
@@ -78,21 +78,21 @@ export function BiasReport({ article }: BiasReportProps) {
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <div className="font-medium text-gray-900">Total News Source</div>
-              <div className="text-2xl font-bold text-gray-900">{total}</div>
+              <div className="font-medium text-gray-900 dark:text-gray-100">Total News Source</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{total}</div>
             </div>
             <div>
-              <div className="font-medium text-gray-900">Left Aligned News</div>
+              <div className="font-medium text-gray-900 dark:text-gray-100">Left Aligned News</div>
               <div className="text-2xl font-bold text-blue-600">{article.biasScores.left}</div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm mt-2">
             <div>
-              <div className="font-medium text-gray-900">Center Aligned News</div>
-              <div className="text-2xl font-bold text-gray-600">{article.biasScores.center}</div>
+              <div className="font-medium text-gray-900 dark:text-gray-100">Center Aligned News</div>
+              <div className="text-2xl font-bold text-gray-600 dark:text-gray-200">{article.biasScores.center}</div>
             </div>
             <div>
-              <div className="font-medium text-gray-900">Right Aligned News</div>
+              <div className="font-medium text-gray-900 dark:text-gray-100">Right Aligned News</div>
               <div className="text-2xl font-bold text-red-600">{article.biasScores.right}</div>
             </div>
           </div>
@@ -101,8 +101,8 @@ export function BiasReport({ article }: BiasReportProps) {
 
       {/* Factuality */}
       <div className="mb-6">
-        <h4 className="font-bold text-gray-900 mb-2">FACTUALITY</h4>
-        <p className="text-sm text-gray-600 mb-3">Accuracy of Data from different sources</p>
+        <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">FACTUALITY</h4>
+        <p className="text-sm text-gray-600 dark:text-gray-200 mb-3">Accuracy of Data from different sources</p>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-blue-500 h-3 rounded-full transition-all duration-500"
@@ -116,8 +116,8 @@ export function BiasReport({ article }: BiasReportProps) {
 
       {/* Ownership */}
       <div>
-        <h4 className="font-bold text-gray-900 mb-2">OWNERSHIP</h4>
-        <p className="text-sm text-gray-600 mb-3">Accuracy of Data from different sources</p>
+        <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-2">OWNERSHIP</h4>
+        <p className="text-sm text-gray-600 dark:text-gray-200 mb-3">Accuracy of Data from different sources</p>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
             className="bg-purple-500 h-3 rounded-full transition-all duration-500"

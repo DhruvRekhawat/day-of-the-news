@@ -19,7 +19,7 @@ export function MoreNewsSection({ news }: MoreNewsSectionProps) {
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">More News</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">More News</h2>
         <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
           See all
         </a>
@@ -33,11 +33,11 @@ export function MoreNewsSection({ news }: MoreNewsSectionProps) {
                 src={item.image || "/placeholder.svg"}
                 alt={item.title}
                 fill
-                className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                className="object-cover  group-hover:scale-105 transition-transform duration-200"
               />
             </div>
             <div className="flex-1">
-              <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors line-clamp-2">
                 {item.title}
               </h3>
               <div className="flex items-center space-x-2 mt-1">

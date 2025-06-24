@@ -33,20 +33,20 @@ export function RelatedTopics() {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">RELATED TOPICS</h3>
+    <div className="bg-gray-50  p-6">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">RELATED TOPICS</h3>
       <div className="space-y-3">
         {topics.map((topic) => (
           <div key={topic.name} className="border-b border-gray-200 last:border-b-0 pb-3 last:pb-0">
             <button
               onClick={() => toggleTopic(topic.name)}
-              className="w-full flex items-center justify-between hover:bg-gray-100 rounded-lg p-2 transition-colors"
+              className="w-full flex items-center justify-between hover:bg-gray-100  p-2 transition-colors"
             >
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                   <span className="text-sm">{topic.icon}</span>
                 </div>
-                <span className="font-medium text-gray-900">{topic.name}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{topic.name}</span>
               </div>
               {expandedTopics.has(topic.name) ? (
                 <Minus className="h-4 w-4 text-gray-500" />
@@ -55,7 +55,7 @@ export function RelatedTopics() {
               )}
             </button>
             {expandedTopics.has(topic.name) && (
-              <div className="mt-3 ml-11 text-sm text-gray-600">
+              <div className="mt-3 ml-11 text-sm text-gray-600 dark:text-gray-200">
                 <p>Related articles and content for {topic.name} will appear here.</p>
               </div>
             )}

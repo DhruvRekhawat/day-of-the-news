@@ -53,9 +53,9 @@ export default function PricingPage() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <p className="text-sm text-gray-600 mb-4">PRICING</p>
+          <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">PRICING</p>
           <h1 className="text-4xl font-bold  mb-4">Affordable pricing plans</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-200 max-w-2xl mx-auto">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id arcu, convallis est sed. Proin nulla eu a vitae
             lectus leo suscipit.
           </p>
@@ -66,15 +66,15 @@ export default function PricingPage() {
             <div
               key={index}
               className={` p-8 ${
-                plan.popular ? "bg-gray-900 text-white" : "bg-white border border-gray-200"
+                plan.popular ? "bg-gray-900 text-white" : " border border-gray-200"
               }`}
             >
               <div className="mb-8">
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <p className={`text-sm ${plan.popular ? "" : "text-gray-600"} mb-6`}>{plan.description}</p>
+                <p className={`text-sm ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"} mb-6`}>{plan.description}</p>
                 <div className="flex items-baseline">
                   <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className={`ml-1 ${plan.popular ? "" : "text-gray-600"}`}>{plan.period}</span>
+                  <span className={`ml-1 ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"}`}>{plan.period}</span>
                 </div>
               </div>
 
@@ -84,7 +84,7 @@ export default function PricingPage() {
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center">
                       <Check className={`w-5 h-5 mr-3 ${plan.popular ? "text-white" : ""}`} />
-                      <span className={`text-sm ${plan.popular ? "" : "text-gray-600"}`}>{feature}</span>
+                      <span className={`text-sm ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>

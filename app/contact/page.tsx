@@ -16,26 +16,26 @@ export default function ContactPage() {
           {/* Left Column - Contact Info */}
           <div>
             <h1 className="text-4xl font-bold  mb-6">Let&apos;s Talk</h1>
-            <p className="text-gray-600 mb-12">
+            <p className="text-gray-600 dark:text-gray-200 mb-12">
               Have some big idea or brand to develop and need help? Then reach out we&apos;d love to hear about your project
               and provide help
             </p>
 
             <div className="mb-12">
               <h2 className="text-2xl font-semibold  mb-4">Email</h2>
-              <p className="text-gray-600">dayofthenews@gmail.com</p>
+              <p className="text-gray-600 dark:text-gray-200">dayofthenews@gmail.com</p>
             </div>
 
             <div>
               <h2 className="text-2xl font-semibold  mb-4">Socials</h2>
               <div className="space-y-2">
-                <Link href="#" className="block text-gray-600 hover:">
+                <Link href="#" className="block text-gray-600 dark:text-gray-200 hover:">
                   Instagram
                 </Link>
-                <Link href="#" className="block text-gray-600 hover:">
+                <Link href="#" className="block text-gray-600 dark:text-gray-200 hover:">
                   Twitter
                 </Link>
-                <Link href="#" className="block text-gray-600 hover:">
+                <Link href="#" className="block text-gray-600 dark:text-gray-200 hover:">
                   Facebook
                 </Link>
               </div>

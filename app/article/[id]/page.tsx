@@ -7,31 +7,37 @@ import { RelatedTopics } from "@/components/related-topics"
 import { fetchArticleById, fetchRelatedArticles } from "@/lib/fetch-news"
 import { notFound } from "next/navigation"
 
-export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   try {
-    // Fetch the main article and related articles
+    const { id } = await params
+
     const [article, relatedArticles] = await Promise.all([
-      fetchArticleById((await params).id),
-      fetchRelatedArticles((await params).id),
+      fetchArticleById(id),
+      fetchRelatedArticles(id),
     ])
 
+    console.log("✅ Article fetched:", article ? "Yes" : "No")
+    console.log("🧩 Related articles count:", relatedArticles.length)
+
     if (!article) {
+      console.warn("❌ Article is null, triggering 404")
       notFound()
     }
 
     return (
-      <div className="min-h-screen bg-white text-gray-900">
+      <div className="min-h-screen text-gray-900 dark:text-gray-100">
         <Header />
         <main className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-12 gap-8">
-            {/* Main Article Content */}
-            <div className="col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            <div className="col-span-1 lg:col-span-8">
               <ArticleContent article={article} />
               {relatedArticles.length > 0 && <RelatedArticles articles={relatedArticles} />}
             </div>
-
-            {/* Right Sidebar */}
-            <div className="col-span-4">
+            <div className="col-span-1 lg:col-span-4 mt-8 lg:mt-0">
               <div className="space-y-6">
                 <BiasReport article={article} />
                 <RelatedTopics />
@@ -43,7 +49,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
       </div>
     )
   } catch (error) {
-    console.error("Error loading article:", error)
+    console.error("Error in ArticlePage:", error)
     notFound()
   }
 }

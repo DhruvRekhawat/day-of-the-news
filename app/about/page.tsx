@@ -57,14 +57,14 @@ export default function AboutPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold  mb-6">About News of the Day</h1>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-200 mb-6">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
                 ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
                 etiam ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma
                 odio id risus ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl
                 accusam eget etiam ultrices.
               </p>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-200">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
                 ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
                 etiam ultrices.
@@ -74,12 +74,12 @@ export default function AboutPage() {
         </section>
 
         {/* Team Section */}
-        <section className="bg-white py-16">
+        <section className=" py-16">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl font-bold  mb-6">We&apos;re a team of experts</h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-200">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
                   ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam
                   eget etiam ultrices.
@@ -103,7 +103,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h2 className="text-3xl font-bold  mb-6">About us</h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-200">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
                 ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
                 etiam ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma
@@ -115,7 +115,7 @@ export default function AboutPage() {
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold  mb-2">{stat.number}</div>
-                  <div className="text-gray-600">{stat.label}</div>
+                  <div className="text-gray-600 dark:text-gray-200">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -123,7 +123,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section */}
-        <section className="bg-white py-16">
+        <section className=" py-16">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div className="relative">
@@ -154,7 +154,7 @@ export default function AboutPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold  mb-2">{value.title}</h3>
-                        <p className="text-gray-600 text-sm">{value.description}</p>
+                        <p className="text-gray-600 dark:text-gray-200 text-sm">{value.description}</p>
                       </div>
                     </div>
                   ))}

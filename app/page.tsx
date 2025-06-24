@@ -26,7 +26,7 @@ export default async function HomePage() {
   } = newsData
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 ">
       <Header />
       <main className="container mx-auto px-4 py-6">
         <HeroSection

@@ -22,7 +22,7 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Israel-Hamas Conflict</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Israel-Hamas Conflict</h2>
         <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
           See all
         </a>
@@ -37,13 +37,13 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
                 src={mainStory.image || "/placeholder.svg"}
                 alt={mainStory.title}
                 fill
-                className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                className="object-cover  group-hover:scale-105 transition-transform duration-200"
               />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-red-600 transition-colors">
               {mainStory.title}
             </h3>
-            {mainStory.excerpt && <p className="text-gray-600 mb-3">{mainStory.excerpt}</p>}
+            {mainStory.excerpt && <p className="text-gray-600 dark:text-gray-200 mb-3">{mainStory.excerpt}</p>}
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">{mainStory.timestamp}</span>
               <SimpleBiasIndicator bias={mainStory.bias} size="md" />
@@ -60,11 +60,11 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
                   src={item.image || "/placeholder.svg"}
                   alt={item.title}
                   fill
-                  className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                  className="object-cover  group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
                   {item.title}
                 </h4>
                 <div className="flex items-center justify-between">

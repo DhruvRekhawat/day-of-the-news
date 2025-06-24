@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 
 interface NewsImageProps {
@@ -34,19 +35,19 @@ export function NewsImage({ src, alt, width, height, className }: NewsImageProps
 
   return (
     <div className={`relative ${className}`}>
-      {isLoading && <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />}
-      <img
+      {isLoading && <div className="absolute inset-0 bg-gray-200 animate-pulse " />}
+      <Image
         src={src || "/placeholder.png"}
         alt={alt}
         width={width}
         height={height}
-        className={`object-cover rounded-lg transition-opacity duration-200 ${isLoading ? "opacity-0" : "opacity-100"}`}
+        className={`object-cover  transition-opacity duration-200 ${isLoading ? "opacity-0" : "opacity-100"}`}
         onError={handleImageError}
         onLoad={handleImageLoad}
-        
-        // Add crossOrigin for external images
-
+        unoptimized={true}
+        priority={true}
         crossOrigin="anonymous"
+        fill
       />
     </div>
   )

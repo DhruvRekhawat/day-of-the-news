@@ -34,28 +34,28 @@ export function ArticleContent({ article }: ArticleContentProps) {
   const contentPoints = formatContent(article.content)
 
   return (
-    <article className="bg-white">
+    <article className="">
       {/* Article Header */}
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight font-mono">{article.title}</h1>
 
         {/* Bias Indicators */}
         <div className="flex items-center space-x-8 mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600">LEFT</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">LEFT</span>
               <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">{article.biasScores.left}</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600">CENTER</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">CENTER</span>
               <div className="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">{article.biasScores.center}</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600">RIGHT</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">RIGHT</span>
               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">{article.biasScores.right}</span>
               </div>

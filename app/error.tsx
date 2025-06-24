@@ -15,10 +15,10 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="min-h-screen  flex items-center justify-center">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Something went wrong!</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Something went wrong!</h2>
+        <p className="text-gray-600 dark:text-gray-200 mb-6">
           We encountered an error while loading the news. This might be due to API limits or connectivity issues.
         </p>
         <div className="space-x-4">

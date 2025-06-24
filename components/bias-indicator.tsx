@@ -66,8 +66,8 @@ export function BiasIndicator({ bias, size = "md", showLabel = false }: BiasIndi
         <div className="absolute top-0 right-0 bg-red-500 rounded-r-full h-full" style={{ width: "33.33%" }} />
 
         {/* Center dividers */}
-        <div className="absolute top-0 h-full w-px bg-white" style={{ left: "33.33%" }} />
-        <div className="absolute top-0 h-full w-px bg-white" style={{ left: "66.66%" }} />
+        <div className="absolute top-0 h-full w-px " style={{ left: "33.33%" }} />
+        <div className="absolute top-0 h-full w-px " style={{ left: "66.66%" }} />
 
         {/* Bias indicator dot */}
         <div
@@ -81,7 +81,7 @@ export function BiasIndicator({ bias, size = "md", showLabel = false }: BiasIndi
       </div>
 
       {/* Optional label */}
-      {showLabel && <span className="text-xs text-gray-600 font-medium">{getBiasLabel(bias)}</span>}
+      {showLabel && <span className="text-xs text-gray-600 dark:text-gray-200 font-medium">{getBiasLabel(bias)}</span>}
     </div>
   )
 }
