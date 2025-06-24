@@ -65,7 +65,7 @@ export default function PricingPage() {
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`rounded-lg p-8 ${
+              className={` p-8 ${
                 plan.popular ? "bg-gray-900 text-white" : "bg-white border border-gray-200"
               }`}
             >

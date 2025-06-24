@@ -52,7 +52,7 @@ export default function AboutPage() {
                 alt="Team collaboration"
                 width={600}
                 height={400}
-                className="rounded-lg"
+                className=""
               />
             </div>
             <div>
@@ -91,7 +91,7 @@ export default function AboutPage() {
                   alt="Team meeting"
                   width={600}
                   height={400}
-                  className="rounded-lg"
+                  className=""
                 />
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function AboutPage() {
                   alt="Team collaboration"
                   width={600}
                   height={400}
-                  className="rounded-lg"
+                  className=""
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-white p-6 rounded-b-lg">
                   <h3 className="text-xl font-semibold mb-2">About us</h3>
