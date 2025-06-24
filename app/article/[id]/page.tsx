@@ -7,16 +7,13 @@ import { RelatedTopics } from "@/components/related-topics"
 import { fetchArticleById, fetchRelatedArticles } from "@/lib/fetch-news"
 import { notFound } from "next/navigation"
 
-interface ArticlePageProps {
-  params: {
-    id: string
-  }
-}
-
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   try {
     // Fetch the main article and related articles
-    const [article, relatedArticles] = await Promise.all([fetchArticleById(params.id), fetchRelatedArticles(params.id)])
+    const [article, relatedArticles] = await Promise.all([
+      fetchArticleById((await params).id),
+      fetchRelatedArticles((await params).id),
+    ])
 
     if (!article) {
       notFound()
