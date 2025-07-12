@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 
 const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! });
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const headlines = await newsClient.fetchIndianHeadlines();
 
