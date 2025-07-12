@@ -2,22 +2,23 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { notFound } from "next/navigation";
 import { fetchFromApi } from "@/lib/api-client";
-import { UsageLimitNotifier } from "@/components/ussage-limit-notifier"; 
+import { UsageLimitNotifier } from "@/components/ussage-limit-notifier";
 import { ArticleContent } from "@/components/article-content";
 import { BiasReport } from "@/components/bias-report";
 import { RelatedArticles } from "@/components/related-articles";
 import { RelatedTopics } from "@/components/related-topics";
 
+// This is the standard and correct way to type the props for this page.
 export default async function ArticlePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   // Fetch data from your API
   const article = await fetchFromApi(`articles?id=${id}`);
-  
+
   // Render the notifier component if the API returns a usage limit error
   if (article?.error) {
     return (
@@ -30,15 +31,16 @@ export default async function ArticlePage({
       </div>
     );
   }
-  
+
   // Trigger 404 if the article isn't found for any other reason
   if (!article) {
     notFound();
   }
-  
+
   // Fetch related articles only if the main article was successfully fetched
-  const relatedArticles = await fetchFromApi('articles');
-  const filteredRelated = relatedArticles?.filter((a: any) => a.id !== article.id) || [];
+  const relatedArticles = await fetchFromApi("articles");
+  const filteredRelated =
+    relatedArticles?.filter((a: any) => a.id !== article.id) || [];
 
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
@@ -47,12 +49,14 @@ export default async function ArticlePage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           <div className="col-span-1 lg:col-span-8">
             <ArticleContent article={article} />
-            {filteredRelated.length > 0 && <RelatedArticles articles={filteredRelated} />}
+            {filteredRelated.length > 0 && (
+              <RelatedArticles articles={filteredRelated} />
+            )}
           </div>
           <div className="col-span-1 lg:col-span-4 mt-8 lg:mt-0">
             <div className="space-y-6">
               <BiasReport article={article} />
-              <RelatedTopics /> 
+              <RelatedTopics />
             </div>
           </div>
         </div>
