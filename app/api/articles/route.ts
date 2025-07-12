@@ -1,11 +1,14 @@
 // app/api/articles/route.ts
 
+import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { NewsApiClient } from '@/lib/fetch-news'; // Using our dedicated client
 import { prisma } from '@/lib/prisma';
+import { NewsApiClient } from '@/lib/fetch-news'; // Using our dedicated client
 import { startOfToday } from 'date-fns';
 import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
+
+// This line tells Next.js to treat this route as a dynamic API endpoint.
+export const dynamic = "force-dynamic";
 
 const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! });
 
@@ -74,7 +77,7 @@ export async function GET(request: Request) {
       if (userId) {
         await prisma.interaction.create({
           data: { userId, articleId: article.id }, // Use article.id which is the base64url string
-        }).catch((e: { message: any; }) => {
+        }).catch((e) => {
            console.warn("Failed to log interaction (might be duplicate):", e.message);
         });
       }
@@ -95,7 +98,9 @@ export async function GET(request: Request) {
     let articles = [];
     if (topic) {
       articles = await newsClient.fetchArticlesByTopic(topic);
-    } 
+    } else {
+      articles = await newsClient.fetchIndianHeadlines();
+    }
     // For lists, we don't block, we just return the data.
     // The frontend will be responsible for blocking access to the article *detail* page.
     return NextResponse.json(articles);
