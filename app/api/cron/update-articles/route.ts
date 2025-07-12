@@ -7,7 +7,7 @@ import { generateSummary, analyzeBias } from '@/lib/openai-client';
 
 const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! });
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const headlines = await newsClient.fetchIndianHeadlines();
 
@@ -17,8 +17,8 @@ export async function POST() {
 
       await prisma.article.upsert({
         where: { id: article.id },
-        update: { ...article, summary, bias },
-        create: { ...article, summary, bias },
+        update: { ...article, aiSummary: summary, aiBiasReport: bias },
+        create: { ...article, aiSummary: summary, aiBiasReport: bias },
       });
     }
 
