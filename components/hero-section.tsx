@@ -34,7 +34,7 @@ export function HeroSection({ recentNews, featuredStories, sidebarNews, socialAc
         <div className="">
           <h2 className="text-lg font-bold mb-4 text-red-600">RECENT NEWS</h2>
           <div className="space-y-4">
-            {recentNews?.map((item) => (
+            {recentNews?.slice(0, 10).map((item) => (
               <div key={item.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>

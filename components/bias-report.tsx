@@ -75,7 +75,7 @@ export function BiasReport({ article }: BiasReportProps) {
         </div>
 
         {/* Source Count */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        {/* <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <div className="font-medium text-gray-900 dark:text-gray-100">Total News Source</div>
@@ -96,7 +96,7 @@ export function BiasReport({ article }: BiasReportProps) {
               <div className="text-2xl font-bold text-red-600">{article.biasScores.right}</div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Factuality */}

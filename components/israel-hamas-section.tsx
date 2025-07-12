@@ -53,7 +53,7 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
 
         {/* Other Stories */}
         <div className="space-y-4">
-          {otherStories.map((item) => (
+          {otherStories.slice(0, 10).map((item) => (
             <article key={item.id} className="flex space-x-4 group cursor-pointer">
               <div className="relative w-24 h-24 flex-shrink-0">
                 <Image

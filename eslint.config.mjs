@@ -15,6 +15,13 @@ const eslintConfig = [
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },
+    
+  },
+
+  {
+    ignores: [
+      "./lib/generated", // Skip Prisma generated files
+    ],
   },
 ];
 

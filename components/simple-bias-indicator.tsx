@@ -42,7 +42,7 @@ export function SimpleBiasIndicator({ bias, size = "sm" }: SimpleBiasIndicatorPr
     <div className="relative">
       {/* Gradient background bar */}
       <div
-        className={cn("rounded-full", sizeClasses[size].bar)}
+        className={cn("rounded-full h-4", sizeClasses[size].bar)}
         style={{
           background: "linear-gradient(to right, #3b82f6 0%, #6b7280 50%, #ef4444 100%)",
         }}
