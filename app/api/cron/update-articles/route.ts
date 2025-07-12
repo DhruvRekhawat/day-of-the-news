@@ -3,22 +3,20 @@
 import { NextResponse } from 'next/server';
 import { NewsApiClient } from '@/lib/fetch-news';
 import { prisma } from '@/lib/prisma';
-import { generateSummary, analyzeBias } from '@/lib/openai-client';
 
 const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! });
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const headlines = await newsClient.fetchIndianHeadlines();
 
     for (const article of headlines) {
-      const summary = await generateSummary(article.content);
-      const bias = await analyzeBias(article.content);
-
+      // We will now simply store the article with its excerpt as the summary.
+      // The full AI analysis will be done on-demand.
       await prisma.article.upsert({
         where: { id: article.id },
-        update: { ...article, aiSummary: summary, aiBiasReport: bias },
-        create: { ...article, aiSummary: summary, aiBiasReport: bias },
+        update: { ...article, aiSummary: article.excerpt },
+        create: { ...article, aiSummary: article.excerpt },
       });
     }
 
