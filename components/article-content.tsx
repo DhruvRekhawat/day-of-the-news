@@ -1,63 +1,81 @@
-import { SimpleBiasIndicator } from "./simple-bias-indicator"
-import { Button } from "@/components/ui/button"
-import { Share2, Bookmark, MessageCircle, ThumbsUp } from "lucide-react"
+import { SimpleBiasIndicator } from "./simple-bias-indicator";
+import { Button } from "@/components/ui/button";
+import { Share2, Bookmark, MessageCircle, ThumbsUp } from "lucide-react";
 
 interface Article {
-  id: string
-  title: string
-  content: string
-  image?: string
-  timestamp: string
-  bias: "left" | "center" | "right"
-  source: string
-  url: string
-  author?: string
-  category: string
+  id: string;
+  title: string;
+  content: string;
+  image?: string;
+  timestamp: string;
+  bias: "left" | "center" | "right";
+  source: string;
+  url: string;
+  author?: string;
+  category: string;
   biasScores: {
-    left: number
-    center: number
-    right: number
-  }
+    left: number;
+    center: number;
+    right: number;
+  };
 }
 
 interface ArticleContentProps {
-  article: Article
+  article: Article;
 }
 
 export function ArticleContent({ article }: ArticleContentProps) {
   const formatContent = (content: string) => {
     // Split content into bullet points if it contains bullet-like formatting
-    const sentences = content.split(/[.!?]+/).filter((sentence) => sentence.trim().length > 0)
-    return sentences.map((sentence) => sentence.trim()).filter((s) => s.length > 20)
-  }
+    const sentences = content
+      .split(/[.!?]+/)
+      .filter((sentence) => sentence.trim().length > 0);
+    return sentences
+      .map((sentence) => sentence.trim())
+      .filter((s) => s.length > 20);
+  };
 
-  const contentPoints = formatContent(article.content)
+  const contentPoints = formatContent(article.content);
 
   return (
     <article className="">
       {/* Article Header */}
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight font-mono">{article.title}</h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight font-mono">
+          {article.title}
+        </h1>
 
         {/* Bias Indicators */}
         <div className="flex items-center space-x-8 mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">LEFT</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
+                LEFT
+              </span>
               <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">{article.biasScores.left}</span>
+                <span className="text-white text-xs font-bold">
+                  {article?.biasScores?.left}
+                </span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">CENTER</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
+                CENTER
+              </span>
               <div className="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">{article.biasScores.center}</span>
+                <span className="text-white text-xs font-bold">
+                  {article?.biasScores?.center}
+                </span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">RIGHT</span>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
+                RIGHT
+              </span>
               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">{article.biasScores.right}</span>
+                <span className="text-white text-xs font-bold">
+                  {article?.biasScores?.right}
+                </span>
               </div>
             </div>
           </div>
@@ -92,7 +110,9 @@ export function ArticleContent({ article }: ArticleContentProps) {
             ))}
           </ul>
         ) : (
-          <div className="text-gray-800 leading-relaxed whitespace-pre-line">{article.content}</div>
+          <div className="text-gray-800 leading-relaxed whitespace-pre-line">
+            {article.content}
+          </div>
         )}
       </div>
 
@@ -100,13 +120,17 @@ export function ArticleContent({ article }: ArticleContentProps) {
       <div className="mt-8 pt-6 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Source: {article.source}</span>
+            <span className="text-sm text-gray-500">
+              Source: {article.source}
+            </span>
             <span className="text-sm text-gray-500">•</span>
             <span className="text-sm text-gray-500">{article.timestamp}</span>
             {article.author && (
               <>
                 <span className="text-sm text-gray-500">•</span>
-                <span className="text-sm text-gray-500">By {article.author}</span>
+                <span className="text-sm text-gray-500">
+                  By {article.author}
+                </span>
               </>
             )}
           </div>
@@ -114,5 +138,5 @@ export function ArticleContent({ article }: ArticleContentProps) {
         </div>
       </div>
     </article>
-  )
+  );
 }
