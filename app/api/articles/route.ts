@@ -4,8 +4,10 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NewsApiClient } from "@/lib/fetch-news"; // Using our dedicated client
+// Import AI functions
 import { startOfToday } from "date-fns";
 import { headers } from "next/headers";
+import { analyzeBias, generateSummary } from "@/lib/openai-client";
 
 // This line tells Next.js to treat this route as a dynamic API endpoint.
 export const dynamic = "force-dynamic";
@@ -78,10 +80,32 @@ export async function GET(request: Request) {
             `[API] External API did not return the article for id: ${articleId}`
           );
           return new NextResponse(
-            JSON.stringify({ error: "Article not found frm external" }),
+            JSON.stringify({ error: "Article not found from external" }),
             { status: 404 }
           );
         }
+
+        console.log(
+          `[API] Generating AI summary and bias analysis for article: ${articleId}`
+        );
+
+        // Generate AI summary and bias analysis
+        const [aiSummary, biasAnalysis] = await Promise.all([
+          generateSummary(
+            rawArticle.content || rawArticle.excerpt || rawArticle.title
+          ),
+          analyzeBias(
+            rawArticle.content || rawArticle.excerpt || rawArticle.title
+          ),
+        ]);
+
+        console.log(
+          `[API] AI Summary generated: ${aiSummary.substring(0, 50)}...`
+        );
+        console.log(`[API] AI Bias analysis:`, {
+          bias: biasAnalysis.bias,
+          scores: biasAnalysis.biasScores,
+        });
 
         const prismaArticle = {
           id: rawArticle.id,
@@ -94,8 +118,12 @@ export async function GET(request: Request) {
           source: rawArticle.source,
           category: rawArticle.category,
           publishedAt: new Date(rawArticle.publishedAt),
-          aiSummary: rawArticle.aiSummary ?? null,
-          aiBiasReport: rawArticle.aiBiasReport ?? null,
+          aiSummary: aiSummary || null,
+          // Store the complete bias analysis object
+          aiBiasReport: biasAnalysis as any,
+          // If you have separate fields for bias classification and scores:
+          // aiBias: biasAnalysis.bias,
+          // aiBiasScores: biasAnalysis.biasScores,
         };
         console.log(
           `[API] Creating article in Prisma with data:`,
@@ -103,14 +131,16 @@ export async function GET(request: Request) {
         );
 
         article = await prisma.article.create({ data: prismaArticle });
-        console.log(`[API] Article created in Prisma: ${article.id}`);
+        console.log(
+          `[API] Article created in Prisma with AI analysis: ${article.id}`
+        );
       } catch (error: any) {
         console.error(
           `[API] Error fetching/creating article for id ${articleId}:`,
           error
         );
         return new NextResponse(
-          JSON.stringify({ error: error.message || "Article not found b" }),
+          JSON.stringify({ error: error.message || "Article not found" }),
           { status: 404 }
         );
       }

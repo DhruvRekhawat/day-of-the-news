@@ -5,7 +5,7 @@
 export async function fetchFromApi(endpoint: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const url = `${baseUrl}/api/${endpoint}`;
-  console.log(url);
+
   try {
     const res = await fetch(url, {
       // Use a short cache lifetime for dynamic, user-specific data
