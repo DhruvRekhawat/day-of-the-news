@@ -64,7 +64,7 @@ export class NewsApiClient {
     // console.log("hello", res);
     if (!res.ok) throw new Error(`News API error: ${res.statusText}`);
     const json = await res.json();
-    console.log(json);
+
     const articleUrl = Object.keys(json)[0];
     if (!articleUri || !json[articleUri].info) {
       throw new Error("Article not found");

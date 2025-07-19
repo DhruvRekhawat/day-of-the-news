@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Search, ChevronDown, Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ModeToggle } from "@/components/ui/mode-toggle"
-import SignInModal from "./sign-in-modal"
+import { useState } from "react";
+import Link from "next/link";
+import { Search, ChevronDown, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import SignInModal from "./sign-in-modal";
 
 export function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-background border-b relative">
@@ -24,10 +24,16 @@ export function Header() {
               className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </Button>
             <Link href="/" className="flex flex-col">
-              <span className="text-xs text-gray-600 dark:text-gray-200">DAY OF THE</span>
+              <span className="text-xs text-gray-600 dark:text-gray-200">
+                DAY OF THE
+              </span>
               <span className="text-xl font-bold">NEWS</span>
             </Link>
           </div>
@@ -36,20 +42,20 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+              className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
             >
               HOME
             </Link>
             <Link
               href="/about"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+              className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
             >
               ABOUT
             </Link>
             <div className="flex items-center space-x-1">
               <Link
                 href="#"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
               >
                 CATEGORY
               </Link>
@@ -57,19 +63,19 @@ export function Header() {
             </div>
             <Link
               href="/faq"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+              className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
             >
               FAQ
             </Link>
             <Link
               href="/pricing"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+              className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
             >
               PRICING
             </Link>
             <Link
               href="/contact"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+              className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
             >
               CONTACT US
             </Link>
@@ -97,14 +103,14 @@ export function Header() {
             <nav className="flex flex-col space-y-4 py-4">
               <Link
                 href="/"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 HOME
               </Link>
               <Link
                 href="/about"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 ABOUT
@@ -112,7 +118,7 @@ export function Header() {
               <div className="flex items-center justify-between px-2">
                 <Link
                   href="#"
-                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+                  className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
                 >
                   CATEGORY
                 </Link>
@@ -120,21 +126,21 @@ export function Header() {
               </div>
               <Link
                 href="/faq"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 FAQ
               </Link>
               <Link
                 href="/pricing"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 PRICING
               </Link>
               <Link
                 href="/contact"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
+                className="text-gray-700  hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 CONTACT US
@@ -149,5 +155,5 @@ export function Header() {
         )}
       </div>
     </header>
-  )
+  );
 }

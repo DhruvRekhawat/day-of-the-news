@@ -1,138 +1,138 @@
-"use client"
+"use client";
 
-import { SetStateAction, useState } from "react"
-import { signIn, signUp } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { SetStateAction, useState } from "react";
+import { signIn, signUp } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function AuthModal() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("signin") // "signin" or "signup"
-  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("signin"); // "signin" or "signup"
+
   // Form states
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
   // UI states
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const resetForm = () => {
-    setEmail("")
-    setPassword("")
-    setConfirmPassword("")
-    setFirstName("")
-    setLastName("")
-    setError("")
-    setSuccess("")
-    setShowPassword(false)
-    setShowConfirmPassword(false)
-  }
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setFirstName("");
+    setLastName("");
+    setError("");
+    setSuccess("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
 
   const handleTabChange = (tab: SetStateAction<string>) => {
-    setActiveTab(tab)
-    resetForm()
-  }
+    setActiveTab(tab);
+    resetForm();
+  };
 
   const validateForm = () => {
     if (!email || !password) {
-      setError("Email and password are required")
-      return false
+      setError("Email and password are required");
+      return false;
     }
 
     if (activeTab === "signup") {
       if (!firstName || !lastName) {
-        setError("First name and last name are required")
-        return false
+        setError("First name and last name are required");
+        return false;
       }
-      
+
       if (password !== confirmPassword) {
-        setError("Passwords do not match")
-        return false
+        setError("Passwords do not match");
+        return false;
       }
 
       if (password.length < 8) {
-        setError("Password must be at least 8 characters long")
-        return false
+        setError("Password must be at least 8 characters long");
+        return false;
       }
     }
 
-    return true
-  }
+    return true;
+  };
 
   const handleEmailLogin = async () => {
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setLoading(true)
-    setError("")
-    setSuccess("")
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
       const result = await signIn.email({
         email,
         password,
-      })
+      });
 
       if (result.error) {
-        setError(result.error.message || "Sign in failed")
+        setError(result.error.message || "Sign in failed");
       } else {
-        setSuccess("Successfully signed in!")
+        setSuccess("Successfully signed in!");
         setTimeout(() => {
-          setIsOpen(false)
-          resetForm()
+          setIsOpen(false);
+          resetForm();
           // You might want to redirect or refresh the page here
-          window.location.reload()
-        }, 1000)
+          window.location.reload();
+        }, 1000);
       }
     } catch (err) {
-      setError("An unexpected error occurred")
-      console.error("Sign in error:", err)
+      setError("An unexpected error occurred");
+      console.error("Sign in error:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleEmailSignup = async () => {
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setLoading(true)
-    setError("")
-    setSuccess("")
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
       const result = await signUp.email({
         email,
         password,
         name: `${firstName} ${lastName}`.trim(),
-      })
+      });
 
       if (result.error) {
-        setError(result.error.message || "Sign up failed")
+        setError(result.error.message || "Sign up failed");
       } else {
-        setSuccess("Account created successfully!")
+        setSuccess("Account created successfully!");
         setTimeout(() => {
-          setIsOpen(false)
-          resetForm()
+          setIsOpen(false);
+          resetForm();
           // You might want to redirect or refresh the page here
-          window.location.reload()
-        }, 1000)
+          window.location.reload();
+        }, 1000);
       }
     } catch (err) {
-      setError("An unexpected error occurred")
-      console.error("Sign up error:", err)
+      setError("An unexpected error occurred");
+      console.error("Sign up error:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // const handleGoogleAuth = async () => {
   //   try {
@@ -147,14 +147,15 @@ export default function AuthModal() {
   // }
 
   return (
-    <div className="flex items-center justify-center bg-gray-100">
+    <div className="flex items-center justify-center ">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="ghost">Login</Button>
+          <Button variant="default" className="hover:cursor-pointer">
+            Login
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md bg-gray-100 border-0 p-0">
           <div className="flex flex-col items-center px-8 py-6 space-y-6">
-
             {/* Social Login */}
             {/* <div className="flex space-x-4 w-full">
               <Button
@@ -194,7 +195,10 @@ export default function AuthModal() {
             {activeTab === "signin" && (
               <div className="w-full space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email" className="text-sm font-medium text-black">
+                  <Label
+                    htmlFor="signin-email"
+                    className="text-sm font-medium text-black"
+                  >
                     Email
                   </Label>
                   <Input
@@ -209,7 +213,10 @@ export default function AuthModal() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password" className="text-sm font-medium text-black">
+                  <Label
+                    htmlFor="signin-password"
+                    className="text-sm font-medium text-black"
+                  >
                     Password
                   </Label>
                   <div className="relative">
@@ -261,7 +268,10 @@ export default function AuthModal() {
               <div className="w-full space-y-4">
                 <div className="flex space-x-4">
                   <div className="flex-1 space-y-2">
-                    <Label htmlFor="firstName" className="text-sm font-medium text-black">
+                    <Label
+                      htmlFor="firstName"
+                      className="text-sm font-medium text-black"
+                    >
                       First Name
                     </Label>
                     <Input
@@ -275,7 +285,10 @@ export default function AuthModal() {
                     />
                   </div>
                   <div className="flex-1 space-y-2">
-                    <Label htmlFor="lastName" className="text-sm font-medium text-black">
+                    <Label
+                      htmlFor="lastName"
+                      className="text-sm font-medium text-black"
+                    >
                       Last Name
                     </Label>
                     <Input
@@ -291,7 +304,10 @@ export default function AuthModal() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-sm font-medium text-black">
+                  <Label
+                    htmlFor="signup-email"
+                    className="text-sm font-medium text-black"
+                  >
                     Email
                   </Label>
                   <Input
@@ -306,7 +322,10 @@ export default function AuthModal() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-sm font-medium text-black">
+                  <Label
+                    htmlFor="signup-password"
+                    className="text-sm font-medium text-black"
+                  >
                     Password
                   </Label>
                   <div className="relative">
@@ -337,7 +356,10 @@ export default function AuthModal() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-sm font-medium text-black">
+                  <Label
+                    htmlFor="confirm-password"
+                    className="text-sm font-medium text-black"
+                  >
                     Confirm Password
                   </Label>
                   <div className="relative">
@@ -355,7 +377,9 @@ export default function AuthModal() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent rounded-none"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       disabled={loading}
                     >
                       {showConfirmPassword ? (
@@ -388,7 +412,7 @@ export default function AuthModal() {
               {activeTab === "signin" ? (
                 <>
                   Don&apos;t have an account?{" "}
-                  <button 
+                  <button
                     onClick={() => handleTabChange("signup")}
                     className="text-black font-medium underline"
                     disabled={loading}
@@ -399,7 +423,7 @@ export default function AuthModal() {
               ) : (
                 <>
                   Already have an account?{" "}
-                  <button 
+                  <button
                     onClick={() => handleTabChange("signin")}
                     className="text-black font-medium underline"
                     disabled={loading}
@@ -413,5 +437,5 @@ export default function AuthModal() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
