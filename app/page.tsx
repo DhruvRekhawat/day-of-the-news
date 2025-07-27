@@ -10,6 +10,7 @@ import { fetchFromApi } from "@/lib/api-client";
 
 export default async function HomePage() {
   // Fetch all data by calling our own API endpoints in parallel
+
   const [
     recentNews,
     politicsNews,

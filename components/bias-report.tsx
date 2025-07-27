@@ -116,7 +116,7 @@ export function BiasReport({ article }: BiasReportProps) {
                         : "none"
                     }
                     strokeWidth={
-                      entry.name.toLowerCase() === dominantBias ? 2 : 0
+                      entry.name.toLowerCase() === dominantBias ? 0 : 0
                     }
                   />
                 ))}

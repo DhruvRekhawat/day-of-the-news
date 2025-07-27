@@ -23,10 +23,8 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
     <section className="mt-12">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-xs font-bold">24</span>
-          </div>
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-200">Show all 24 sources</span>
+
+          {/* <span className="text-sm font-medium text-gray-600 dark:text-gray-200">Show all 24 sources</span> */}
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-500">
           <span>AI Generated Text</span>

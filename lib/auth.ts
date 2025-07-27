@@ -1,7 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,9 +12,8 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
-    async signUp({ email, password, name }: { email: string; password: string; name: string }) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
+    async signUp({ email, name }: { email: string; name: string }) {
+     
       // Create user with password
       const user = await prisma.user.create({
         data: {

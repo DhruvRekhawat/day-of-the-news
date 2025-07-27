@@ -134,17 +134,17 @@ export default function AuthModal() {
     }
   };
 
-  // const handleGoogleAuth = async () => {
-  //   try {
-  //     await signIn.social({
-  //       provider: "google",
-  //       callbackURL: "/dashboard", // Redirect after successful login
-  //     })
-  //   } catch (err) {
-  //     setError("Google authentication failed")
-  //     console.error("Google auth error:", err)
-  //   }
-  // }
+  const handleGoogleAuth = async () => {
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/", // Redirect after successful login
+      })
+    } catch (err) {
+      setError("Google authentication failed")
+      console.error("Google auth error:", err)
+    }
+  }
 
   return (
     <div className="flex items-center justify-center ">
@@ -157,7 +157,7 @@ export default function AuthModal() {
         <DialogContent className="sm:max-w-md bg-gray-100 border-0 p-0">
           <div className="flex flex-col items-center px-8 py-6 space-y-6">
             {/* Social Login */}
-            {/* <div className="flex space-x-4 w-full">
+            <div className="flex space-x-4 w-full">
               <Button
                 onClick={handleGoogleAuth}
                 variant="outline"
@@ -172,10 +172,7 @@ export default function AuthModal() {
                 </svg>
                 Google
               </Button>
-              <Button variant="outline" className="flex-1 h-12" disabled>
-                Facebook
-              </Button>
-            </div> */}
+            </div>
 
             {/* Success Message */}
             {success && (

@@ -1,6 +1,10 @@
+"use client"
 import { SimpleBiasIndicator } from "./simple-bias-indicator";
+import { SocialShare } from "./social-share";
 import { Button } from "@/components/ui/button";
-import { Share2, Bookmark, MessageCircle, ThumbsUp } from "lucide-react";
+import { Bookmark, ThumbsUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getArticleActionsState, toggleBookmark, toggleLike } from "@/actions/articleActions";
 
 interface BiasAnalysis {
   bias: "left" | "center" | "right";
@@ -13,15 +17,19 @@ interface BiasAnalysis {
 
 interface Article {
   id: string;
+  originalUri: string;
   title: string;
   content: string;
-  image?: string;
-  timestamp: string;
-  aiBiasReport: BiasAnalysis;
-  source: string;
+  excerpt: string;
   url: string;
-  author?: string;
+  image: string;
+  source: string;
   category: string;
+  publishedAt: string;
+  aiSummary: string;
+  aiBiasReport: BiasAnalysis;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ArticleContentProps {
@@ -29,6 +37,29 @@ interface ArticleContentProps {
 }
 
 export function ArticleContent({ article }: ArticleContentProps) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load initial state
+  useEffect(() => {
+    const loadInitialState = async () => {
+      try {
+        const state = await getArticleActionsState(article.id);
+        setIsBookmarked(state.isBookmarked);
+        setIsLiked(state.isLiked);
+        setTotalLikes(state.totalLikes);
+      } catch (error) {
+        console.error('Error loading initial state:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialState();
+  }, [article.id]);
+
   const formatContent = (content: string) => {
     // Split content into bullet points if it contains bullet-like formatting
     const sentences = content
@@ -39,7 +70,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
       .filter((s) => s.length > 20);
   };
 
-  const contentPoints = formatContent(article.content);
+  const contentPoints = formatContent(article.aiSummary);
 
   // Extract bias data with fallbacks
   const biasData = article.aiBiasReport || {
@@ -47,6 +78,29 @@ export function ArticleContent({ article }: ArticleContentProps) {
     biasScores: { left: 0, center: 1, right: 0 },
   };
   const { bias, biasScores } = biasData;
+
+  // Bookmark functionality
+  const handleBookmark = async () => {
+    try {
+      const newBookmarkState = await toggleBookmark(article.id, isBookmarked);
+      setIsBookmarked(newBookmarkState);
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      // You could show a toast notification here
+    }
+  };
+
+  // Like functionality
+  const handleLike = async () => {
+    try {
+      const result = await toggleLike(article.id, isLiked);
+      setIsLiked(result.isLiked);
+      setTotalLikes(result.totalLikes);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      // You could show a toast notification here
+    }
+  };
 
   console.log(article);
 
@@ -123,37 +177,41 @@ export function ArticleContent({ article }: ArticleContentProps) {
             </div>
           </div>
 
-          {/* Overall Bias Badge */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-              Overall Bias:
-            </span>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
-                bias === "left"
-                  ? "bg-red-100 text-red-800"
-                  : bias === "right"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
-              {bias}
-            </span>
-          </div>
-
           {/* Action Buttons */}
           <div className="flex items-center space-x-2 ml-auto">
-            <Button variant="ghost" size="sm">
-              <Bookmark className="h-4 w-4" />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleBookmark}
+              disabled={isLoading}
+              className={`transition-colors ${
+                isBookmarked 
+                  ? 'text-blue-600 hover:text-blue-700' 
+                  : 'text-gray-600 hover:text-gray-700'
+              }`}
+            >
+              <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
             </Button>
-            <Button variant="ghost" size="sm">
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <MessageCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <ThumbsUp className="h-4 w-4" />
+            <SocialShare 
+              title={article.title}
+              excerpt={article.excerpt}
+              url={article.url}
+            />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleLike}
+              disabled={isLoading}
+              className={`transition-colors flex items-center space-x-1 ${
+                isLiked 
+                  ? 'text-zinc-600 hover:text-zinc-700 dark:text-zinc-200 dark:hover:text-zinc-100' 
+                  : 'text-gray-600 hover:text-gray-700'
+              }`}
+            >
+              <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+              {totalLikes > 0 && (
+                <span className="text-xs">{totalLikes}</span>
+              )}
             </Button>
           </div>
         </div>
@@ -202,7 +260,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
           </ul>
         ) : (
           <div className="text-gray-800 leading-relaxed whitespace-pre-line">
-            {article.content}
+            {article.aiSummary}
           </div>
         )}
       </div>
@@ -215,15 +273,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
               Source: {article.source}
             </span>
             <span className="text-sm text-gray-500">•</span>
-            <span className="text-sm text-gray-500">{article.timestamp}</span>
-            {article.author && (
-              <>
-                <span className="text-sm text-gray-500">•</span>
-                <span className="text-sm text-gray-500">
-                  By {article.author}
-                </span>
-              </>
-            )}
+           
           </div>
           <SimpleBiasIndicator bias={bias} size="md" />
         </div>
