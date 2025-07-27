@@ -36,6 +36,7 @@ export function LocalNewsSection({ news }: LocalNewsSectionProps) {
                 alt={item.title}
                 fill
                 className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                unoptimized
               />
             </div>
             <Link href={`/article/${item.id}`}>

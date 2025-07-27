@@ -38,6 +38,7 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                       alt={item.title}
                       fill
                       className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                      unoptimized
                     />
                   </div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-green-600 transition-colors line-clamp-2">
@@ -71,6 +72,7 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                       alt={item.title}
                       fill
                       className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                      unoptimized
                     />
                   </div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">

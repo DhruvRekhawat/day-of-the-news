@@ -53,6 +53,7 @@ export default function AboutPage() {
                 width={600}
                 height={400}
                 className=""
+                unoptimized
               />
             </div>
             <div>
@@ -92,6 +93,7 @@ export default function AboutPage() {
                   width={600}
                   height={400}
                   className=""
+                  unoptimized
                 />
               </div>
             </div>
@@ -133,6 +135,7 @@ export default function AboutPage() {
                   width={600}
                   height={400}
                   className=""
+                  unoptimized
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-white p-6 rounded-b-lg">
                   <h3 className="text-xl font-semibold mb-2">About us</h3>

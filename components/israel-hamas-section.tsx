@@ -38,6 +38,7 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
                 alt={mainStory.title}
                 fill
                 className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                unoptimized
               />
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-red-600 transition-colors">
@@ -61,6 +62,7 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
                   alt={item.title}
                   fill
                   className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                  unoptimized
                 />
               </div>
               <div className="flex-1">

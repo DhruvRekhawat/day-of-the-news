@@ -43,6 +43,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
                 alt={article.title}
                 fill
                 className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                unoptimized
               />
             </div>
             <div className="flex-1">

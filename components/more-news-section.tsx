@@ -34,6 +34,7 @@ export function MoreNewsSection({ news }: MoreNewsSectionProps) {
                 alt={item.title}
                 fill
                 className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                unoptimized
               />
             </div>
             <div className="flex-1">
