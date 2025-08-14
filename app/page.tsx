@@ -28,7 +28,6 @@ export default async function HomePage() {
     fetchFromApi('articles?topic=sports'),
   ]);
 
-
   // Use default empty arrays if a fetch fails
   const featuredStories = recentNews?.slice(0, 1) || []; // Pass as an array
   const sidebarNews = recentNews?.slice(1, 3) || [];

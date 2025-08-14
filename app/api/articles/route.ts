@@ -1,4 +1,7 @@
 // app/api/articles/route.ts
+// This is the main API route handler for fetching articles. It supports two modes:
+// 1. Fetching a single article by ID 
+// 2. Fetching a list of articles by topic
 
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";

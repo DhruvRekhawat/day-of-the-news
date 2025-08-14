@@ -154,14 +154,14 @@ export default function AuthModal() {
             Login
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md bg-gray-100 border-0 p-0">
+        <DialogContent className="sm:max-w-md bg-background border-border p-0">
           <div className="flex flex-col items-center px-8 py-6 space-y-6">
             {/* Social Login */}
             <div className="flex space-x-4 w-full">
               <Button
                 onClick={handleGoogleAuth}
                 variant="outline"
-                className="flex-1 h-12 bg-white border-gray-300 hover:bg-gray-50 rounded-none"
+                className="flex-1 h-12 bg-background border-border hover:bg-accent rounded-none"
                 disabled={loading}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
@@ -176,14 +176,14 @@ export default function AuthModal() {
 
             {/* Success Message */}
             {success && (
-              <div className="w-full p-3 bg-green-100 border border-green-300 rounded text-green-700 text-sm">
+              <div className="w-full p-3 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700 rounded text-green-700 dark:text-green-300 text-sm">
                 {success}
               </div>
             )}
 
             {/* Error Message */}
             {error && (
-              <div className="w-full p-3 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
+              <div className="w-full p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded text-red-700 dark:text-red-300 text-sm">
                 {error}
               </div>
             )}
@@ -194,7 +194,7 @@ export default function AuthModal() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="signin-email"
-                    className="text-sm font-medium text-black"
+                    className="text-sm font-medium text-foreground"
                   >
                     Email
                   </Label>
@@ -204,7 +204,7 @@ export default function AuthModal() {
                     placeholder="joe@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 bg-white border-gray-300 placeholder:text-gray-400 rounded-none"
+                    className="h-12 bg-background border-border placeholder:text-muted-foreground rounded-none"
                     disabled={loading}
                   />
                 </div>
@@ -212,7 +212,7 @@ export default function AuthModal() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="signin-password"
-                    className="text-sm font-medium text-black"
+                    className="text-sm font-medium text-foreground"
                   >
                     Password
                   </Label>
@@ -223,7 +223,7 @@ export default function AuthModal() {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 bg-white border-gray-300 placeholder:text-gray-400 pr-10 rounded-none"
+                      className="h-12 bg-background border-border placeholder:text-muted-foreground pr-10 rounded-none"
                       disabled={loading}
                     />
                     <Button
@@ -235,9 +235,9 @@ export default function AuthModal() {
                       disabled={loading}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
@@ -245,7 +245,7 @@ export default function AuthModal() {
 
                 <Button
                   onClick={handleEmailLogin}
-                  className="w-full h-12 bg-black text-white hover:bg-gray-800"
+                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={loading}
                 >
                   {loading ? (
@@ -267,7 +267,7 @@ export default function AuthModal() {
                   <div className="flex-1 space-y-2">
                     <Label
                       htmlFor="firstName"
-                      className="text-sm font-medium text-black"
+                      className="text-sm font-medium text-foreground"
                     >
                       First Name
                     </Label>
@@ -277,14 +277,14 @@ export default function AuthModal() {
                       placeholder="John"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="h-12 bg-white border-gray-300 placeholder:text-gray-400 rounded-none"
+                      className="h-12 bg-background border-border placeholder:text-muted-foreground rounded-none"
                       disabled={loading}
                     />
                   </div>
                   <div className="flex-1 space-y-2">
                     <Label
                       htmlFor="lastName"
-                      className="text-sm font-medium text-black"
+                      className="text-sm font-medium text-foreground"
                     >
                       Last Name
                     </Label>
@@ -294,7 +294,7 @@ export default function AuthModal() {
                       placeholder="Doe"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="h-12 bg-white border-gray-300 placeholder:text-gray-400 rounded-none"
+                      className="h-12 bg-background border-border placeholder:text-muted-foreground rounded-none"
                       disabled={loading}
                     />
                   </div>
@@ -303,7 +303,7 @@ export default function AuthModal() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="signup-email"
-                    className="text-sm font-medium text-black"
+                    className="text-sm font-medium text-foreground"
                   >
                     Email
                   </Label>
@@ -313,7 +313,7 @@ export default function AuthModal() {
                     placeholder="joe@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 bg-white border-gray-300 placeholder:text-gray-400 rounded-none"
+                    className="h-12 bg-background border-border placeholder:text-muted-foreground rounded-none"
                     disabled={loading}
                   />
                 </div>
@@ -321,7 +321,7 @@ export default function AuthModal() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="signup-password"
-                    className="text-sm font-medium text-black"
+                    className="text-sm font-medium text-foreground"
                   >
                     Password
                   </Label>
@@ -332,7 +332,7 @@ export default function AuthModal() {
                       placeholder="Enter your password (min 8 characters)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="h-12 bg-white border-gray-300 placeholder:text-gray-400 pr-10 rounded-none"
+                      className="h-12 bg-background border-border placeholder:text-muted-foreground pr-10 rounded-none"
                       disabled={loading}
                     />
                     <Button
@@ -344,9 +344,9 @@ export default function AuthModal() {
                       disabled={loading}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
@@ -355,7 +355,7 @@ export default function AuthModal() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="confirm-password"
-                    className="text-sm font-medium text-black"
+                    className="text-sm font-medium text-foreground"
                   >
                     Confirm Password
                   </Label>
@@ -366,7 +366,7 @@ export default function AuthModal() {
                       placeholder="Confirm your password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="h-12 bg-white border-gray-300 placeholder:text-gray-400 pr-10 rounded-none"
+                      className="h-12 bg-background border-border placeholder:text-muted-foreground pr-10 rounded-none"
                       disabled={loading}
                     />
                     <Button
@@ -380,9 +380,9 @@ export default function AuthModal() {
                       disabled={loading}
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
@@ -390,7 +390,7 @@ export default function AuthModal() {
 
                 <Button
                   onClick={handleEmailSignup}
-                  className="w-full h-12 bg-black text-white hover:bg-gray-800"
+                  className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={loading}
                 >
                   {loading ? (
@@ -405,13 +405,13 @@ export default function AuthModal() {
               </div>
             )}
 
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               {activeTab === "signin" ? (
                 <>
                   Don&apos;t have an account?{" "}
                   <button
                     onClick={() => handleTabChange("signup")}
-                    className="text-black font-medium underline"
+                    className="text-foreground font-medium underline"
                     disabled={loading}
                   >
                     Sign Up
@@ -422,7 +422,7 @@ export default function AuthModal() {
                   Already have an account?{" "}
                   <button
                     onClick={() => handleTabChange("signin")}
-                    className="text-black font-medium underline"
+                    className="text-foreground font-medium underline"
                     disabled={loading}
                   >
                     Sign In

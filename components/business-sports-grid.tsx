@@ -24,8 +24,8 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
         {businessNews?.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Business</h2>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
+              <h2 className="text-2xl font-bold text-foreground">Business</h2>
+              <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
                 See all
               </a>
             </div>
@@ -37,15 +37,15 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                       src={item.image || "/placeholder.svg"}
                       alt={item.title}
                       fill
-                      className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                      className="object-cover group-hover:scale-105 transition-transform duration-200"
                       unoptimized
                     />
                   </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-green-600 transition-colors line-clamp-2">
+                  <h3 className="font-semibold text-foreground mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors line-clamp-2">
                     {item.title}
                   </h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.timestamp}</span>
+                    <span className="text-sm text-muted-foreground">{item.timestamp}</span>
                     <SimpleBiasIndicator bias={item.bias} size="sm" />
                   </div>
                 </article>
@@ -58,8 +58,8 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
         {sportsNews?.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Sports</h2>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
+              <h2 className="text-2xl font-bold text-foreground">Sports</h2>
+              <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
                 See all
               </a>
             </div>
@@ -71,15 +71,15 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                       src={item.image || "/placeholder.svg"}
                       alt={item.title}
                       fill
-                      className="object-cover  group-hover:scale-105 transition-transform duration-200"
+                      className="object-cover group-hover:scale-105 transition-transform duration-200"
                       unoptimized
                     />
                   </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
+                  <h3 className="font-semibold text-foreground mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors line-clamp-2">
                     {item.title}
                   </h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{item.timestamp}</span>
+                    <span className="text-sm text-muted-foreground">{item.timestamp}</span>
                     <SimpleBiasIndicator bias={item.bias} size="sm" />
                   </div>
                 </article>

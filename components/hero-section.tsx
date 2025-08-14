@@ -50,23 +50,23 @@ export function HeroSection({
       {/* Left Sidebar - Recent News - Hidden on mobile, shown on large screens */}
       <div className="hidden lg:block lg:col-span-3">
         <div className="">
-          <h2 className="text-lg font-bold mb-4 text-red-600">RECENT NEWS</h2>
+          <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
           <div className="space-y-4">
             {recentNews?.slice(0, 10).map((item) => (
               <div
                 key={item.id}
-                className="border-b border-gray-100 pb-4 last:border-b-0"
+                className="border-b border-border pb-4 last:border-b-0"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
                   <div className="flex-1">
                     <Link href={`/article/${item.id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight mb-2">
+                      <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
                         {item.title}
                       </h3>
                     </Link>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {item.timestamp}
                       </span>
                       <SimpleBiasIndicator bias={item.bias} size="sm" />
@@ -122,12 +122,12 @@ export function HeroSection({
                 />
               </div>
               <Link href={`/article/${item.id}`}>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-red-600 transition-colors cursor-pointer text-sm sm:text-base">
+                <h3 className="font-semibold text-foreground mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors cursor-pointer text-sm sm:text-base">
                   {item.title}
                 </h3>
               </Link>
               <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-gray-500">
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   {item.timestamp}
                 </span>
                 <SimpleBiasIndicator bias={item.bias} size="sm" />
@@ -138,18 +138,18 @@ export function HeroSection({
 
         {/* Recent News for Mobile - Show below main content on small screens */}
         <div className="block lg:hidden mt-8">
-          <h2 className="text-lg font-bold mb-4 text-red-600">RECENT NEWS</h2>
+          <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {recentNews?.slice(3, 7).map((item) => (
-              <div key={item.id} className="border border-gray-100  p-4">
+              <div key={item.id} className="border border-border p-4">
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-tight mb-2">
+                    <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
                       {item.title}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {item.timestamp}
                       </span>
                       <SimpleBiasIndicator bias={item.bias} size="sm" />
@@ -166,8 +166,8 @@ export function HeroSection({
       <div className="col-span-1 lg:col-span-3 mt-8 lg:mt-0">
         {/* Uncovered Section */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold mb-4 text-blue-600">UNCOVERED</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">
+          <h2 className="text-lg font-bold mb-4 text-blue-600 dark:text-blue-400">UNCOVERED</h2>
+          <p className="text-sm text-muted-foreground mb-4">
             Discover stories that others are missing
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
@@ -180,11 +180,11 @@ export function HeroSection({
                     className=" object-cover "
                   />
                 </div>
-                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+                <h3 className="text-sm font-medium text-foreground mb-1">
                   {item.title}
                 </h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {item.timestamp}
                   </span>
                   <SimpleBiasIndicator bias={item.bias} size="sm" />
@@ -196,20 +196,20 @@ export function HeroSection({
 
         {/* Social Accounts */}
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
+          <h3 className="font-semibold text-foreground mb-3">
             Following
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
             {socialAccounts?.map((account) => (
               <div
                 key={account.name}
-                className="flex items-center justify-between p-2 hover:bg-gray-50 "
+                className="flex items-center justify-between p-2 hover:bg-accent transition-colors rounded"
               >
                 <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 rounded-full flex-shrink-0 grid place-items-center bg-gray-100">
-                    {React.createElement(getIconForAccount(account.name), { className: "w-4 h-4 text-gray-600" })}
+                  <div className="w-6 h-6 rounded-full flex-shrink-0 grid place-items-center bg-muted">
+                    {React.createElement(getIconForAccount(account.name), { className: "w-4 h-4 text-muted-foreground" })}
                   </div>
-                  <span className="text-sm font-medium truncate">
+                  <span className="text-sm font-medium truncate text-foreground">
                     {account.name}
                   </span>
                   {account.verified && (
