@@ -4,12 +4,14 @@
 // It's designed to be called from Server Components.
 export async function fetchFromApi(endpoint: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const url = `${baseUrl}/api/${endpoint}`;
+  // Add timestamp to prevent caching
+  const separator = endpoint.includes('?') ? '&' : '?';
+  const url = `${baseUrl}/api/${endpoint}${separator}_t=${Date.now()}`;
 
   try {
     const res = await fetch(url, {
-      // Use a short cache lifetime for dynamic, user-specific data
-      next: { revalidate: 60 },
+      // Disable caching for articles to get fresh content
+      cache: 'no-store',
     });
 
     if (!res.ok) {

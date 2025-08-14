@@ -33,15 +33,19 @@ export class NewsApiClient {
     const url = new URL(`${this.baseUrl}/article/getArticles`);
     params.append("apiKey", this.apiKey);
     params.append("resultType", "articles");
+    // Add timestamp to prevent caching
+    params.append("_t", Date.now().toString());
     url.search = params.toString();
 
+    console.log(`[NewsAPI] Making request to: ${url.toString().replace(this.apiKey, '***')}`);
     const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
+      cache: 'no-store', // Disable caching to get fresh articles
     });
     if (!response.ok) {
       throw new Error(`News API error: ${response.statusText}`);
     }
     const data = await response.json();
+    console.log(`[NewsAPI] Received ${data.articles?.results?.length || 0} articles`);
     return data.articles.results.map(this.normalizeArticle);
   }
 
@@ -59,7 +63,7 @@ export class NewsApiClient {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,
-      next: { revalidate: 3600 },
+      cache: 'no-store', // Disable caching to get fresh article data
     });
     // console.log("hello", res);
     if (!res.ok) throw new Error(`News API error: ${res.statusText}`);
@@ -98,4 +102,35 @@ export class NewsApiClient {
     });
     return this.fetchArticles(params);
   }
+
+  async fetchTrendingArticles(): Promise<any[]> {
+    // 1️⃣ Get trending concepts
+    const trendingUrl = `${this.baseUrl}/trendingConcepts?apiKey=${this.apiKey}&sourceLocationUri=country/IN&conceptType=person,org,loc&_t=${Date.now()}`;
+    const trendingRes = await fetch(trendingUrl, {
+      cache: 'no-store', // Disable caching to get fresh trending data
+    });
+    if (!trendingRes.ok) throw new Error(`Trending API error: ${trendingRes.statusText}`);
+  
+    const trendingData = await trendingRes.json();
+    const concepts = trendingData?.concepts || [];
+  
+    if (!concepts.length) return [];
+  
+    // 2️⃣ Get top 20 concept URIs
+    const conceptUris = concepts.slice(0, 20).map((c: any) => c.uri);
+  
+    // 3️⃣ Build params for fetching related articles
+    const params = new URLSearchParams({
+      conceptUri: conceptUris.join(","),
+      articlesSortBy: "date",
+      articlesCount: "20",
+    });
+  
+    // 4️⃣ Fetch and return normalized articles
+    return this.fetchArticles(params);
+  }
+  
+  
 }
+
+

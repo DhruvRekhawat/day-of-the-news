@@ -88,11 +88,22 @@ model Interaction {
 }
 
 model Topic {
-  id        String          @id @default(cuid())
-  name      String          @unique
-  slug      String          @unique
-  followers FollowedTopic[]
+  id         String     @id @default(cuid())
+  name       String     @unique
+  slug       String     @unique
+  articles   StoryArticle[]
+
+  FollowedTopic FollowedTopic[]
 }
+
+model StoryArticle {
+  id         String   @id @default(cuid())
+  article    Article  @relation(fields: [articleId], references: [id])
+  articleId  String
+  topic      Topic    @relation(fields: [topicId], references: [id])
+  topicId    String
+}
+
 
 model FollowedTopic {
   userId  String
@@ -111,6 +122,8 @@ model Article {
   excerpt      String
   url          String
   image        String?
+  topic        String?
+  isTrending   Boolean  @default(false)
   source       String
   category     String
   publishedAt  DateTime
@@ -123,6 +136,7 @@ model Article {
   @@index([publishedAt])
   Bookmark Bookmark[]
   Like Like[]
+  StoryArticle StoryArticle[]
 }
 
 

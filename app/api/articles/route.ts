@@ -17,7 +17,7 @@ const newsClient = new NewsApiClient({
 });
 
 const USAGE_LIMITS = {
-  LOGGED_OUT: 1,
+  LOGGED_OUT: 100,
   FREE: 5,
   PREMIUM: 100, // Premium users get a higher limit
 };
@@ -165,12 +165,14 @@ export async function GET(request: Request) {
 
   // --- Handle Fetching a List of Articles ---
   try {
+    console.log(`[API] Fetching articles for topic: ${topic || 'headlines'} at ${new Date().toISOString()}`);
     let articles = [];
     if (topic) {
       articles = await newsClient.fetchArticlesByTopic(topic);
     } else {
       articles = await newsClient.fetchIndianHeadlines();
     }
+    console.log(`[API] Fetched ${articles.length} articles for topic: ${topic || 'headlines'}`);
     return NextResponse.json(articles);
   } catch (error) {
     console.error("Error fetching article list:", error);

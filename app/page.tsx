@@ -8,6 +8,9 @@ import { PoliticsSection } from "@/components/politics-section";
 import { StickyCategories } from "@/components/sticky-categories";
 import { fetchFromApi } from "@/lib/api-client";
 
+// Force dynamic rendering to prevent caching
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // Fetch all data by calling our own API endpoints in parallel
 
@@ -30,11 +33,43 @@ export default async function HomePage() {
   const featuredStories = recentNews?.slice(0, 1) || []; // Pass as an array
   const sidebarNews = recentNews?.slice(1, 3) || [];
   const moreNewsItems = recentNews?.slice(5, 10) || [];
-  const socialAccounts = [{
-    name: "John Doe",
-    followers: "1000",
-    verified: true,
-  }];
+  const socialAccounts = [
+    {
+      name: "Sports Central",
+      followers: "2.5M",
+      verified: true,
+    },
+    {
+      name: "Politics Daily",
+      followers: "1.8M", 
+      verified: true,
+    },
+    {
+      name: "Business News",
+      followers: "1.2M",
+      verified: true,
+    },
+    {
+      name: "Tech Updates",
+      followers: "900K",
+      verified: true,
+    },
+    {
+      name: "Entertainment Weekly",
+      followers: "3.1M",
+      verified: true,
+    },
+    {
+      name: "Science Today",
+      followers: "750K",
+      verified: true,
+    },
+    {
+      name: "World Affairs",
+      followers: "1.5M",
+      verified: true,
+    }
+  ];
 
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100 ">

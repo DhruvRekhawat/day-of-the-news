@@ -1,7 +1,8 @@
 import { SimpleBiasIndicator } from "./simple-bias-indicator";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Newspaper, Briefcase, Gamepad2, Laptop2, Film, FlaskConical, Globe } from "lucide-react";
 import Link from "next/link";
+import React from "react";
 
 interface NewsItem {
   id: string;
@@ -32,6 +33,18 @@ export function HeroSection({
   sidebarNews,
   socialAccounts,
 }: HeroSectionProps) {
+  // Map social accounts to icons
+  const getIconForAccount = (name: string) => {
+    if (name.includes("Sports")) return Gamepad2;
+    if (name.includes("Politics")) return Newspaper;
+    if (name.includes("Business")) return Briefcase;
+    if (name.includes("Tech")) return Laptop2;
+    if (name.includes("Entertainment")) return Film;
+    if (name.includes("Science")) return FlaskConical;
+    if (name.includes("World")) return Globe;
+    return Newspaper; // Default icon
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
       {/* Left Sidebar - Recent News - Hidden on mobile, shown on large screens */}
@@ -193,7 +206,9 @@ export function HeroSection({
                 className="flex items-center justify-between p-2 hover:bg-gray-50 "
               >
                 <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 bg-gray-300 rounded-full flex-shrink-0"></div>
+                  <div className="w-6 h-6 rounded-full flex-shrink-0 grid place-items-center bg-gray-100">
+                    {React.createElement(getIconForAccount(account.name), { className: "w-4 h-4 text-gray-600" })}
+                  </div>
                   <span className="text-sm font-medium truncate">
                     {account.name}
                   </span>

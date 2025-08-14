@@ -1,28 +1,81 @@
 // app/api/cron/update-articles/route.ts
 
-import { NextResponse } from 'next/server';
-import { NewsApiClient } from '@/lib/fetch-news';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server'
+import { NewsApiClient } from '@/lib/fetch-news'
+import { prisma } from '@/lib/prisma'
 
-const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! });
+const newsClient = new NewsApiClient({ apiKey: process.env.EVENTREGISTRY_API_KEY! })
 
 export async function POST() {
   try {
-    const headlines = await newsClient.fetchIndianHeadlines();
+    // 1. Fetch latest articles for each topic
+    const [latestNews, trendingNews, politicsNews, globalConflicts, businessNews, sportsNews] =
+      await Promise.all([
+        newsClient.fetchArticlesByTopic('india'),
+        newsClient.fetchTrendingArticles(), // You'd need to implement this in NewsApiClient
+        newsClient.fetchArticlesByTopic('politics'),
+        newsClient.fetchArticlesByTopic('global-conflicts'),
+        newsClient.fetchArticlesByTopic('business'),
+        newsClient.fetchArticlesByTopic('sports'),
+      ])
 
-    for (const article of headlines) {
-      // We will now simply store the article with its excerpt as the summary.
-      // The full AI analysis will be done on-demand.
+    const allArticles = [
+      ...latestNews,
+      ...trendingNews,
+      ...politicsNews,
+      ...globalConflicts,
+      ...businessNews,
+      ...sportsNews,
+    ]
+
+    // 2. Upsert articles
+    for (const article of allArticles) {
       await prisma.article.upsert({
         where: { id: article.id },
-        update: { ...article, aiSummary: article.excerpt },
-        create: { ...article, aiSummary: article.excerpt },
-      });
+        update: {
+          title: article.title,
+          url: article.url,
+          image: article.image,
+          source: article.source,
+          publishedAt: article.publishedAt,
+          aiSummary: article.excerpt,
+          topic: article.topic,
+          originalUri: article.url,
+          content: article.excerpt || '',
+          excerpt: article.excerpt || '',
+          category: article.topic || 'general',
+        },
+        create: {
+          id: article.id,
+          title: article.title,
+          url: article.url,
+          image: article.imageUrl,
+          source: article.source,
+          publishedAt: article.publishedAt,
+          aiSummary: article.excerpt,
+          topic: article.topic,
+          originalUri: article.url,
+          content: article.excerpt || '',
+          excerpt: article.excerpt || '',
+          category: article.topic || 'general',
+        },
+      })
     }
 
-    return NextResponse.json({ success: true, message: 'Articles updated' });
+    // 3. Delete old articles (older than 1 month)
+    const cutoffDate = new Date()
+    cutoffDate.setMonth(cutoffDate.getMonth() - 1)
+
+    const deleted = await prisma.article.deleteMany({
+      where: { publishedAt: { lt: cutoffDate } },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: `Articles updated. Deleted ${deleted.count} old articles.`,
+    })
   } catch (error) {
-    console.error('Cron job failed:', error);
-    return new NextResponse('Error updating articles', { status: 500 });
+    console.error('Cron job failed:', error)
+    return new NextResponse('Error updating articles', { status: 500 })
   }
 }
