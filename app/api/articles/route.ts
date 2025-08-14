@@ -171,9 +171,11 @@ export async function GET(request: Request) {
     console.log(`[API] Fetching articles for topic: ${topic || 'headlines'} at ${new Date().toISOString()}`);
     let articles = [];
     if (topic) {
-      articles = await newsClient.fetchArticlesByTopic(topic);
+      const eventsWithArticles = await newsClient.fetchEventsByTopic(topic);
+      articles = eventsWithArticles.flatMap(event => event.articles);
     } else {
-      articles = await newsClient.fetchIndianHeadlines();
+      const eventsWithArticles = await newsClient.fetchIndianEvents();
+      articles = eventsWithArticles.flatMap(event => event.articles);
     }
     console.log(`[API] Fetched ${articles.length} articles for topic: ${topic || 'headlines'}`);
     return NextResponse.json(articles);

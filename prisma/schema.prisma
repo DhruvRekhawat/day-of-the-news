@@ -114,6 +114,36 @@ model FollowedTopic {
   @@id([userId, topicId])
 }
 
+model Event {
+  id          String        @id @default(cuid())
+  eventUri    String        @unique
+  title       String
+  category    String?
+  topic       String?
+  isTrending  Boolean       @default(false)
+  summary     String?
+  image       String?
+  publishedAt DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  articles    EventArticle[]
+
+  @@index([publishedAt])
+  @@index([topic])
+  @@index([isTrending])
+}
+
+model EventArticle {
+  id        String   @id @default(cuid())
+  eventId   String
+  articleId String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, articleId])
+  @@index([eventId])
+}
+
 model Article {
   id           String        @id @unique @default(cuid())
   originalUri  String        @unique
@@ -123,7 +153,7 @@ model Article {
   url          String
   image        String?
   topic        String?
-  isTrending   Boolean  @default(false)
+  isTrending   Boolean       @default(false)
   source       String
   category     String
   publishedAt  DateTime
@@ -132,6 +162,7 @@ model Article {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   interactions Interaction[]
+  events       EventArticle[]
 
   @@index([publishedAt])
   Bookmark Bookmark[]

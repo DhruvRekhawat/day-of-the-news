@@ -1,93 +1,130 @@
-import { BusinessSportsGrid } from "@/components/business-sports-grid";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { HeroSection } from "@/components/hero-section";
-import { IsraelHamasSection } from "@/components/israel-hamas-section";
-import { MoreNewsSection } from "@/components/more-news-section";
-import { PoliticsSection } from "@/components/politics-section";
 import { StickyCategories } from "@/components/sticky-categories";
+import { EventsGrid } from "@/components/events-grid";
 import { fetchFromApi } from "@/lib/api-client";
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  // Fetch all data by calling our own API endpoints in parallel
-
+  // Fetch events data by calling our own API endpoints in parallel
   const [
-    recentNews,
-    politicsNews,
-    globalConflicts,
-    businessNews,
-    sportsNews,
+    trendingEvents,
+    indiaEvents,
+    politicsEvents,
+    globalConflictEvents,
+    businessEvents,
+    sportsEvents,
   ] = await Promise.all([
-    fetchFromApi('articles?topic=india'), // Gets general headlines
-    fetchFromApi('articles?topic=politics'),
-    fetchFromApi('articles?topic=global-conflicts'),
-    fetchFromApi('articles?topic=business'),
-    fetchFromApi('articles?topic=sports'),
+    fetchFromApi('events?trending=true&limit=6'), // Trending events
+    fetchFromApi('events?topic=india&limit=6'), // Indian events
+    fetchFromApi('events?topic=politics&limit=6'),
+    fetchFromApi('events?topic=global-conflicts&limit=6'),
+    fetchFromApi('events?topic=business&limit=6'),
+    fetchFromApi('events?topic=sports&limit=6'),
   ]);
 
-  // Use default empty arrays if a fetch fails
-  const featuredStories = recentNews?.slice(0, 1) || []; // Pass as an array
-  const sidebarNews = recentNews?.slice(1, 3) || [];
-  const moreNewsItems = recentNews?.slice(5, 10) || [];
-  const socialAccounts = [
-    {
-      name: "Sports Central",
-      followers: "2.5M",
-      verified: true,
-    },
-    {
-      name: "Politics Daily",
-      followers: "1.8M", 
-      verified: true,
-    },
-    {
-      name: "Business News",
-      followers: "1.2M",
-      verified: true,
-    },
-    {
-      name: "Tech Updates",
-      followers: "900K",
-      verified: true,
-    },
-    {
-      name: "Entertainment Weekly",
-      followers: "3.1M",
-      verified: true,
-    },
-    {
-      name: "Science Today",
-      followers: "750K",
-      verified: true,
-    },
-    {
-      name: "World Affairs",
-      followers: "1.5M",
-      verified: true,
-    }
-  ];
-
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100 ">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100">
       <Header />
-      <StickyCategories></StickyCategories>
+      <StickyCategories />
       <main className="container mx-auto px-4 py-6">
-        <HeroSection
-          recentNews={recentNews || []}
-          featuredStories={featuredStories} // Reverted to featuredStories
-          sidebarNews={sidebarNews}
-          socialAccounts={socialAccounts}
-        />
-
-        {politicsNews?.length > 0 && <PoliticsSection news={politicsNews} />}
-        {globalConflicts?.length > 0 && <IsraelHamasSection news={globalConflicts} />}
-        {(businessNews?.length > 0 || sportsNews?.length > 0) && (
-          <BusinessSportsGrid businessNews={businessNews || []} sportsNews={sportsNews || []} />
+        {/* Trending Events Section */}
+        {trendingEvents?.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Trending Stories</h2>
+              <p className="text-muted-foreground">
+                Multiple perspectives on today&apos;s top stories
+              </p>
+            </div>
+            <EventsGrid trending={true} limit={6} showTopic={false} />
+          </section>
         )}
-        {moreNewsItems?.length > 0 && <MoreNewsSection news={moreNewsItems} />}
+
+        {/* Indian Events Section */}
+        {indiaEvents?.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">India Headlines</h2>
+              <p className="text-muted-foreground">
+                Latest news from India with multiple sources
+              </p>
+            </div>
+            <EventsGrid topic="india" limit={6} />
+          </section>
+        )}
+
+        {/* Politics Events Section */}
+        {politicsEvents?.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Politics</h2>
+              <p className="text-muted-foreground">
+                Political news from various perspectives
+              </p>
+            </div>
+            <EventsGrid topic="politics" limit={6} />
+          </section>
+        )}
+
+        {/* Global Conflicts Events Section */}
+        {globalConflictEvents?.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Global Conflicts</h2>
+              <p className="text-muted-foreground">
+                International conflict coverage from multiple sources
+              </p>
+            </div>
+            <EventsGrid topic="global-conflicts" limit={6} />
+          </section>
+        )}
+
+        {/* Business & Sports Grid */}
+        {(businessEvents?.length > 0 || sportsEvents?.length > 0) && (
+          <section className="mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Business Events */}
+              {businessEvents?.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold">Business</h2>
+                    <p className="text-muted-foreground">
+                      Business news with multiple sources
+                    </p>
+                  </div>
+                  <EventsGrid topic="business" limit={3} />
+                </div>
+              )}
+
+              {/* Sports Events */}
+              {sportsEvents?.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold">Sports</h2>
+                    <p className="text-muted-foreground">
+                      Sports coverage from various outlets
+                    </p>
+                  </div>
+                  <EventsGrid topic="sports" limit={3} />
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* More Events Section */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">More Stories</h2>
+            <p className="text-muted-foreground">
+              Additional news with multiple perspectives
+            </p>
+          </div>
+          <EventsGrid limit={12} />
+        </section>
       </main>
       <Footer />
     </div>

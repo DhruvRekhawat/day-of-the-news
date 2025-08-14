@@ -2,8 +2,6 @@
 
 import base64url from "base64url";
 
-// A mock client for demonstration. Replace with your actual NewsAPI.ai SDK or fetch calls.
-// The structure of the responses should match your actual API provider.
 export class NewsApiClient {
   private apiKey: string;
   private baseUrl = "https://eventregistry.org/api/v1";
@@ -29,30 +27,91 @@ export class NewsApiClient {
     };
   }
 
-  async fetchArticles(params: URLSearchParams): Promise<any[]> {
-    const url = new URL(`${this.baseUrl}/article/getArticles`);
+  // Normalizes event data
+  private normalizeEvent(event: any) {
+    return {
+      eventUri: event.uri,
+      title: event.title,
+      category: event.categories?.[0]?.label || "General",
+      summary: event.summary,
+      image: event.image || null,
+      publishedAt: new Date(event.dateTime),
+    };
+  }
+
+  // Fetch events with their related articles
+  async fetchEvents(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
+    const url = new URL(`${this.baseUrl}/event/getEvents`);
     params.append("apiKey", this.apiKey);
-    params.append("resultType", "articles");
-    // Add timestamp to prevent caching
+    params.append("resultType", "events");
     params.append("_t", Date.now().toString());
     url.search = params.toString();
 
-    console.log(`[NewsAPI] Making request to: ${url.toString().replace(this.apiKey, '***')}`);
+    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
     const response = await fetch(url.toString(), {
-      cache: 'no-store', // Disable caching to get fresh articles
+      cache: 'no-store',
     });
+    
     if (!response.ok) {
       throw new Error(`News API error: ${response.statusText}`);
     }
+    
     const data = await response.json();
-    console.log(`[NewsAPI] Received ${data.articles?.results?.length || 0} articles`);
-    return data.articles.results.map(this.normalizeArticle);
+    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
+    
+    const events = data.events?.results || [];
+    const eventsWithArticles: { event: any; articles: any[] }[] = [];
+
+    // For each event, fetch its articles
+    for (const event of events) {
+      try {
+        const eventWithArticles = await this.fetchEventWithArticles(event.uri);
+        eventsWithArticles.push(eventWithArticles);
+      } catch (error) {
+        console.error(`[NewsAPI] Error fetching articles for event ${event.uri}:`, error);
+        // Continue with other events even if one fails
+      }
+    }
+
+    return eventsWithArticles;
   }
 
+  // Fetch a specific event with all its articles
+  async fetchEventWithArticles(eventUri: string): Promise<{ event: any; articles: any[] }> {
+    const url = `${this.baseUrl}/event/getEvent`;
+    const body = JSON.stringify({
+      apiKey: this.apiKey,
+      eventUri,
+      resultType: "articles",
+      articlesSortBy: "date",
+      articlesCount: 10,
+    });
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      cache: 'no-store',
+    });
+
+    if (!res.ok) throw new Error(`News API error: ${res.statusText}`);
+    const data = await res.json();
+
+    if (!data.event) {
+      throw new Error("Event not found");
+    }
+
+    return {
+      event: this.normalizeEvent(data.event),
+      articles: (data.articles?.results || []).map(this.normalizeArticle.bind(this)),
+    };
+  }
+
+  // Fetch individual article by ID (for backward compatibility)
   async fetchArticleById(id: string): Promise<any> {
     const articleUri = base64url.decode(id);
     console.log(articleUri);
-    // Use getArticle endpoint with POST and JSON body
+    
     const url = `${this.baseUrl}/article/getArticle`;
     const body = JSON.stringify({
       apiKey: this.apiKey,
@@ -63,9 +122,9 @@ export class NewsApiClient {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,
-      cache: 'no-store', // Disable caching to get fresh article data
+      cache: 'no-store',
     });
-    // console.log("hello", res);
+
     if (!res.ok) throw new Error(`News API error: ${res.statusText}`);
     const json = await res.json();
 
@@ -76,39 +135,44 @@ export class NewsApiClient {
     return this.normalizeArticle(json[articleUri].info);
   }
 
-  async fetchIndianHeadlines(): Promise<any[]> {
+  // Fetch Indian events
+  async fetchIndianEvents(): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       sourceLocationUri: "http://en.wikipedia.org/wiki/India",
-      articlesSortBy: "date",
-      articlesCount: "20",
+      eventsSortBy: "date",
+      eventsCount: "10",
     });
-    return this.fetchArticles(params);
+    return this.fetchEvents(params);
   }
 
-  async fetchGlobalConflicts(): Promise<any[]> {
+  // Fetch global conflict events
+  async fetchGlobalConflictEvents(): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       conceptUri: "http://en.wikipedia.org/wiki/War",
-      articlesSortBy: "rel",
-      articlesCount: "20",
+      eventsSortBy: "rel",
+      eventsCount: "10",
     });
-    return this.fetchArticles(params);
+    return this.fetchEvents(params);
   }
 
-  async fetchArticlesByTopic(topic: string): Promise<any[]> {
+  // Fetch events by topic
+  async fetchEventsByTopic(topic: string): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       keyword: topic,
-      articlesSortBy: "rel",
-      articlesCount: "20",
+      eventsSortBy: "rel",
+      eventsCount: "10",
     });
-    return this.fetchArticles(params);
+    return this.fetchEvents(params);
   }
 
-  async fetchTrendingArticles(): Promise<any[]> {
-    // 1️⃣ Get trending concepts
+  // Fetch trending events
+  async fetchTrendingEvents(): Promise<{ event: any; articles: any[] }[]> {
+    // Get trending concepts first
     const trendingUrl = `${this.baseUrl}/trendingConcepts?apiKey=${this.apiKey}&sourceLocationUri=country/IN&conceptType=person,org,loc&_t=${Date.now()}`;
     const trendingRes = await fetch(trendingUrl, {
-      cache: 'no-store', // Disable caching to get fresh trending data
+      cache: 'no-store',
     });
+    
     if (!trendingRes.ok) throw new Error(`Trending API error: ${trendingRes.statusText}`);
   
     const trendingData = await trendingRes.json();
@@ -116,21 +180,18 @@ export class NewsApiClient {
   
     if (!concepts.length) return [];
   
-    // 2️⃣ Get top 20 concept URIs
-    const conceptUris = concepts.slice(0, 20).map((c: any) => c.uri);
+    // Get top 10 concept URIs
+    const conceptUris = concepts.slice(0, 10).map((c: any) => c.uri);
   
-    // 3️⃣ Build params for fetching related articles
+    // Build params for fetching related events
     const params = new URLSearchParams({
       conceptUri: conceptUris.join(","),
-      articlesSortBy: "date",
-      articlesCount: "20",
+      eventsSortBy: "date",
+      eventsCount: "10",
     });
   
-    // 4️⃣ Fetch and return normalized articles
-    return this.fetchArticles(params);
+    return this.fetchEvents(params);
   }
-  
-  
 }
 
 
