@@ -44,13 +44,13 @@ export async function POST() {
     }
 
     // Delete month-old articles
-    console.log("[CRON] Deleting old articles...")
-    const deleted = await prisma.article.deleteMany({
-      where: {
-        publishedAt: { lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-      },
-    })
-    console.log(`[CRON] Deleted ${deleted.count} old articles.`)
+    // console.log("[CRON] Deleting old articles...")
+    // const deleted = await prisma.article.deleteMany({
+    //   where: {
+    //     publishedAt: { lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+    //   },
+    // })
+    // console.log(`[CRON] Deleted ${deleted.count} old articles.`)
 
     return NextResponse.json({
       success: true,
