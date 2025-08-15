@@ -12,6 +12,7 @@ export async function fetchFromApi(endpoint: string) {
     const res = await fetch(url, {
       // Disable caching for articles to get fresh content
       cache: 'no-store',
+      next: { revalidate: 0 }, // Force revalidation
     });
 
     if (!res.ok) {

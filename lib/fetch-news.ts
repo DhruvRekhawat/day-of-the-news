@@ -31,16 +31,73 @@ export class NewsApiClient {
   private normalizeEvent(event: any) {
     return {
       eventUri: event.uri,
-      title: event.title,
+      title: event.title?.eng || event.title || "Untitled Event",
       category: event.categories?.[0]?.label || "General",
-      summary: event.summary,
-      image: event.image || null,
-      publishedAt: new Date(event.dateTime),
+      summary: event.summary?.eng || event.summary || "",
+      image: event.images?.[0] || null,
+      publishedAt: new Date(event.eventDate || event.dateTime || new Date()),
     };
   }
 
-  // Fetch events with their related articles
+  // Fetch events with their related articles (optimized with limits)
   async fetchEvents(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
+    const url = new URL(`${this.baseUrl}/event/getEvents`);
+    params.append("apiKey", this.apiKey);
+    params.append("resultType", "events");
+    params.append("_t", Date.now().toString());
+    url.search = params.toString();
+
+    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
+    const response = await fetch(url.toString(), {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`News API error: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
+    
+    const events = data.events?.results || [];
+    const eventsWithArticles: { event: any; articles: any[] }[] = [];
+
+    // Limit to first 5 events to avoid timeout
+    const limitedEvents = events.slice(0, 5);
+    console.log(`[NewsAPI] Processing ${limitedEvents.length} events (limited from ${events.length})`);
+
+    // Process events in parallel with concurrency limit
+    const batchSize = 2; // Process 2 events at a time
+    for (let i = 0; i < limitedEvents.length; i += batchSize) {
+      const batch = limitedEvents.slice(i, i + batchSize);
+      const batchPromises = batch.map(async (event: any) => {
+        try {
+          const eventWithArticles = await this.fetchEventWithArticles(event.uri);
+          // Only add events that have articles
+          if (eventWithArticles.articles.length > 0) {
+            return eventWithArticles;
+          }
+        } catch (error) {
+          console.error(`[NewsAPI] Error fetching articles for event ${event.uri}:`, error);
+        }
+        return null;
+      });
+
+      const batchResults = await Promise.all(batchPromises);
+      eventsWithArticles.push(...batchResults.filter(Boolean));
+      
+      // Small delay between batches to avoid rate limiting
+      if (i + batchSize < limitedEvents.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    console.log(`[NewsAPI] Successfully processed ${eventsWithArticles.length} events with articles`);
+    return eventsWithArticles;
+  }
+
+  // Fetch events using metadata directly (simpler approach)
+  async fetchEventsSimple(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
     const url = new URL(`${this.baseUrl}/event/getEvents`);
     params.append("apiKey", this.apiKey);
     params.append("resultType", "events");
@@ -66,7 +123,10 @@ export class NewsApiClient {
     for (const event of events) {
       try {
         const eventWithArticles = await this.fetchEventWithArticles(event.uri);
-        eventsWithArticles.push(eventWithArticles);
+        // Only add events that have articles
+        if (eventWithArticles.articles.length > 0) {
+          eventsWithArticles.push(eventWithArticles);
+        }
       } catch (error) {
         console.error(`[NewsAPI] Error fetching articles for event ${event.uri}:`, error);
         // Continue with other events even if one fails
@@ -94,16 +154,44 @@ export class NewsApiClient {
       cache: 'no-store',
     });
 
-    if (!res.ok) throw new Error(`News API error: ${res.statusText}`);
+    if (!res.ok) {
+      console.error(`[NewsAPI] HTTP error for event ${eventUri}: ${res.status} ${res.statusText}`);
+      throw new Error(`News API error: ${res.statusText}`);
+    }
+    
     const data = await res.json();
+    console.log(`[NewsAPI] Raw response for event ${eventUri}:`, JSON.stringify(data, null, 2));
 
-    if (!data.event) {
+    // Event Registry returns data in format: { 'eventUri': { articles: {...} } }
+    const eventData = data[eventUri];
+    if (!eventData) {
+      console.error(`[NewsAPI] No event data returned for ${eventUri}:`, data);
       throw new Error("Event not found");
     }
 
+    const articles = eventData.articles?.results || [];
+    console.log(`[NewsAPI] Found ${articles.length} articles for event ${eventUri}`);
+
+    // For events, we need to construct the event data from the articles
+    // Use the first article to get event metadata
+    const firstArticle = articles[0];
+    if (!firstArticle) {
+      throw new Error("No articles found for event");
+    }
+
+    // Create event data from the first article
+    const event = {
+      uri: eventUri,
+      title: firstArticle.title,
+      categories: firstArticle.categories,
+      summary: firstArticle.body?.substring(0, 200) + "..." || "",
+      image: firstArticle.image,
+      dateTime: firstArticle.dateTime,
+    };
+
     return {
-      event: this.normalizeEvent(data.event),
-      articles: (data.articles?.results || []).map(this.normalizeArticle.bind(this)),
+      event: this.normalizeEvent(event),
+      articles: articles.map(this.normalizeArticle.bind(this)),
     };
   }
 

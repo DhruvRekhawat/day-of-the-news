@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useSearch } from "@/hooks/useSearch";
 import { authClient } from "@/lib/auth-client";
-import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Menu, Search, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SearchOverlay } from "./search-overlay";
 import SignInModal from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
@@ -16,6 +16,23 @@ import UserDropdown from "./user-dropdown";
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when mouse leaves the dropdown area
+  useEffect(() => {
+    function handleMouseLeave() {
+      setIsCategoriesDropdownOpen(false);
+    }
+
+    const dropdownElement = dropdownRef.current;
+    if (dropdownElement) {
+      dropdownElement.addEventListener('mouseleave', handleMouseLeave);
+      return () => {
+        dropdownElement.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, []);
   
   const {
     query,
@@ -85,15 +102,93 @@ const user = session?.user
               >
                 ABOUT
               </Link>
-              <div className="flex items-center space-x-1">
-                <Link
-                  href="#"
-                  className="text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
-                >
-                  CATEGORY
-                </Link>
-                <ChevronDown className="w-4 h-4" />
-              </div>
+                             <div 
+                 className="relative" 
+                 ref={dropdownRef}
+                 onMouseEnter={() => setIsCategoriesDropdownOpen(true)}
+               >
+                 <button
+                   className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+                 >
+                   <span>CATEGORIES</span>
+                   <ChevronDown className={`w-4 h-4 transition-transform ${isCategoriesDropdownOpen ? 'rotate-180' : ''}`} />
+                 </button>
+                 
+                 {isCategoriesDropdownOpen && (
+                   <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                     <div className="p-4">
+                       <div className="mb-4">
+                         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Categories</h3>
+                         <div className="space-y-1">
+                                                       <Link
+                              href="/category/politics"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Politics
+                            </Link>
+                            <Link
+                              href="/category/business"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Business
+                            </Link>
+                            <Link
+                              href="/category/sports"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Sports
+                            </Link>
+                            <Link
+                              href="/category/technology"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Technology
+                            </Link>
+                         </div>
+                       </div>
+                       
+                       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Topics</h3>
+                         <div className="space-y-1">
+                                                       <Link
+                              href="/topic/india"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              India
+                            </Link>
+                            <Link
+                              href="/topic/global-conflicts"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Global Conflicts
+                            </Link>
+                            <Link
+                              href="/topic/modi"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Modi
+                            </Link>
+                            <Link
+                              href="/topic/trump"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Trump
+                            </Link>
+                         </div>
+                       </div>
+                       
+                       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                                   <Link
+                            href="/categories"
+                            className="block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                          >
+                            View All Categories →
+                          </Link>
+                       </div>
+                     </div>
+                   </div>
+                 )}
+               </div>
               <Link
                 href="/faq"
                 className="text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
@@ -153,15 +248,124 @@ const user = session?.user
                 >
                   ABOUT
                 </Link>
-                <div className="flex items-center justify-between px-2">
-                  <Link
-                    href="#"
-                    className="text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
-                  >
-                    CATEGORY
-                  </Link>
-                  <ChevronDown className="w-4 h-4" />
-                </div>
+                                 <div className="px-2">
+                   <button
+                     onClick={() => setIsCategoriesDropdownOpen(!isCategoriesDropdownOpen)}
+                     className="flex items-center justify-between w-full text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100"
+                   >
+                     <span>CATEGORIES</span>
+                     <ChevronRight className={`w-4 h-4 transition-transform ${isCategoriesDropdownOpen ? 'rotate-90' : ''}`} />
+                   </button>
+                   
+                   {isCategoriesDropdownOpen && (
+                     <div className="mt-2 ml-4 space-y-2">
+                       <div className="mb-3">
+                         <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Categories</h4>
+                         <div className="space-y-1">
+                           <Link
+                             href="/category/politics"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Politics
+                           </Link>
+                           <Link
+                             href="/category/business"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Business
+                           </Link>
+                           <Link
+                             href="/category/sports"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Sports
+                           </Link>
+                           <Link
+                             href="/category/technology"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Technology
+                           </Link>
+                         </div>
+                       </div>
+                       
+                       <div className="mb-3">
+                         <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Topics</h4>
+                         <div className="space-y-1">
+                           <Link
+                             href="/topic/india"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             India
+                           </Link>
+                           <Link
+                             href="/topic/global-conflicts"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Global Conflicts
+                           </Link>
+                           <Link
+                             href="/topic/modi"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Modi
+                           </Link>
+                           <Link
+                             href="/topic/trump"
+                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                             onClick={() => {
+                               setIsCategoriesDropdownOpen(false);
+                               setIsMobileMenuOpen(false);
+                             }}
+                           >
+                             Trump
+                           </Link>
+                         </div>
+                       </div>
+                       
+                       <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                         <Link
+                           href="/categories"
+                           className="block text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                           onClick={() => {
+                             setIsCategoriesDropdownOpen(false);
+                             setIsMobileMenuOpen(false);
+                           }}
+                         >
+                           View All Categories →
+                         </Link>
+                       </div>
+                     </div>
+                   )}
+                 </div>
                 <Link
                   href="/faq"
                   className="text-gray-700 hover:text-gray-900 dark:text-gray-100 dark:hover:text-gray-100 px-2"

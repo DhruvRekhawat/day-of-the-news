@@ -10,6 +10,7 @@ export async function POST() {
   try {
     console.log("[CRON] Starting events update...")
 
+    // Fetch all topics for homepage sections
     const topics = [
       { name: "india", fetcher: () => newsClient.fetchIndianEvents() },
       { name: "politics", fetcher: () => newsClient.fetchEventsByTopic("politics") },
@@ -22,32 +23,104 @@ export async function POST() {
     for (const { name, fetcher } of topics) {
       console.log(`[CRON] Fetching topic: ${name}`)
       const eventsWithArticles = await fetcher()
+      console.log(`[CRON] Received ${eventsWithArticles.length} events for topic: ${name}`)
 
-      for (const { event, articles } of eventsWithArticles) {
-        // Create or update the event
-        const dbEvent = await prisma.event.upsert({
-          where: { eventUri: event.eventUri },
-          update: { 
-            ...event, 
-            topic: name, 
-            isTrending: false 
-          },
-          create: { 
-            ...event, 
-            topic: name, 
-            isTrending: false 
-          },
-        })
+             for (const { event, articles } of eventsWithArticles) {
+         console.log(`[CRON] Processing event: ${event.title} with ${articles.length} articles`)
+         console.log(`[CRON] Event data:`, JSON.stringify(event, null, 2))
+         
+                  let dbEvent;
+         try {
+           // Create or update the event
+           dbEvent = await prisma.event.upsert({
+             where: { eventUri: event.eventUri },
+             update: { 
+               ...event, 
+               topic: name, 
+               isTrending: false 
+             },
+             create: { 
+               ...event, 
+               topic: name, 
+               isTrending: false 
+             },
+           })
+           console.log(`[CRON] Event stored/updated: ${dbEvent.id}`)
+         } catch (error) {
+           console.error(`[CRON] Error storing event:`, error)
+           console.error(`[CRON] Event data that failed:`, event)
+           continue // Skip this event and continue with others
+         }
 
-        // Create or update articles and link them to the event
+         // Create or update articles and link them to the event
+         for (const article of articles) {
+           const dbArticle = await prisma.article.upsert({
+             where: { id: article.id },
+             update: { ...article, topic: name, isTrending: false },
+             create: { ...article, topic: name, isTrending: false },
+           })
+           console.log(`[CRON] Article stored/updated: ${dbArticle.id}`)
+
+           // Link article to event
+           await prisma.eventArticle.upsert({
+             where: {
+               eventId_articleId: {
+                 eventId: dbEvent.id,
+                 articleId: dbArticle.id,
+               },
+             },
+             update: {},
+             create: {
+               eventId: dbEvent.id,
+               articleId: dbArticle.id,
+             },
+           })
+           console.log(`[CRON] Linked article ${dbArticle.id} to event ${dbEvent.id}`)
+         }
+      }
+    }
+
+    // Fetch trending events for homepage featured/sidebar sections
+    console.log("[CRON] Fetching trending events...")
+    try {
+      const trendingEventsWithArticles = await newsClient.fetchTrendingEvents()
+      console.log(`[CRON] Received ${trendingEventsWithArticles.length} trending events`)
+      
+      for (const { event, articles } of trendingEventsWithArticles) {
+        console.log(`[CRON] Processing trending event: ${event.title} with ${articles.length} articles`)
+        
+        let dbEvent;
+        try {
+          // Create or update the trending event
+          dbEvent = await prisma.event.upsert({
+            where: { eventUri: event.eventUri },
+            update: { 
+              ...event, 
+              topic: "trending", 
+              isTrending: true 
+            },
+            create: { 
+              ...event, 
+              topic: "trending", 
+              isTrending: true 
+            },
+          })
+          console.log(`[CRON] Trending event stored/updated: ${dbEvent.id}`)
+        } catch (error) {
+          console.error(`[CRON] Error storing trending event:`, error)
+          continue
+        }
+
+        // Create or update articles and link them to the trending event
         for (const article of articles) {
           const dbArticle = await prisma.article.upsert({
             where: { id: article.id },
-            update: { ...article, topic: name, isTrending: false },
-            create: { ...article, topic: name, isTrending: false },
+            update: { ...article, topic: "trending", isTrending: true },
+            create: { ...article, topic: "trending", isTrending: true },
           })
+          console.log(`[CRON] Trending article stored/updated: ${dbArticle.id}`)
 
-          // Link article to event
+          // Link article to trending event
           await prisma.eventArticle.upsert({
             where: {
               eventId_articleId: {
@@ -61,53 +134,12 @@ export async function POST() {
               articleId: dbArticle.id,
             },
           })
+          console.log(`[CRON] Linked trending article ${dbArticle.id} to event ${dbEvent.id}`)
         }
       }
-    }
-
-    // Fetch & store trending events
-    console.log("[CRON] Fetching trending events...")
-    const trendingEventsWithArticles = await newsClient.fetchTrendingEvents()
-    
-    for (const { event, articles } of trendingEventsWithArticles) {
-      // Create or update the event
-      const dbEvent = await prisma.event.upsert({
-        where: { eventUri: event.eventUri },
-        update: { 
-          ...event, 
-          topic: null, 
-          isTrending: true 
-        },
-        create: { 
-          ...event, 
-          topic: null, 
-          isTrending: true 
-        },
-      })
-
-      // Create or update articles and link them to the event
-      for (const article of articles) {
-        const dbArticle = await prisma.article.upsert({
-          where: { id: article.id },
-          update: { ...article, topic: null, isTrending: true },
-          create: { ...article, topic: null, isTrending: true },
-        })
-
-        // Link article to event
-        await prisma.eventArticle.upsert({
-          where: {
-            eventId_articleId: {
-              eventId: dbEvent.id,
-              articleId: dbArticle.id,
-            },
-          },
-          update: {},
-          create: {
-            eventId: dbEvent.id,
-            articleId: dbArticle.id,
-          },
-        })
-      }
+    } catch (error) {
+      console.error("[CRON] Error fetching trending events:", error)
+      console.log("[CRON] Continuing with other topics...")
     }
 
     // Delete month-old events and articles
@@ -131,9 +163,23 @@ export async function POST() {
     
     console.log(`[CRON] Deleted ${deletedEvents.count} old events and ${deletedOrphanedArticles.count} orphaned articles.`)
 
+    // Get final counts
+    const eventCount = await prisma.event.count()
+    const articleCount = await prisma.article.count()
+    const eventArticleCount = await prisma.eventArticle.count()
+    
+    console.log(`[CRON] Final database state: ${eventCount} events, ${articleCount} articles, ${eventArticleCount} event-article links`)
+
     return NextResponse.json({
       success: true,
       message: "Events and articles updated successfully",
+      stats: {
+        events: eventCount,
+        articles: articleCount,
+        eventArticles: eventArticleCount,
+        deletedEvents: deletedEvents.count,
+        deletedArticles: deletedOrphanedArticles.count
+      }
     })
   } catch (error) {
     console.error("[CRON] Error:", error)

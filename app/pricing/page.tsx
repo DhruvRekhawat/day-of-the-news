@@ -1,51 +1,57 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
+import { useEffect, useState } from "react"
+import { usePayment } from "@/hooks/usePayment"
+import { useSession } from "@/lib/auth-client"
+
+interface PricingPlan {
+  id: string
+  name: string
+  price: number
+  currency: string
+  period: string
+  description: string
+  features: string[]
+  isPopular: boolean
+  isActive: boolean
+}
 
 export default function PricingPage() {
-  const plans = [
-    {
-      name: "Basic",
-      price: "$99",
-      period: "/monthly",
-      description: "Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.",
-      features: ["All analytics features", "Up to 250,000 tracked visits", "Normal support", "Up to 3 team members"],
-      buttonText: "Get started",
-      buttonVariant: "default" as const,
-      popular: false,
-    },
-    {
-      name: "Pro",
-      price: "$199",
-      period: "/monthly",
-      description: "Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.",
-      features: [
-        "All analytics features",
-        "Up to 1,000,000 tracked visits",
-        "Premium support",
-        "Up to 10 team members",
-      ],
-      buttonText: "Get started",
-      buttonVariant: "secondary" as const,
-      popular: true,
-    },
-    {
-      name: "Enterprise",
-      price: "$399",
-      period: "/monthly",
-      description: "Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.",
-      features: [
-        "All analytics features",
-        "Up to 5,000,000 tracked visits",
-        "Dedicated support",
-        "Up to 50 team members",
-      ],
-      buttonText: "Get started",
-      buttonVariant: "default" as const,
-      popular: false,
-    },
-  ]
+  const [plans, setPlans] = useState<PricingPlan[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { data: session } = useSession()
+  const { handlePayment, isLoading: isPaymentLoading } = usePayment()
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch("/api/pricing")
+        if (response.ok) {
+          const data = await response.json()
+          setPlans(data)
+        }
+      } catch (error) {
+        console.error("Error fetching plans:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPlans()
+  }, [])
+
+  const handleSubscribe = async (plan: PricingPlan) => {
+    if (!session?.user?.id) {
+      // Handle not logged in case
+      return
+    }
+
+    await handlePayment(plan.id, session.user.id, plan.name)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,41 +67,73 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className={` p-8 ${
-                plan.popular ? "bg-gray-900 text-white" : " border border-gray-200"
-              }`}
-            >
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <p className={`text-sm ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"} mb-6`}>{plan.description}</p>
-                <div className="flex items-baseline">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className={`ml-1 ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"}`}>{plan.period}</span>
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {[1, 2].map((i) => (
+              <div key={i} className="p-8 border border-gray-200 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded mb-6"></div>
+                <div className="h-8 bg-gray-200 rounded mb-8"></div>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="h-4 bg-gray-200 rounded"></div>
+                  ))}
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {plans.map((plan, index) => (
+              <div
+                key={plan.id}
+                className={`p-8 rounded-lg ${
+                  plan.isPopular ? "bg-gray-900 text-white" : "border border-gray-200"
+                }`}
+              >
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                  <p className={`text-sm ${plan.isPopular ? "" : "text-gray-600 dark:text-gray-200"} mb-6`}>
+                    {plan.description}
+                  </p>
+                  <div className="flex items-baseline">
+                    <span className="text-4xl font-bold">
+                      ₹{plan.price}
+                    </span>
+                    <span className={`ml-1 ${plan.isPopular ? "" : "text-gray-600 dark:text-gray-200"}`}>
+                      /{plan.period}
+                    </span>
+                  </div>
+                </div>
 
-              <div className="mb-8">
-                <p className={`font-medium mb-4 ${plan.popular ? "text-white" : ""}`}>What&apos;s included</p>
-                <ul className="space-y-3">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <Check className={`w-5 h-5 mr-3 ${plan.popular ? "text-white" : ""}`} />
-                      <span className={`text-sm ${plan.popular ? "" : "text-gray-600 dark:text-gray-200"}`}>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mb-8">
+                  <p className={`font-medium mb-4 ${plan.isPopular ? "text-white" : ""}`}>
+                    What&apos;s included
+                  </p>
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center">
+                        <Check className={`w-5 h-5 mr-3 ${plan.isPopular ? "text-white" : ""}`} />
+                        <span className={`text-sm ${plan.isPopular ? "" : "text-gray-600 dark:text-gray-200"}`}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Button 
+                  className="w-full" 
+                  variant={plan.isPopular ? "secondary" : "default"}
+                  onClick={() => handleSubscribe(plan)}
+                  disabled={isPaymentLoading}
+                >
+                  {isPaymentLoading ? "Processing..." : "Subscribe Now"}
+                </Button>
               </div>
-
-              <Button className="w-full" variant={plan.popular ? "secondary" : "default"}>
-                {plan.buttonText}
-              </Button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </main>
 
       <Footer />

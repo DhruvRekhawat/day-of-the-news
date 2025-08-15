@@ -122,6 +122,7 @@ model Event {
   topic       String?
   isTrending  Boolean       @default(false)
   summary     String?
+  aiSummary   String?
   image       String?
   publishedAt DateTime
   createdAt   DateTime      @default(now())
@@ -196,8 +197,36 @@ model Like {
   @@index([userId])
 }
 
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact")
+}
+
 enum Role {
   FREE
   PREMIUM
   ADMIN
+}
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  price       Float
+  currency    String   @default("INR")
+  period      String   @default("monthly") // monthly, yearly
+  description String
+  features    String[] // Array of features
+  isPopular   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  razorpayPlanId String? // Razorpay plan ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("pricing_plan")
 }
