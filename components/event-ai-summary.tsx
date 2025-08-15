@@ -16,7 +16,7 @@ interface EventAISummaryProps {
   initialAiSummary?: string | null
 }
 
-export function EventAISummary({ eventId, eventTitle, articles, initialAiSummary }: EventAISummaryProps) {
+export function EventAISummary({ eventId, initialAiSummary }: EventAISummaryProps) {
   const [aiSummary, setAiSummary] = useState<string | null>(initialAiSummary || null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
+import Razorpay from "razorpay"
 import { prisma } from "@/lib/prisma"
 
 export async function POST(request: NextRequest) {
@@ -21,14 +22,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Get order details from Razorpay to extract plan information
-    const Razorpay = require("razorpay")
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID!,
       key_secret: process.env.RAZORPAY_KEY_SECRET!,
     })
 
-    const order = await razorpay.orders.fetch(razorpay_order_id)
-    const planId = order.notes.planId
+    // Fetch order details from Razorpay (order object available if needed for future use)
+    await razorpay.orders.fetch(razorpay_order_id)
 
     // Update user role to PREMIUM
     await prisma.user.update({

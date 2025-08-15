@@ -189,8 +189,6 @@ export default async function HomePage() {
 
   // Use default empty arrays if a fetch fails
   const featuredStories = Array.isArray(indiaEventsArray) ? indiaEventsArray.slice(0, 1) : [];
-  const sidebarNews = Array.isArray(indiaEventsArray) ? indiaEventsArray.slice(1, 3) : [];
-  const moreNewsItems = Array.isArray(indiaEventsArray) ? indiaEventsArray.slice(5, 10) : [];
 
   // Combine all available events for recent news
   const allEvents = [

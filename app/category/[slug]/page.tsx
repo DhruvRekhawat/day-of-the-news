@@ -11,13 +11,13 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = params;
+  const { slug } = await params;
   
   // Decode the slug (handle URL encoding)
   const category = decodeURIComponent(slug);

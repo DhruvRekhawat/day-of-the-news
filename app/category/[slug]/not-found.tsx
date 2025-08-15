@@ -13,7 +13,7 @@ export default function CategoryNotFound() {
           <div className="max-w-md mx-auto">
             <h1 className="text-4xl font-bold mb-4">Category Not Found</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-              The category you're looking for doesn't exist or has no news articles.
+              The category you&apos;re looking for doesn&apos;t exist or has no news articles.
             </p>
             <div className="space-y-4">
               <Link 

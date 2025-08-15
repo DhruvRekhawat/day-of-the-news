@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ArticleContent } from "@/components/article-content"
-import { RelatedArticles } from "@/components/related-articles"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, TrendingUp } from "lucide-react"
@@ -12,12 +11,13 @@ import { formatDistanceToNow } from "date-fns"
 import { EventAISummary } from "@/components/event-ai-summary"
 
 interface EventPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function EventPage({ params }: EventPageProps) {
+  const { id } = await params
   const event = await prisma.event.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       articles: {
         include: {

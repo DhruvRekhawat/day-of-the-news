@@ -68,14 +68,14 @@ export default async function CategoriesPage() {
               {categoryList.map((category) => (
                 <Link
                   key={category}
-                  href={`/category/${encodeURIComponent(category)}`}
+                  href={`/category/${encodeURIComponent(category || '')}`}
                   className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                 >
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
                     {category}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    View all {category.toLowerCase()} news
+                    View all {category?.toLowerCase() || 'category'} news
                   </p>
                 </Link>
               ))}
@@ -92,14 +92,14 @@ export default async function CategoriesPage() {
               {topicList.map((topic) => (
                 <Link
                   key={topic}
-                  href={`/topic/${encodeURIComponent(topic)}`}
+                  href={`/topic/${encodeURIComponent(topic || '')}`}
                   className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
                 >
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
                     {topic}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    View all {topic.toLowerCase()} news
+                    View all {topic?.toLowerCase() || 'topic'} news
                   </p>
                 </Link>
               ))}

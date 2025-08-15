@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { EventCard } from "./event-card"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
@@ -46,7 +46,7 @@ export function EventsGrid({
   const [hasMore, setHasMore] = useState(true)
   const [offset, setOffset] = useState(0)
 
-  const fetchEvents = async (reset = false) => {
+  const fetchEvents = useCallback(async (reset = false) => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -83,11 +83,11 @@ export function EventsGrid({
     } finally {
       setLoading(false)
     }
-  }
+  }, [limit, offset, topic, trending])
 
   useEffect(() => {
     fetchEvents(true)
-  }, [topic, trending])
+  }, [topic, trending, fetchEvents])
 
   const loadMore = () => {
     fetchEvents(false)

@@ -4,12 +4,14 @@ import { generateSummary } from "@/lib/openai-client"
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+    
     // Get the event with its articles
     const event = await prisma.event.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         articles: {
           include: {
@@ -66,7 +68,7 @@ export async function POST(
 
     // Update the event with the generated AI summary
     const updatedEvent = await prisma.event.update({
-      where: { id: params.id },
+      where: { id },
       data: { aiSummary },
     })
 
