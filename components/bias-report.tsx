@@ -37,19 +37,19 @@ export function BiasReport({ article }: BiasReportProps) {
       name: "Left",
       value: Math.round((biasScores.left / total) * 100),
       rawValue: biasScores.left,
-      color: "#ef4444", // Updated to match other components (red=left)
+      color: "#ef4444", // Red for left
     },
     {
       name: "Center",
       value: Math.round((biasScores.center / total) * 100),
       rawValue: biasScores.center,
-      color: "#6b7280",
+      color: "#6b7280", // Grey for center
     },
     {
       name: "Right",
       value: Math.round((biasScores.right / total) * 100),
       rawValue: biasScores.right,
-      color: "#3b82f6", // Updated to match other components (blue=right)
+      color: "#3b82f6", // Blue for right
     },
   ];
 
@@ -131,7 +131,7 @@ export function BiasReport({ article }: BiasReportProps) {
             <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-3 h-3 rounded-none ${
                     item.name.toLowerCase() === dominantBias
                       ? "ring-2 ring-gray-400"
                       : ""

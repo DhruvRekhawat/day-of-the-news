@@ -1,10 +1,10 @@
+import { EventArticleCard } from "@/components/event-article-card";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { StickyCategories } from "@/components/sticky-categories";
-import { EventArticleCard } from "@/components/event-article-card";
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
@@ -209,12 +209,12 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
           {/* Left Column - RECENT NEWS */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div className=" bg-transparent rounded-none p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
               <div className="space-y-3">
-                {allEvents.slice(0, 10).map((event: any, index: number) => (
+                {allEvents.slice(0, 8).map((event: any, index: number) => (
                   <div key={event.id} className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-600 dark:bg-red-400 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-6 h-6  dark:text-white text-2xl rounded-full flex items-center justify-center flex-shrink-0 mt-1 font-extralight">
                       {index + 1}
                     </div>
                     <div className="flex-1">
@@ -243,25 +243,24 @@ export default async function HomePage() {
 
           {/* Middle Column - TOP STORY */}
           <div className="lg:col-span-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-              <h2 className="text-lg font-bold mb-4 p-4 pb-0">TOP STORY</h2>
+            <div className=" bg-transparent border rounded-none shadow-sm overflow-hidden">
               {featuredStories.length > 0 && (
                 <div className="p-4">
                   <EventArticleCard event={featuredStories[0]} variant="featured" />
                   
                   {/* Bias Breakdown */}
-                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="mt-4 p-3 bg-transparent rounded-none">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Coverage Bias</span>
                     </div>
                     <div className="flex h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-red-500" style={{ width: '22%' }}></div>
-                      <div className="h-full bg-gray-300" style={{ width: '28%' }}></div>
+                      <div className="h-full bg-red-500" style={{ width: '20%' }}></div>
+                      <div className="h-full bg-gray-300" style={{ width: '40%' }}></div>
                       <div className="h-full bg-blue-500" style={{ width: '40%' }}></div>
                     </div>
                     <div className="flex justify-between text-xs mt-1">
-                      <span className="text-red-600">Left 22%</span>
-                      <span className="text-gray-600">Center 28%</span>
+                      <span className="text-red-600">Left 20%</span>
+                      <span className="text-gray-600">Center 40%</span>
                       <span className="text-blue-600">Right 40%</span>
                     </div>
                   </div>
@@ -269,7 +268,7 @@ export default async function HomePage() {
                   {/* Additional Stories */}
                   <div className="mt-6 space-y-4">
                     {indiaEventsArray.slice(1, 3).map((event: any) => (
-                      <div key={event.id} className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                      <div key={event.id} className="border-t border-gray-200 dark:border-transparent pt-4">
                         <div className="flex items-start space-x-4">
                           <div className="w-24 h-20 rounded-lg overflow-hidden flex-shrink-0">
                             <img
@@ -308,18 +307,10 @@ export default async function HomePage() {
 
           {/* Right Column - UNCOVERED */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div className=" bg-transparent rounded-none p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-2">UNCOVERED</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">News covered by both sides of the political spectrum.</p>
-              
-              {/* Coverage Balance Bar */}
-              <div className="mb-4">
-                <div className="flex h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-red-500" style={{ width: '33%' }}></div>
-                  <div className="h-full bg-gray-300" style={{ width: '34%' }}></div>
-                  <div className="h-full bg-green-500" style={{ width: '33%' }}></div>
-                </div>
-              </div>
+
 
               <div className="space-y-4">
                 {politicsEventsArray.slice(0, 2).map((event: any) => (
@@ -376,14 +367,14 @@ export default async function HomePage() {
 
         {/* Rest of the content sections */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-                      {/* Politics Section */}
-            <div className="col-span-1 lg:col-span-9">
+            {/* Politics Section */}
+            <div className="col-span-full">
               {politicsEventsArray.length > 0 && (
                 <section className="mb-8">
                   <Link href="/topic/politics">
                     <h2 className="text-xl font-bold mb-4 hover:text-blue-600 transition-colors cursor-pointer">Politics</h2>
                   </Link>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     {politicsEventsArray.slice(0, 4).map((event: any) => (
                       <EventArticleCard key={event.id} event={event} />
                     ))}
@@ -397,7 +388,7 @@ export default async function HomePage() {
                   <Link href="/topic/global-conflicts">
                     <h2 className="text-xl font-bold mb-4 hover:text-blue-600 transition-colors cursor-pointer">Global Conflicts</h2>
                   </Link>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {globalConflictEventsArray.slice(0, 4).map((event: any) => (
                       <EventArticleCard key={event.id} event={event} />
                     ))}

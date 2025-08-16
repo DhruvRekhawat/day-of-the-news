@@ -1,14 +1,15 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+import { AlternativeSourcesDropdown } from "@/components/alternative-sources-dropdown"
 import { ArticleContent } from "@/components/article-content"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ExternalLink, TrendingUp } from "lucide-react"
-import Link from "next/link"
-import { formatDistanceToNow } from "date-fns"
 import { EventAISummary } from "@/components/event-ai-summary"
+import { EventBiasChart } from "@/components/event-bias-chart"
+import { Footer } from "@/components/footer"
+import { Header } from "@/components/header"
+import { SimilarNewsArticles } from "@/components/similar-news-articles"
+import { Badge } from "@/components/ui/badge"
+import { prisma } from "@/lib/prisma"
+import { formatDistanceToNow } from "date-fns"
+import { TrendingUp } from "lucide-react"
+import { notFound } from "next/navigation"
 
 interface EventPageProps {
   params: Promise<{ id: string }>
@@ -49,6 +50,35 @@ export default async function EventPage({ params }: EventPageProps) {
     notFound()
   }
 
+  // Get bias data for the main article
+  const biasData = mainArticle.aiBiasReport as any || {
+    bias: "center",
+    biasScores: { left: 0, center: 1, right: 0 }
+  }
+
+  // Fetch similar articles (for now, we'll use articles from the same category)
+  // In a real implementation, you'd want to use semantic similarity or topic matching
+  const similarArticles = await prisma.article.findMany({
+    where: {
+      category: mainArticle.category,
+      id: { not: mainArticle.id },
+    },
+    take: 6,
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  // Transform similar articles to match the expected interface
+  const transformedSimilarArticles = similarArticles.map(article => ({
+    id: article.id,
+    title: article.title,
+    image: article.image || '/placeholder.png',
+    publishedAt: article.publishedAt,
+    source: article.source,
+    bias: (article.aiBiasReport as any)?.bias || "center",
+    excerpt: article.excerpt,
+    url: article.url,
+  }))
+
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
       <Header />
@@ -56,89 +86,76 @@ export default async function EventPage({ params }: EventPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Article Content */}
           <div className="lg:col-span-2">
-            {/* Event Header */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                {event.isTrending && (
-                  <Badge variant="destructive">
-                    <TrendingUp className="w-4 h-4 mr-1" />
-                    Trending
-                  </Badge>
-                )}
-                <Badge variant="secondary">{event.category}</Badge>
-                {event.topic && (
-                  <Badge variant="outline">{event.topic}</Badge>
-                )}
-                <Badge variant="outline">+{alternativeSources.length} sources</Badge>
-              </div>
-              <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-              <EventAISummary
-                eventId={event.id}
-                eventTitle={event.title}
-                articles={event.articles}
-                initialAiSummary={event.aiSummary}
-              />
-              {event.summary && !event.aiSummary && (
-                <p className="text-lg text-muted-foreground mb-4">{event.summary}</p>
-              )}
-            </div>
+                         {/* Event Header */}
+             <div className="mb-6">
+               <div className="flex items-center gap-2 mb-4">
+                 {event.isTrending && (
+                   <Badge variant="destructive">
+                     <TrendingUp className="w-4 h-4 mr-1" />
+                     Trending
+                   </Badge>
+                 )}
+                 <Badge variant="secondary">{event.category}</Badge>
+                 {event.topic && (
+                   <Badge variant="outline">{event.topic}</Badge>
+                 )}
+                 <Badge variant="outline">+{alternativeSources.length} sources</Badge>
+               </div>
+             </div>
 
-            {/* Main Article */}
-            <ArticleContent article={{
-              id: mainArticle.id,
-              originalUri: mainArticle.originalUri,
-              title: mainArticle.title,
-              content: mainArticle.content,
-              excerpt: mainArticle.excerpt || '',
-              url: mainArticle.url,
-              image: mainArticle.image || '/placeholder.png',
-              source: mainArticle.source,
-              category: mainArticle.category,
-              publishedAt: mainArticle.publishedAt.toISOString(),
-              aiSummary: mainArticle.aiSummary || '',
-              aiBiasReport: mainArticle.aiBiasReport as any || {
-                bias: "center",
-                biasScores: { left: 0, center: 1, right: 0 }
-              },
-              createdAt: mainArticle.createdAt.toISOString(),
-              updatedAt: mainArticle.updatedAt.toISOString()
-            }} />
+                         {/* Main Article */}
+             <ArticleContent article={{
+               id: mainArticle.id,
+               originalUri: mainArticle.originalUri,
+               title: mainArticle.title,
+               content: mainArticle.content,
+               excerpt: mainArticle.excerpt || '',
+               url: mainArticle.url,
+               image: mainArticle.image || '/placeholder.png',
+               source: mainArticle.source,
+               category: mainArticle.category,
+               publishedAt: mainArticle.publishedAt.toISOString(),
+               aiSummary: mainArticle.aiSummary || '',
+               aiBiasReport: biasData,
+               createdAt: mainArticle.createdAt.toISOString(),
+               updatedAt: mainArticle.updatedAt.toISOString()
+             }} />
+
+             {/* Event Summary and AI Summary */}
+             <div className="mt-8">
+               {event.summary && !event.aiSummary && (
+                 <div className="mb-6">
+                   <h2 className="text-xl font-bold mb-3">Event Summary</h2>
+                   <p className="text-lg text-muted-foreground">{event.summary}</p>
+                 </div>
+               )}
+               <EventAISummary
+                 eventId={event.id}
+                 eventTitle={event.title}
+                 articles={event.articles}
+                 initialAiSummary={event.aiSummary}
+               />
+             </div>
+
+                         {/* Alternative Sources Dropdown */}
+             <div className="mt-8">
+               <AlternativeSourcesDropdown sources={alternativeSources} />
+             </div>
+
+            {/* Similar News Articles */}
+             <div className="mt-8">
+               <SimilarNewsArticles 
+                 articles={transformedSimilarArticles}
+                 eventTitle={event.title}
+               />
+             </div>
+
           </div>
 
-          {/* Sidebar - Alternative Sources */}
+          {/* Sidebar - Bias Chart */}
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <h2 className="text-xl font-bold mb-4">Alternative Sources</h2>
-              <div className="space-y-4">
-                {alternativeSources.map((article) => (
-                  <div key={article.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-sm leading-tight">
-                        <Link 
-                          href={`/article/${article.id}`}
-                          className="hover:text-blue-600 transition-colors"
-                        >
-                          {article.title}
-                        </Link>
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        asChild
-                        className="h-6 px-2 flex-shrink-0"
-                      >
-                        <Link href={article.url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-3 h-3" />
-                        </Link>
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="font-medium text-blue-600">{article.source}</span>
-                      <span>{formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <EventBiasChart biasData={biasData} />
 
               {/* Event Metadata */}
               <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -167,11 +184,6 @@ export default async function EventPage({ params }: EventPageProps) {
             </div>
           </div>
         </div>
-
-        {/* Related Articles - TODO: Implement related articles fetching */}
-        {/* <div className="mt-12">
-          <RelatedArticles currentArticleId={mainArticle.id} />
-        </div> */}
       </main>
       <Footer />
     </div>

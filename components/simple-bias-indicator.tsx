@@ -47,11 +47,11 @@ export function SimpleBiasIndicator({
   const getBiasColor = (bias: string) => {
     switch (bias) {
       case "left":
-        return "bg-red-600 border-red-300"; // Updated to match ArticleContent
+        return "bg-red-600 border-red-300"; // Red for left
       case "right":
-        return "bg-blue-600 border-blue-300";
+        return "bg-blue-600 border-blue-300"; // Blue for right
       case "center":
-        return "bg-gray-600 border-gray-300";
+        return "bg-gray-600 border-gray-300"; // Grey for center
       default:
         return "bg-gray-600 border-gray-300";
     }
@@ -75,7 +75,7 @@ export function SimpleBiasIndicator({
       {/* Enhanced gradient background bar */}
       <div
         className={cn(
-          "rounded-full relative overflow-hidden",
+          "rounded-none relative overflow-hidden",
           sizeClasses[size].bar
         )}
         style={{
@@ -105,7 +105,7 @@ export function SimpleBiasIndicator({
       {/* Enhanced bias indicator dot */}
       <div
         className={cn(
-          "absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 rounded-full border-2 shadow-lg transition-all duration-200 group-hover:scale-110",
+          "absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 rounded-none border-2 shadow-lg transition-all duration-200 group-hover:scale-110",
           getBiasColor(bias),
           sizeClasses[size].indicator
         )}

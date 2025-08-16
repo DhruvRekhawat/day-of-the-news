@@ -53,7 +53,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
               {article.excerpt && <p className="text-sm text-gray-600 dark:text-gray-200 mb-3 line-clamp-2">{article.excerpt}</p>}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                  <div className="w-4 h-4 bg-red-500 rounded-none"></div>
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{article.source}</span>
                   <span className="text-sm text-gray-500">•</span>
                   <span className="text-sm text-gray-500">{article.timestamp}</span>

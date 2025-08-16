@@ -120,7 +120,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
                 LEFT
               </span>
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "left"
                     ? "bg-red-500 ring-2 ring-red-300"
                     : "bg-red-200"
@@ -140,7 +140,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
                 CENTER
               </span>
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "center"
                     ? "bg-gray-500 ring-2 ring-gray-300"
                     : "bg-gray-200"
@@ -160,7 +160,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
                 RIGHT
               </span>
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "right"
                     ? "bg-blue-500 ring-2 ring-blue-300"
                     : "bg-blue-200"
@@ -223,7 +223,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
               Bias Analysis:
             </span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden flex">
+          <div className="w-full h-3 bg-gray-200 rounded-none overflow-hidden flex">
             <div
               className="h-full bg-red-500 transition-all duration-300"
               style={{ width: `${(biasScores?.left || 0) * 100}%` }}

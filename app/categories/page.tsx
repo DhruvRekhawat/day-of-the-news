@@ -44,6 +44,9 @@ export default async function CategoriesPage() {
   const categoryList = categories.map(c => c.category).filter(Boolean);
   const topicList = topics.map(t => t.topic).filter(Boolean);
 
+  console.log(categoryList);
+  console.log(topicList);
+
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
       <Header />

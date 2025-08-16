@@ -173,9 +173,9 @@ export function Footer() {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Logo */}
-            <div className="flex flex-col">
-              <span className="text-xs text-gray-400">DAY OF THE</span>
-              <span className="text-xl font-bold">NEWS</span>
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-sm text-gray-400">DAY OF THE</span>
+              <span className="text-3xl font-bold">NEWS</span>
             </div>
 
             {/* Company */}

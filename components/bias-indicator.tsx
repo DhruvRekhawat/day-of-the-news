@@ -27,9 +27,9 @@ export function BiasIndicator({
   const getBiasColor = (bias: string) => {
     switch (bias) {
       case "left":
-        return "bg-blue-500";
-      case "right":
         return "bg-red-500";
+      case "right":
+        return "bg-blue-500";
       case "center":
         return "bg-gray-500";
       default:
@@ -62,18 +62,18 @@ export function BiasIndicator({
       <div className="relative">
         {/* Background bar */}
         <div
-          className={cn("bg-gray-200 rounded-full", sizeClasses[size].bar)}
+          className={cn("bg-gray-200 rounded-none", sizeClasses[size].bar)}
         />
 
-        {/* Left section (blue) */}
+        {/* Left section (red) */}
         <div
-          className="absolute top-0 left-0 bg-blue-500 rounded-l-full h-full"
+          className="absolute top-0 left-0 bg-red-500 rounded-none h-full"
           style={{ width: "33.33%" }}
         />
 
-        {/* Right section (red) */}
+        {/* Right section (blue) */}
         <div
-          className="absolute top-0 right-0 bg-red-500 rounded-r-full h-full"
+          className="absolute top-0 right-0 bg-blue-500 rounded-none h-full"
           style={{ width: "33.33%" }}
         />
 
@@ -90,7 +90,7 @@ export function BiasIndicator({
         {/* Bias indicator dot */}
         <div
           className={cn(
-            "absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white shadow-sm",
+            "absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 rounded-none border-2 border-white shadow-sm",
             getBiasColor(bias),
             sizeClasses[size].indicator
           )}
