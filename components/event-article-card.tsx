@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { ExternalLink, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
+import { BiasIndicator } from "@/components/ui/BiasIndicator"
+import { BiasAnalysisStatus, BiasDirection } from "@/lib/generated/prisma"
 
 interface Article {
   id: string
@@ -16,6 +18,13 @@ interface Article {
   image?: string | null
   excerpt: string
   category: string
+  biasAnalysis?: {
+    biasDirection: BiasDirection
+    biasStrength: number
+    confidence: number
+    status: BiasAnalysisStatus
+    reasoning?: string
+  } | null
 }
 
 interface Event {
@@ -56,11 +65,17 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
               </span>
-              {alternativeSourcesCount > 0 && (
-                <Badge variant="outline" className="text-xs">
-                  +{alternativeSourcesCount} sources
-                </Badge>
-              )}
+              <div className="flex items-center space-x-2">
+                <BiasIndicator 
+                  biasAnalysis={mainArticle.biasAnalysis}
+                  className="text-xs"
+                />
+                {alternativeSourcesCount > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{alternativeSourcesCount} sources
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -88,11 +103,17 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
               <span className="text-sm opacity-90">
                 {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
               </span>
-              {alternativeSourcesCount > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{alternativeSourcesCount} sources
-                </Badge>
-              )}
+              <div className="flex items-center space-x-2">
+                <BiasIndicator 
+                  biasAnalysis={mainArticle.biasAnalysis}
+                  className="text-xs"
+                />
+                {alternativeSourcesCount > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    +{alternativeSourcesCount} sources
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -155,6 +176,10 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(mainArticle.publishedAt), { addSuffix: true })}
               </span>
+              <BiasIndicator 
+                biasAnalysis={mainArticle.biasAnalysis}
+                className="text-xs"
+              />
             </div>
             <Button
               variant="ghost"

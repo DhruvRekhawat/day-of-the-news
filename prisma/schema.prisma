@@ -127,7 +127,8 @@ model Event {
   publishedAt DateTime
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  articles    EventArticle[]
+  
+  articles     EventArticle[]
 
   @@index([publishedAt])
   @@index([topic])
@@ -160,8 +161,10 @@ model Article {
   publishedAt  DateTime
   aiSummary    String?
   aiBiasReport Json?
+
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  biasAnalysis BiasAnalysis? // Relation to bias analysis
   interactions Interaction[]
   events       EventArticle[]
 
@@ -171,6 +174,29 @@ model Article {
   StoryArticle StoryArticle[]
 }
 
+// Article-level bias analysis (for source categorization)
+model BiasAnalysis {
+  id              String   @id @default(cuid())
+  articleId       String   @unique
+  article         Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  
+  // AI analysis results
+  biasDirection   BiasDirection
+  biasStrength    Int      // 1-5 scale
+  confidence      Float    // 0.0-1.0
+  reasoning       String?
+  
+  // Processing status
+  status          BiasAnalysisStatus @default(PENDING)
+  processedAt     DateTime?
+  errorMessage    String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([status])
+  @@index([biasDirection])
+}
 
 
 model Bookmark {
@@ -229,4 +255,22 @@ model PricingPlan {
   updatedAt   DateTime @updatedAt
 
   @@map("pricing_plan")
+}
+
+enum BiasDirection {
+  FAR_LEFT
+  LEFT
+  CENTER_LEFT
+  CENTER
+  CENTER_RIGHT
+  RIGHT
+  FAR_RIGHT
+  UNKNOWN
+}
+
+enum BiasAnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }

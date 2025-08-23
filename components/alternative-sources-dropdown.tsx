@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { BiasIndicator } from "@/components/ui/BiasIndicator";
+import { BiasAnalysisStatus, BiasDirection } from "@/lib/generated/prisma";
 
 interface Article {
   id: string;
@@ -12,6 +14,13 @@ interface Article {
   url: string;
   source: string;
   publishedAt: Date;
+  biasAnalysis?: {
+    biasDirection: BiasDirection;
+    biasStrength: number;
+    confidence: number;
+    status: BiasAnalysisStatus;
+    reasoning?: string;
+  } | null;
 }
 
 interface AlternativeSourcesDropdownProps {
@@ -59,7 +68,13 @@ export function AlternativeSourcesDropdown({ sources }: AlternativeSourcesDropdo
                 </Button>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-medium text-blue-600">{article.source}</span>
+                <div className="flex items-center space-x-2">
+                  <span className="font-medium text-blue-600">{article.source}</span>
+                  <BiasIndicator 
+                    biasAnalysis={article.biasAnalysis}
+                    className="text-xs"
+                  />
+                </div>
                 <span>{formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}</span>
               </div>
             </div>
