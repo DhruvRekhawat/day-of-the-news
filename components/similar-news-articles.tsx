@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SimpleBiasIndicator } from "./simple-bias-indicator";
+import { BiasBar } from "@/components/ui/BiasBar";
 import { formatDistanceToNow } from "date-fns";
 
 interface SimilarArticle {
@@ -58,14 +58,16 @@ export function SimilarNewsArticles({ articles }: SimilarNewsArticlesProps) {
                 </p>
               )}
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-blue-600">{article.source}</span>
-                  <span className="text-sm text-gray-500">•</span>
-                  <span className="text-sm text-gray-500">
-                    {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
-                  </span>
-                </div>
-                <SimpleBiasIndicator bias={article.bias} size="sm" />
+                <span className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
+                </span>
+                <BiasBar
+                  leftPercentage={article.bias === "left" ? 100 : 0}
+                  centerPercentage={article.bias === "center" ? 100 : 0}
+                  rightPercentage={article.bias === "right" ? 100 : 0}
+                  height="h-1"
+                  className="w-12"
+                />
               </div>
               <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                 <Link

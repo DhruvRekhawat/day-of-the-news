@@ -1,8 +1,8 @@
-import { SimpleBiasIndicator } from "./simple-bias-indicator";
 import { Button } from "@/components/ui/button";
 import { Plus, Newspaper, Briefcase, Gamepad2, Laptop2, Film, FlaskConical, Globe } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { BiasBar } from "@/components/ui/BiasBar";
 
 interface NewsItem {
   id: string;
@@ -45,6 +45,20 @@ export function HeroSection({
     return Newspaper; // Default icon
   };
 
+  // Helper function to convert bias to percentages for BiasBar
+  const getBiasPercentages = (bias: string) => {
+    switch (bias) {
+      case "left":
+        return { left: 100, center: 0, right: 0 };
+      case "center":
+        return { left: 0, center: 100, right: 0 };
+      case "right":
+        return { left: 0, center: 0, right: 100 };
+      default:
+        return { left: 33, center: 34, right: 33 };
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
       {/* Left Sidebar - Recent News - Hidden on mobile, shown on large screens */}
@@ -52,29 +66,38 @@ export function HeroSection({
         <div className="">
           <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
           <div className="space-y-4">
-            {recentNews?.slice(0, 10).map((item) => (
-              <div
-                key={item.id}
-                className="border-b border-border pb-4 last:border-b-0"
-              >
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <div className="flex-1">
-                    <Link href={`/article/${item.id}`}>
-                      <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
-                        {item.title}
-                      </h3>
-                    </Link>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {item.timestamp}
-                      </span>
-                      <SimpleBiasIndicator bias={item.bias} size="sm" />
+            {recentNews?.slice(0, 10).map((item) => {
+              const biasPercentages = getBiasPercentages(item.bias);
+              return (
+                <div
+                  key={item.id}
+                  className="border-b border-border pb-4 last:border-b-0"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <Link href={`/article/${item.id}`}>
+                        <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
+                          {item.title}
+                        </h3>
+                      </Link>
+                      <BiasBar
+                        leftPercentage={biasPercentages.left}
+                        centerPercentage={biasPercentages.center}
+                        rightPercentage={biasPercentages.right}
+                        height="h-1"
+                        className="mb-2"
+                      />
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {item.timestamp}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -96,14 +119,22 @@ export function HeroSection({
                     {featuredStories[0].title}
                   </h1>
                 </Link>
+                {(() => {
+                  const biasPercentages = getBiasPercentages(featuredStories[0].bias);
+                  return (
+                    <BiasBar
+                      leftPercentage={biasPercentages.left}
+                      centerPercentage={biasPercentages.center}
+                      rightPercentage={biasPercentages.right}
+                      height="h-2"
+                      className="mb-2"
+                    />
+                  );
+                })()}
                 <div className="flex items-center justify-between">
                   <span className="text-sm opacity-90">
                     {featuredStories[0].timestamp}
                   </span>
-                  <SimpleBiasIndicator
-                    bias={featuredStories[0].bias}
-                    size="md"
-                  />
                 </div>
               </div>
             </div>
@@ -112,52 +143,70 @@ export function HeroSection({
 
         {/* Secondary Stories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 lg:mb-0">
-          {recentNews?.slice(1, 3).map((item) => (
-            <div key={item.id} className="group cursor-pointer">
-              <div className="relative h-40 sm:h-48 mb-3 overflow-clip">
-                <img
-                  src={item.image || "/placeholder.png"}
-                  alt={item.title}
-                  className="group-hover:scale-105 transition-transform duration-200"
+          {recentNews?.slice(1, 3).map((item) => {
+            const biasPercentages = getBiasPercentages(item.bias);
+            return (
+              <div key={item.id} className="group cursor-pointer">
+                <div className="relative h-40 sm:h-48 mb-3 overflow-clip">
+                  <img
+                    src={item.image || "/placeholder.png"}
+                    alt={item.title}
+                    className="group-hover:scale-105 transition-transform duration-200"
+                  />
+                </div>
+                <Link href={`/article/${item.id}`}>
+                  <h3 className="font-semibold text-foreground mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors cursor-pointer text-sm sm:text-base">
+                    {item.title}
+                  </h3>
+                </Link>
+                <BiasBar
+                  leftPercentage={biasPercentages.left}
+                  centerPercentage={biasPercentages.center}
+                  rightPercentage={biasPercentages.right}
+                  height="h-1"
+                  className="mb-2"
                 />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs sm:text-sm text-muted-foreground">
+                    {item.timestamp}
+                  </span>
+                </div>
               </div>
-              <Link href={`/article/${item.id}`}>
-                <h3 className="font-semibold text-foreground mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors cursor-pointer text-sm sm:text-base">
-                  {item.title}
-                </h3>
-              </Link>
-              <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  {item.timestamp}
-                </span>
-                <SimpleBiasIndicator bias={item.bias} size="sm" />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Recent News for Mobile - Show below main content on small screens */}
         <div className="block lg:hidden mt-8">
           <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {recentNews?.slice(3, 7).map((item) => (
-              <div key={item.id} className="border border-border p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {item.timestamp}
-                      </span>
-                      <SimpleBiasIndicator bias={item.bias} size="sm" />
+            {recentNews?.slice(3, 7).map((item) => {
+              const biasPercentages = getBiasPercentages(item.bias);
+              return (
+                <div key={item.id} className="border border-border p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-medium text-foreground leading-tight mb-2">
+                        {item.title}
+                      </h3>
+                      <BiasBar
+                        leftPercentage={biasPercentages.left}
+                        centerPercentage={biasPercentages.center}
+                        rightPercentage={biasPercentages.right}
+                        height="h-1"
+                        className="mb-2"
+                      />
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {item.timestamp}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -171,26 +220,35 @@ export function HeroSection({
             Discover stories that others are missing
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-            {sidebarNews?.map((item) => (
-              <div key={item.id} className="mb-4">
-                <div className="relative h-32 mb-2 overflow-clip grid place-items-center">
-                  <img
-                    src={item.image || "/placeholder.png"}
-                    alt={item.title}
-                    className=" object-cover "
+            {sidebarNews?.map((item) => {
+              const biasPercentages = getBiasPercentages(item.bias);
+              return (
+                <div key={item.id} className="mb-4">
+                  <div className="relative h-32 mb-2 overflow-clip grid place-items-center">
+                    <img
+                      src={item.image || "/placeholder.png"}
+                      alt={item.title}
+                      className=" object-cover "
+                    />
+                  </div>
+                  <h3 className="text-sm font-medium text-foreground mb-1">
+                    {item.title}
+                  </h3>
+                  <BiasBar
+                    leftPercentage={biasPercentages.left}
+                    centerPercentage={biasPercentages.center}
+                    rightPercentage={biasPercentages.right}
+                    height="h-1"
+                    className="mb-2"
                   />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {item.timestamp}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-sm font-medium text-foreground mb-1">
-                  {item.title}
-                </h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {item.timestamp}
-                  </span>
-                  <SimpleBiasIndicator bias={item.bias} size="sm" />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

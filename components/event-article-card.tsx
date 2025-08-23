@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { ExternalLink, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
-import { BiasIndicator } from "@/components/ui/BiasIndicator"
 import { BiasAnalysisStatus, BiasDirection } from "@/lib/generated/prisma"
+import { BiasBar } from "@/components/ui/BiasBar"
 
 interface Article {
   id: string
@@ -50,6 +50,24 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
   const mainArticle = event.articles[0]
   const alternativeSourcesCount = event.articles.length - 1
 
+  // Calculate bias distribution for the event
+  const biasCounts = event.articles.reduce((acc, article) => {
+    if (article.biasAnalysis?.status === 'COMPLETED') {
+      const direction = article.biasAnalysis.biasDirection;
+      acc[direction] = (acc[direction] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const leftCount = (biasCounts.FAR_LEFT || 0) + (biasCounts.LEFT || 0) + (biasCounts.CENTER_LEFT || 0);
+  const centerCount = biasCounts.CENTER || 0;
+  const rightCount = (biasCounts.CENTER_RIGHT || 0) + (biasCounts.RIGHT || 0) + (biasCounts.FAR_RIGHT || 0);
+  
+  const total = leftCount + centerCount + rightCount;
+  const leftPercentage = total > 0 ? (leftCount / total) * 100 : 0;
+  const centerPercentage = total > 0 ? (centerCount / total) * 100 : 0;
+  const rightPercentage = total > 0 ? (rightCount / total) * 100 : 0;
+
   if (variant === "sidebar") {
     return (
       <div className="border-b border-border pb-4 last:border-b-0">
@@ -61,15 +79,20 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
                 {event.title}
               </h3>
             </Link>
+            {total > 0 && (
+              <BiasBar
+                leftPercentage={leftPercentage}
+                centerPercentage={centerPercentage}
+                rightPercentage={rightPercentage}
+                height="h-1"
+                className="mb-2"
+              />
+            )}
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
               </span>
               <div className="flex items-center space-x-2">
-                <BiasIndicator 
-                  biasAnalysis={mainArticle.biasAnalysis}
-                  className="text-xs"
-                />
                 {alternativeSourcesCount > 0 && (
                   <Badge variant="outline" className="text-xs">
                     +{alternativeSourcesCount} sources
@@ -99,15 +122,20 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
                 {event.title}
               </h1>
             </Link>
+            {total > 0 && (
+              <BiasBar
+                leftPercentage={leftPercentage}
+                centerPercentage={centerPercentage}
+                rightPercentage={rightPercentage}
+                height="h-2"
+                className="mb-2"
+              />
+            )}
             <div className="flex items-center justify-between">
               <span className="text-sm opacity-90">
                 {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
               </span>
               <div className="flex items-center space-x-2">
-                <BiasIndicator 
-                  biasAnalysis={mainArticle.biasAnalysis}
-                  className="text-xs"
-                />
                 {alternativeSourcesCount > 0 && (
                   <Badge variant="secondary" className="text-xs">
                     +{alternativeSourcesCount} sources
@@ -153,6 +181,15 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
                 {event.title}
               </h3>
             </Link>
+            {total > 0 && (
+              <BiasBar
+                leftPercentage={leftPercentage}
+                centerPercentage={centerPercentage}
+                rightPercentage={rightPercentage}
+                height="h-2"
+                className="mt-2"
+              />
+            )}
           </div>
           {(event.image || mainArticle.image) && (
             <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
@@ -176,10 +213,6 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(mainArticle.publishedAt), { addSuffix: true })}
               </span>
-              <BiasIndicator 
-                biasAnalysis={mainArticle.biasAnalysis}
-                className="text-xs"
-              />
             </div>
             <Button
               variant="ghost"

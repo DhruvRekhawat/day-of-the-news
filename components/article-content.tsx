@@ -1,10 +1,11 @@
 "use client"
-import { SimpleBiasIndicator } from "./simple-bias-indicator";
+
 import { SocialShare } from "./social-share";
 import { Button } from "@/components/ui/button";
 import { Bookmark, ThumbsUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getArticleActionsState, toggleBookmark, toggleLike } from "@/actions/articleActions";
+import { BiasBar } from "@/components/ui/BiasBar";
 
 interface BiasAnalysis {
   bias: "left" | "center" | "right";
@@ -223,25 +224,13 @@ export function ArticleContent({ article }: ArticleContentProps) {
               Bias Analysis:
             </span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-none overflow-hidden flex">
-            <div
-              className="h-full bg-red-500 transition-all duration-300"
-              style={{ width: `${(biasScores?.left || 0) * 100}%` }}
-            />
-            <div
-              className="h-full bg-gray-500 transition-all duration-300"
-              style={{ width: `${(biasScores?.center || 0) * 100}%` }}
-            />
-            <div
-              className="h-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${(biasScores?.right || 0) * 100}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Left</span>
-            <span>Center</span>
-            <span>Right</span>
-          </div>
+          <BiasBar
+            leftPercentage={(biasScores?.left || 0) * 100}
+            centerPercentage={(biasScores?.center || 0) * 100}
+            rightPercentage={(biasScores?.right || 0) * 100}
+            height="h-3"
+            showLabels={true}
+          />
         </div>
       </div>
 
@@ -275,7 +264,6 @@ export function ArticleContent({ article }: ArticleContentProps) {
             <span className="text-sm text-gray-500">•</span>
            
           </div>
-          <SimpleBiasIndicator bias={bias} size="md" />
         </div>
       </div>
     </article>

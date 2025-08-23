@@ -3,7 +3,8 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { StickyCategories } from "@/components/sticky-categories";
 import { BiasDistributionSummary } from "@/components/ui/BiasDistributionSummary";
-import { BiasIndicator } from "@/components/ui/BiasIndicator";
+import { BiasBar } from "@/components/ui/BiasBar";
+
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
@@ -219,6 +220,30 @@ export default async function HomePage() {
     }
   };
 
+  // Helper function to calculate bias percentages for an event
+  const getEventBiasPercentages = (event: any) => {
+    const biasCounts = event.articles.reduce((acc: any, article: any) => {
+      if (article.biasAnalysis?.status === 'COMPLETED') {
+        const direction = article.biasAnalysis.biasDirection;
+        acc[direction] = (acc[direction] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    const leftCount = (biasCounts.FAR_LEFT || 0) + (biasCounts.LEFT || 0) + (biasCounts.CENTER_LEFT || 0);
+    const centerCount = biasCounts.CENTER || 0;
+    const rightCount = (biasCounts.CENTER_RIGHT || 0) + (biasCounts.RIGHT || 0) + (biasCounts.FAR_RIGHT || 0);
+    
+    const total = leftCount + centerCount + rightCount;
+    if (total === 0) return { left: 33, center: 34, right: 33 };
+    
+    return {
+      left: (leftCount / total) * 100,
+      center: (centerCount / total) * 100,
+      right: (rightCount / total) * 100
+    };
+  };
+
   const trendingEventsArray = trendingEvents.map(transformEvent);
   const indiaEventsArray = indiaEvents.map(transformEvent);
   const politicsEventsArray = politicsEvents.map(transformEvent);
@@ -251,31 +276,35 @@ export default async function HomePage() {
             <div className=" bg-transparent rounded-none p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
               <div className="space-y-3">
-                {allEvents.slice(0, 8).map((event: any, index: number) => (
-                  <div key={event.id} className="flex items-start space-x-3">
-                    <div className="w-6 h-6  dark:text-white text-2xl rounded-full flex items-center justify-center flex-shrink-0 mt-1 font-extralight">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <Link href={`/event/${event.id}`}>
-                        <h3 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
-                          {event.title}
-                        </h3>
-                      </Link>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <BiasIndicator 
-                            biasAnalysis={event.articles[0]?.biasAnalysis}
-                            className="text-xs"
-                          />
+                {allEvents.slice(0, 8).map((event: any, index: number) => {
+                  const biasPercentages = getEventBiasPercentages(event);
+                  return (
+                    <div key={event.id} className="flex items-start space-x-3">
+                      <div className="w-6 h-6  dark:text-white text-2xl rounded-full flex items-center justify-center flex-shrink-0 mt-1 font-extralight">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <Link href={`/event/${event.id}`}>
+                          <h3 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
+                            {event.title}
+                          </h3>
+                        </Link>
+                        <BiasBar
+                          leftPercentage={biasPercentages.left}
+                          centerPercentage={biasPercentages.center}
+                          rightPercentage={biasPercentages.right}
+                          height="h-1"
+                          className="mb-2"
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                            {event.topic || event.category}
+                          </span>
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                          {event.topic || event.category}
-                        </span>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -317,13 +346,7 @@ export default async function HomePage() {
                               <span className="text-xs text-gray-500 dark:text-gray-400">
                                 {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
                               </span>
-                              <div className="flex items-center space-x-2">
-                                <BiasIndicator 
-                                  biasAnalysis={event.articles[0]?.biasAnalysis}
-                                  className="text-xs"
-                                />
-                                <span className="text-xs text-gray-500 dark:text-gray-400">Coverage: {event.articles.length} sources</span>
-                              </div>
+                              <span className="text-xs text-gray-500 dark:text-gray-400">Coverage: {event.articles.length} sources</span>
                             </div>
                           </div>
                         </div>
@@ -372,29 +395,33 @@ export default async function HomePage() {
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="text-md font-bold mb-3 text-gray-800 dark:text-gray-200">MORE NEWS</h3>
                 <div className="space-y-3">
-                  {allEvents.slice(10, 15).map((event: any) => (
-                    <div key={event.id} className="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-b-0">
-                      <Link href={`/event/${event.id}`}>
-                        <h4 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
-                          {event.title}
-                        </h4>
-                      </Link>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
-                        </span>
-                        <div className="flex items-center space-x-2">
-                          <BiasIndicator 
-                            biasAnalysis={event.articles[0]?.biasAnalysis}
-                            className="text-xs"
-                          />
+                  {allEvents.slice(10, 15).map((event: any) => {
+                    const biasPercentages = getEventBiasPercentages(event);
+                    return (
+                      <div key={event.id} className="border-b border-gray-100 dark:border-gray-700 pb-3 last:border-b-0">
+                        <Link href={`/event/${event.id}`}>
+                          <h4 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
+                            {event.title}
+                          </h4>
+                        </Link>
+                        <BiasBar
+                          leftPercentage={biasPercentages.left}
+                          centerPercentage={biasPercentages.center}
+                          rightPercentage={biasPercentages.right}
+                          height="h-1"
+                          className="mb-2"
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {formatDistanceToNow(new Date(event.publishedAt), { addSuffix: true })}
+                          </span>
                           <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                             {event.topic || event.category}
                           </span>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -482,8 +509,8 @@ export default async function HomePage() {
              </div>
            </section>
          )}
-      </main>
-      <Footer />
-    </div>
-  );
-}
+       </main>
+       <Footer />
+     </div>
+   );
+ }

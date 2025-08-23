@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { SimpleBiasIndicator } from "./simple-bias-indicator"
+import { BiasBar } from "@/components/ui/BiasBar"
 
 interface NewsItem {
   id: string
@@ -45,8 +45,16 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                     {item.title}
                   </h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{item.timestamp}</span>
-                    <SimpleBiasIndicator bias={item.bias} size="sm" />
+                    <span className="text-xs text-muted-foreground">
+                      {item.timestamp}
+                    </span>
+                    <BiasBar
+                      leftPercentage={item.bias === "left" ? 100 : 0}
+                      centerPercentage={item.bias === "center" ? 100 : 0}
+                      rightPercentage={item.bias === "right" ? 100 : 0}
+                      height="h-1"
+                      className="w-12"
+                    />
                   </div>
                 </article>
               ))}
@@ -79,8 +87,16 @@ export function BusinessSportsGrid({ businessNews, sportsNews }: BusinessSportsG
                     {item.title}
                   </h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{item.timestamp}</span>
-                    <SimpleBiasIndicator bias={item.bias} size="sm" />
+                    <span className="text-xs text-muted-foreground">
+                      {item.timestamp}
+                    </span>
+                    <BiasBar
+                      leftPercentage={item.bias === "left" ? 100 : 0}
+                      centerPercentage={item.bias === "center" ? 100 : 0}
+                      rightPercentage={item.bias === "right" ? 100 : 0}
+                      height="h-1"
+                      className="w-12"
+                    />
                   </div>
                 </article>
               ))}

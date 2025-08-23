@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
-import { SimpleBiasIndicator } from "./simple-bias-indicator"
+import { BiasBar } from "@/components/ui/BiasBar";
+import { formatDistanceToNow } from "date-fns";
 
 interface RelatedArticle {
   id: string
@@ -10,6 +11,7 @@ interface RelatedArticle {
   source: string
   bias: "left" | "center" | "right"
   excerpt?: string
+  publishedAt: string;
 }
 
 interface RelatedArticlesProps {
@@ -52,21 +54,16 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
               </Link>
               {article.excerpt && <p className="text-sm text-gray-600 dark:text-gray-200 mb-3 line-clamp-2">{article.excerpt}</p>}
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-red-500 rounded-none"></div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{article.source}</span>
-                  <span className="text-sm text-gray-500">•</span>
-                  <span className="text-sm text-gray-500">{article.timestamp}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <SimpleBiasIndicator bias={article.bias} size="sm" />
-                  <Link
-                    href={`/article/${article.id}`}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    Read Full Article →
-                  </Link>
-                </div>
+                <span className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
+                </span>
+                <BiasBar
+                  leftPercentage={article.bias === "left" ? 100 : 0}
+                  centerPercentage={article.bias === "center" ? 100 : 0}
+                  rightPercentage={article.bias === "right" ? 100 : 0}
+                  height="h-1"
+                  className="w-12"
+                />
               </div>
             </div>
           </article>

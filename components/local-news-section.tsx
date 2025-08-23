@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { SimpleBiasIndicator } from "./simple-bias-indicator"
+import { BiasBar } from "@/components/ui/BiasBar"
 import Link from "next/link"
 
 interface NewsItem {
@@ -46,8 +46,16 @@ export function LocalNewsSection({ news }: LocalNewsSectionProps) {
             </Link>
             {item.excerpt && <p className="text-sm text-gray-600 dark:text-gray-200 mb-3 line-clamp-2">{item.excerpt}</p>}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">{item.timestamp}</span>
-              <SimpleBiasIndicator bias={item.bias} size="sm" />
+              <span className="text-xs text-muted-foreground">
+                {item.timestamp}
+              </span>
+              <BiasBar
+                leftPercentage={item.bias === "left" ? 100 : 0}
+                centerPercentage={item.bias === "center" ? 100 : 0}
+                rightPercentage={item.bias === "right" ? 100 : 0}
+                height="h-1"
+                className="w-12"
+              />
             </div>
           </article>
         ))}

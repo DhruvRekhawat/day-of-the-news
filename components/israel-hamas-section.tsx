@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { SimpleBiasIndicator } from "./simple-bias-indicator"
+import { BiasBar } from "@/components/ui/BiasBar"
 
 interface NewsItem {
   id: string
@@ -46,8 +46,16 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
             </h3>
             {mainStory.excerpt && <p className="text-gray-600 dark:text-gray-200 mb-3">{mainStory.excerpt}</p>}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">{mainStory.timestamp}</span>
-              <SimpleBiasIndicator bias={mainStory.bias} size="md" />
+              <span className="text-sm opacity-90">
+                {mainStory.timestamp}
+              </span>
+              <BiasBar
+                leftPercentage={mainStory.bias === "left" ? 100 : 0}
+                centerPercentage={mainStory.bias === "center" ? 100 : 0}
+                rightPercentage={mainStory.bias === "right" ? 100 : 0}
+                height="h-2"
+                className="w-16"
+              />
             </div>
           </article>
         )}
@@ -70,8 +78,16 @@ export function IsraelHamasSection({ news }: IsraelHamasSectionProps) {
                   {item.title}
                 </h4>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{item.timestamp}</span>
-                  <SimpleBiasIndicator bias={item.bias} size="sm" />
+                  <span className="text-xs text-muted-foreground">
+                    {item.timestamp}
+                  </span>
+                  <BiasBar
+                    leftPercentage={item.bias === "left" ? 100 : 0}
+                    centerPercentage={item.bias === "center" ? 100 : 0}
+                    rightPercentage={item.bias === "right" ? 100 : 0}
+                    height="h-1"
+                    className="w-12"
+                  />
                 </div>
               </div>
             </article>

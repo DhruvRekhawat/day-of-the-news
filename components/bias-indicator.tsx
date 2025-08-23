@@ -1,107 +1,54 @@
-import { cn } from "@/lib/utils";
+import { BiasBar } from "@/components/ui/BiasBar";
 
 interface BiasIndicatorProps {
-  bias: "left" | "center" | "right";
+  bias: string;
   size?: "sm" | "md" | "lg";
   showLabel?: boolean;
 }
 
-export function BiasIndicator({
+export function SimpleBiasIndicator({
   bias,
   size = "md",
   showLabel = false,
 }: BiasIndicatorProps) {
-  const getBiasPosition = (bias: string) => {
+  // Helper function to convert bias to percentages for BiasBar
+  const getBiasPercentages = (bias: string) => {
     switch (bias) {
       case "left":
-        return "15%"; // Position on the left side
+        return { left: 100, center: 0, right: 0 };
       case "center":
-        return "50%"; // Position in the center
+        return { left: 0, center: 100, right: 0 };
       case "right":
-        return "85%"; // Position on the right side
+        return { left: 0, center: 0, right: 100 };
       default:
-        return "50%";
-    }
-  };
-
-  const getBiasColor = (bias: string) => {
-    switch (bias) {
-      case "left":
-        return "bg-red-500";
-      case "right":
-        return "bg-blue-500";
-      case "center":
-        return "bg-gray-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
-  const getBiasLabel = (bias: string) => {
-    switch (bias) {
-      case "left":
-        return "Left";
-      case "right":
-        return "Right";
-      case "center":
-        return "Center";
-      default:
-        return "Unknown";
+        return { left: 33, center: 34, right: 33 };
     }
   };
 
   const sizeClasses = {
-    sm: { bar: "h-1 w-12", indicator: "w-2 h-2" },
-    md: { bar: "h-1.5 w-16", indicator: "w-2.5 h-2.5" },
-    lg: { bar: "h-2 w-20", indicator: "w-3 h-3" },
+    sm: { height: "h-1", width: "w-12" },
+    md: { height: "h-1.5", width: "w-16" },
+    lg: { height: "h-2", width: "w-20" },
   };
+
+  const biasPercentages = getBiasPercentages(bias);
 
   return (
     <div className="flex flex-col items-center space-y-1">
-      {/* Horizontal bias bar */}
-      <div className="relative">
-        {/* Background bar */}
-        <div
-          className={cn("bg-gray-200 rounded-none", sizeClasses[size].bar)}
-        />
-
-        {/* Left section (red) */}
-        <div
-          className="absolute top-0 left-0 bg-red-500 rounded-none h-full"
-          style={{ width: "33.33%" }}
-        />
-
-        {/* Right section (blue) */}
-        <div
-          className="absolute top-0 right-0 bg-blue-500 rounded-none h-full"
-          style={{ width: "33.33%" }}
-        />
-
-        {/* Center dividers */}
-        <div
-          className="absolute top-0 h-full w-px "
-          style={{ left: "33.33%" }}
-        />
-        <div
-          className="absolute top-0 h-full w-px "
-          style={{ left: "66.66%" }}
-        />
-
-        {/* Bias indicator dot */}
-        <div
-          className={cn(
-            "absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 rounded-none border-2 border-white shadow-sm",
-            getBiasColor(bias),
-            sizeClasses[size].indicator
-          )}
-          style={{ left: getBiasPosition(bias) }}
+      <div className={sizeClasses[size].width}>
+        <BiasBar
+          leftPercentage={biasPercentages.left}
+          centerPercentage={biasPercentages.center}
+          rightPercentage={biasPercentages.right}
+          height={sizeClasses[size].height}
+          showLabels={false}
         />
       </div>
 
       {/* Optional label */}
       {showLabel && (
         <span className="text-xs text-gray-600 dark:text-gray-200 font-medium">
-          {getBiasLabel(bias)}
+          {bias.charAt(0).toUpperCase() + bias.slice(1)}
         </span>
       )}
     </div>
