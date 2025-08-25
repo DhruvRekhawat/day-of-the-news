@@ -226,7 +226,15 @@ const user = session?.user
                 <Search className="w-5 h-5" />
               </Button>
               <ModeToggle />
-              {user ? <UserDropdown /> : <SignInModal />}
+              {user ? <UserDropdown /> : (
+                <SignInModal 
+                  trigger={
+                    <Button variant="outline" size="sm">
+                      Sign In
+                    </Button>
+                  }
+                />
+              )}
             </div>
           </div>
 

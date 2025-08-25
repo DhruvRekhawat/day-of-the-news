@@ -312,6 +312,11 @@ export default async function EventPage({ params }: EventPageProps) {
               />
             </div>
 
+            {/* Bias Chart - Mobile View (appears after AI summary) */}
+            <div className="mt-8 lg:hidden">
+              <EventBiasChart articles={transformedArticles} />
+            </div>
+
             {/* Alternative Sources Dropdown */}
             <div className="mt-8">
               <AlternativeSourcesDropdown sources={alternativeSources} />
@@ -331,10 +336,13 @@ export default async function EventPage({ params }: EventPageProps) {
             </div>
           </div>
 
-          {/* Sidebar - Bias Chart */}
+          {/* Sidebar - Bias Chart (Desktop only) */}
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <EventBiasChart articles={transformedArticles} />
+              {/* Bias Chart - Desktop View */}
+              <div className="hidden lg:block">
+                <EventBiasChart articles={transformedArticles} />
+              </div>
 
               {/* Event Metadata */}
               <div className="mt-8 p-4 bg-muted rounded-lg">

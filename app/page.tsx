@@ -292,43 +292,10 @@ export default async function HomePage() {
       <Header />
       <StickyCategories />
       <main className="container mx-auto px-4 py-6">
-        {/* Hero Section - Three Column Layout */}
+        {/* Hero Section - Mobile First Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-          {/* Left Column - RECENT NEWS */}
-          <div className="lg:col-span-3">
-            <div className=" bg-transparent rounded-none p-4 shadow-sm">
-              <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
-              <div className="space-y-3">
-                {allEvents.slice(0, 8).map((event: any, index: number) => {
-                  const biasPercentages = getEventBiasPercentages(event);
-                  return (
-                    <div key={event.id} className="flex items-start space-x-3">
-                      <div className="w-6 h-6  dark:text-white text-2xl rounded-full flex items-center justify-center flex-shrink-0 mt-1 font-extralight">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <Link href={`/event/${event.id}`}>
-                          <h3 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
-                            {event.title}
-                          </h3>
-                        </Link>
-                        <BiasBar
-                          leftPercentage={biasPercentages.left}
-                          centerPercentage={biasPercentages.center}
-                          rightPercentage={biasPercentages.right}
-                          height="h-3"
-                          className="mb-2"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Middle Column - TOP STORY */}
-          <div className="lg:col-span-6">
+          {/* Top Story - Full width on mobile, middle column on desktop */}
+          <div className="lg:col-span-6 lg:order-2">
             <div className=" bg-transparent border rounded-none shadow-sm overflow-hidden">
               {featuredStories.length > 0 && (
                 <div className="p-4">
@@ -336,7 +303,7 @@ export default async function HomePage() {
                   
                   {/* Additional Stories */}
                   <div className="mt-6 space-y-4">
-                    {indiaEventsArray.slice(1, 3).map((event: any) => (
+                    {indiaEventsArray.slice(1, 4).map((event: any) => (
                       <div key={event.id} className="border-t border-gray-200 dark:border-transparent pt-4">
                         <div className="flex items-start space-x-4">
                           <div className="w-24 h-20 rounded-lg overflow-hidden flex-shrink-0">
@@ -371,12 +338,44 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right Column - UNCOVERED */}
-          <div className="lg:col-span-3">
+          {/* Recent News - Left column on desktop, second on mobile */}
+          <div className="lg:col-span-3 lg:order-1">
+            <div className=" bg-transparent rounded-none p-4 shadow-sm">
+              <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT NEWS</h2>
+              <div className="space-y-3">
+                {allEvents.slice(0, 8).map((event: any, index: number) => {
+                  const biasPercentages = getEventBiasPercentages(event);
+                  return (
+                    <div key={event.id} className="flex items-start space-x-3">
+                      <div className="w-6 h-6  dark:text-white text-2xl rounded-full flex items-center justify-center flex-shrink-0 mt-1 font-extralight">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <Link href={`/event/${event.id}`}>
+                          <h3 className="text-sm font-medium text-foreground leading-tight mb-1 hover:text-blue-600 transition-colors">
+                            {event.title}
+                          </h3>
+                        </Link>
+                        <BiasBar
+                          leftPercentage={biasPercentages.left}
+                          centerPercentage={biasPercentages.center}
+                          rightPercentage={biasPercentages.right}
+                          height="h-3"
+                          className="mb-2"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Uncovered & More News - Right column on desktop, third on mobile */}
+          <div className="lg:col-span-3 lg:order-3">
             <div className=" bg-transparent rounded-none p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-2">UNCOVERED</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">News covered by both sides of the political spectrum.</p>
-
 
               <div className="space-y-4">
                 {politicsEventsArray.slice(0, 2).map((event: any) => (
@@ -421,7 +420,7 @@ export default async function HomePage() {
                           leftPercentage={biasPercentages.left}
                           centerPercentage={biasPercentages.center}
                           rightPercentage={biasPercentages.right}
-                          height="h-1"
+                          height="h-3"
                           className="mb-2"
                         />
                         <div className="flex items-center justify-between">
