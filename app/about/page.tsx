@@ -2,6 +2,27 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import Image from "next/image"
 import { Users, Target, Lightbulb, Heart } from "lucide-react"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "About Us - Day of the News",
+  description: "Learn about Day of the News, our mission to provide unbiased news analysis, and how we use AI to detect media bias and help readers make informed decisions.",
+  keywords: ["about us", "mission", "unbiased news", "media bias detection", "AI news analysis", "team"],
+  openGraph: {
+    title: "About Us - Day of the News",
+    description: "Learn about Day of the News, our mission to provide unbiased news analysis, and how we use AI to detect media bias.",
+    type: "website",
+    url: "https://dayofthenews.com/about",
+  },
+  twitter: {
+    card: "summary",
+    title: "About Us - Day of the News",
+    description: "Learn about Day of the News, our mission to provide unbiased news analysis, and how we use AI to detect media bias.",
+  },
+  alternates: {
+    canonical: "https://dayofthenews.com/about",
+  },
+};
 
 export default function AboutPage() {
   const stats = [

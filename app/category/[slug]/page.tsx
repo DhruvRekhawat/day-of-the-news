@@ -5,6 +5,7 @@ import { EventArticleCard } from "@/components/event-article-card";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
+import type { Metadata } from "next";
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,48 @@ interface CategoryPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+// Generate metadata for the category page
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const category = decodeURIComponent(slug);
+  
+  // Get some events to understand the category better
+  const events = await prisma.event.findMany({
+    where: { category: slug },
+    take: 5,
+  });
+
+  if (events.length === 0) {
+    return {
+      title: 'Category Not Found',
+      description: 'The requested news category could not be found.',
+    }
+  }
+
+  const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
+  const description = `Latest ${category.toLowerCase()} news and updates with bias analysis from multiple sources. Stay informed with reliable coverage of ${category.toLowerCase()} events.`;
+  
+  return {
+    title: `${categoryTitle} News`,
+    description: description,
+    keywords: [category, 'news', 'bias analysis', 'media coverage', 'current events'],
+    openGraph: {
+      title: `${categoryTitle} News`,
+      description: description,
+      type: 'website',
+      url: `https://dayofthenews.com/category/${slug}`,
+    },
+    twitter: {
+      card: 'summary',
+      title: `${categoryTitle} News`,
+      description: description,
+    },
+    alternates: {
+      canonical: `https://dayofthenews.com/category/${slug}`,
+    },
+  }
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

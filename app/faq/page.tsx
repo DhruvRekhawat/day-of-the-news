@@ -1,6 +1,27 @@
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Frequently Asked Questions - Day of the News",
+  description: "Find answers to common questions about Day of the News, our bias analysis methodology, and how we help you understand media bias and make informed decisions.",
+  keywords: ["FAQ", "frequently asked questions", "bias analysis", "media bias", "news analysis", "help", "support"],
+  openGraph: {
+    title: "Frequently Asked Questions - Day of the News",
+    description: "Find answers to common questions about Day of the News, our bias analysis methodology, and how we help you understand media bias.",
+    type: "website",
+    url: "https://dayofthenews.com/faq",
+  },
+  twitter: {
+    card: "summary",
+    title: "Frequently Asked Questions - Day of the News",
+    description: "Find answers to common questions about Day of the News, our bias analysis methodology, and how we help you understand media bias.",
+  },
+  alternates: {
+    canonical: "https://dayofthenews.com/faq",
+  },
+};
 
 export default function FAQPage() {
   const faqs = [

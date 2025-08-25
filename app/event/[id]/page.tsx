@@ -13,12 +13,69 @@ import { TrendingUp } from "lucide-react"
 import { notFound } from "next/navigation"
 import { BiasIndicator } from "@/components/ui/BiasIndicator"
 import { EventActions } from "@/components/event-actions"
+import type { Metadata } from "next"
 
 type BiasDirection = 'FAR_LEFT' | 'LEFT' | 'CENTER_LEFT' | 'CENTER' | 'CENTER_RIGHT' | 'RIGHT' | 'FAR_RIGHT' | 'UNKNOWN';
 type BiasAnalysisStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
 interface EventPageProps {
   params: Promise<{ id: string }>
+}
+
+// Generate metadata for the event page
+export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+  const { id } = await params
+  const event = await prisma.event.findUnique({
+    where: { id },
+    include: {
+      articles: {
+        include: {
+          article: true,
+        },
+      },
+    },
+  })
+
+  if (!event) {
+    return {
+      title: 'Event Not Found',
+      description: 'The requested news event could not be found.',
+    }
+  }
+
+  const mainArticle = event.articles[0]?.article
+  const description = event.summary || mainArticle?.title || 'Latest news coverage with bias analysis from multiple sources.'
+  
+  return {
+    title: event.title,
+    description: description.length > 160 ? description.substring(0, 157) + '...' : description,
+    keywords: [event.category, event.topic, 'news', 'bias analysis', 'media coverage'].filter((keyword): keyword is string => Boolean(keyword)),
+    openGraph: {
+      title: event.title,
+      description: description,
+      type: 'article',
+      url: `https://dayofthenews.com/event/${id}`,
+      images: event.image ? [
+        {
+          url: event.image,
+          width: 1200,
+          height: 630,
+          alt: event.title,
+        }
+      ] : undefined,
+      publishedTime: event.publishedAt.toISOString(),
+      modifiedTime: event.publishedAt.toISOString(),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: event.title,
+      description: description,
+      images: event.image ? [event.image] : undefined,
+    },
+    alternates: {
+      canonical: `https://dayofthenews.com/event/${id}`,
+    },
+  }
 }
 
 export default async function EventPage({ params }: EventPageProps) {
@@ -52,6 +109,41 @@ export default async function EventPage({ params }: EventPageProps) {
   if (!event) {
     notFound()
   }
+
+  // Generate structured data for the event
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": event.title,
+    "description": event.summary || event.title,
+    "image": event.image ? [event.image] : undefined,
+    "datePublished": event.publishedAt.toISOString(),
+    "dateModified": event.publishedAt.toISOString(),
+    "author": {
+      "@type": "Organization",
+      "name": "Day of the News"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Day of the News",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://dayofthenews.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://dayofthenews.com/event/${id}`
+    },
+    "articleSection": event.category,
+    "keywords": [event.category, event.topic, "news", "bias analysis"].filter(Boolean).join(", "),
+    "about": [
+      {
+        "@type": "Thing",
+        "name": event.category
+      }
+    ]
+  };
 
   // Fallback bias analysis function (20% left, 60% center, 20% right)
   const getFallbackBiasAnalysis = (source: string) => {
@@ -231,6 +323,12 @@ export default async function EventPage({ params }: EventPageProps) {
 
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
       <Header />
       <main className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

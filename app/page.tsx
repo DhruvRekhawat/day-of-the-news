@@ -7,10 +7,32 @@ import { BiasBar } from "@/components/ui/BiasBar";
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 // Force dynamic rendering to prevent caching
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // Disable caching completely
+
+// Generate metadata for the homepage
+export const metadata: Metadata = {
+  title: "Latest News with Bias Analysis | Day of the News",
+  description: "Stay informed with the latest news from around the world. Get unbiased analysis, compare multiple sources, and understand media bias with AI-powered detection.",
+  keywords: ["latest news", "breaking news", "unbiased news", "media bias", "news analysis", "current events", "world news"],
+  openGraph: {
+    title: "Latest News with Bias Analysis | Day of the News",
+    description: "Stay informed with the latest news from around the world. Get unbiased analysis, compare multiple sources, and understand media bias.",
+    type: "website",
+    url: "https://dayofthenews.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Latest News with Bias Analysis | Day of the News",
+    description: "Stay informed with the latest news from around the world. Get unbiased analysis, compare multiple sources, and understand media bias.",
+  },
+  alternates: {
+    canonical: "https://dayofthenews.com",
+  },
+};
 
 export default async function HomePage() {
   // Fetch events data directly from database to ensure fresh data
@@ -289,6 +311,31 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Day of the News",
+            "description": "Unbiased news analysis with AI-powered bias detection",
+            "url": "https://dayofthenews.com",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://dayofthenews.com/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Day of the News",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://dayofthenews.com/logo.png"
+              }
+            }
+          }),
+        }}
+      />
       <Header />
       <StickyCategories />
       <main className="container mx-auto px-4 py-6">
