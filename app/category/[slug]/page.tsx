@@ -24,13 +24,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   
   // Fetch events for this category
   const events = await prisma.event.findMany({
-    where: { 
-      category: {
-        equals: category,
-        mode: 'insensitive' // Case insensitive search
-      }
-    },
+    where: { category: slug },
     include: {
+      _count: {
+        select: {
+          bookmarks: true,
+          likes: true,
+        },
+      },
       articles: {
         include: {
           article: {
@@ -38,8 +39,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               _count: {
                 select: {
                   interactions: true,
-                  Bookmark: true,
-                  Like: true,
                 },
               },
             },
@@ -66,11 +65,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     summary: event.summary,
     image: event.image,
     publishedAt: event.publishedAt,
+    bookmarkCount: event._count.bookmarks,
+    likeCount: event._count.likes,
     articles: event.articles.map((ea: any) => ({
       ...ea.article,
       interactionCount: ea.article._count.interactions,
-      bookmarkCount: ea.article._count.Bookmark,
-      likeCount: ea.article._count.Like,
       _count: undefined,
     })),
   });

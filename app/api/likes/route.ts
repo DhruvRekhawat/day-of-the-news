@@ -18,55 +18,55 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { articleId } = body;
+    const { eventId } = body;
 
-    if (!articleId) {
+    if (!eventId) {
       return NextResponse.json(
-        { error: 'Article ID is required' },
+        { error: 'Event ID is required' },
         { status: 400 }
       );
     }
 
-    // Check if article exists
-    const article = await prisma.article.findUnique({
-      where: { id: articleId }
+    // Check if event exists
+    const event = await prisma.event.findUnique({
+      where: { id: eventId }
     });
 
-    if (!article) {
+    if (!event) {
       return NextResponse.json(
-        { error: 'Article not found' },
+        { error: 'Event not found' },
         { status: 404 }
       );
     }
 
     // Check if like already exists
-    const existingLike = await prisma.like.findUnique({
+    const existingLike = await prisma.eventLike.findUnique({
       where: {
-        userId_articleId: {
+        userId_eventId: {
           userId: session.user.id,
-          articleId: articleId
+          eventId: eventId
         }
       }
     });
 
     if (existingLike) {
       return NextResponse.json(
-        { error: 'Article already liked' },
+        { error: 'Event already liked' },
         { status: 409 }
       );
     }
 
     // Create like
-    const like = await prisma.like.create({
+    const like = await prisma.eventLike.create({
       data: {
         userId: session.user.id,
-        articleId: articleId
+        eventId: eventId
       }
     });
 
-    // Get total likes count for this article
-    const totalLikes = await prisma.like.count({
-      where: { articleId: articleId }
+    // Get total likes count for this event
+    const totalLikes = await prisma.eventLike.count({
+      where: { eventId: eventId }
     });
 
     return NextResponse.json({
@@ -102,20 +102,20 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { articleId } = body;
+    const { eventId } = body;
 
-    if (!articleId) {
+    if (!eventId) {
       return NextResponse.json(
-        { error: 'Article ID is required' },
+        { error: 'Event ID is required' },
         { status: 400 }
       );
     }
 
     // Find and delete like
-    const deletedLike = await prisma.like.deleteMany({
+    const deletedLike = await prisma.eventLike.deleteMany({
       where: {
         userId: session.user.id,
-        articleId: articleId
+        eventId: eventId
       }
     });
 
@@ -126,9 +126,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Get updated total likes count for this article
-    const totalLikes = await prisma.like.count({
-      where: { articleId: articleId }
+    // Get updated total likes count for this event
+    const totalLikes = await prisma.eventLike.count({
+      where: { eventId: eventId }
     });
 
     return NextResponse.json({
@@ -161,21 +161,21 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const articleId = searchParams.get('articleId');
+    const eventId = searchParams.get('eventId');
 
-    if (articleId) {
-      // Check if specific article is liked and get total likes
+    if (eventId) {
+      // Check if specific event is liked and get total likes
       const [userLike, totalLikes] = await Promise.all([
-        prisma.like.findUnique({
+        prisma.eventLike.findUnique({
           where: {
-            userId_articleId: {
+            userId_eventId: {
               userId: session.user.id,
-              articleId: articleId
+              eventId: eventId
             }
           }
         }),
-        prisma.like.count({
-          where: { articleId: articleId }
+        prisma.eventLike.count({
+          where: { eventId: eventId }
         })
       ]);
 
@@ -186,17 +186,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all user's likes
-    const likes = await prisma.like.findMany({
+    const likes = await prisma.eventLike.findMany({
       where: {
         userId: session.user.id
       },
       include: {
-        article: {
+        event: {
           select: {
             id: true,
             title: true,
-            excerpt: true,
-            source: true,
+            summary: true,
+            topic: true,
             publishedAt: true,
             image: true
           }
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
       likes: likes.map(like => ({
         id: like.id,
         createdAt: like.createdAt,
-        article: like.article
+        event: like.event
       }))
     });
 

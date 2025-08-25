@@ -8,6 +8,7 @@ import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { BiasAnalysisStatus, BiasDirection } from "@/lib/generated/prisma"
 import { BiasBar } from "@/components/ui/BiasBar"
+import { EventActions } from "./event-actions"
 
 interface Article {
   id: string
@@ -36,6 +37,8 @@ interface Event {
   summary?: string | null
   image?: string | null
   publishedAt: string
+  bookmarkCount?: number
+  likeCount?: number
   articles: Article[]
 }
 
@@ -228,6 +231,15 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
           <p className="text-sm text-muted-foreground line-clamp-2">
             {event.summary || mainArticle.excerpt}
           </p>
+          
+          {/* Event Actions */}
+          <div className="mt-3">
+            <EventActions 
+              eventId={event.id}
+              initialBookmarkCount={event.bookmarkCount || 0}
+              initialLikeCount={event.likeCount || 0}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

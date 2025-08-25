@@ -52,19 +52,19 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
       name: "Left",
       value: leftCount,
       percentage: Math.round((leftCount / total) * 100),
-      color: "#ef4444", // Red for left
+      color: "#3b82f6", // Blue for left
     },
     {
-      name: "Center",
+      name: "Center", 
       value: centerCount,
       percentage: Math.round((centerCount / total) * 100),
-      color: "#eab308", // Yellow for center
+      color: "#71717a", // Zinc for center
     },
     {
       name: "Right",
       value: rightCount,
       percentage: Math.round((rightCount / total) * 100),
-      color: "#3b82f6", // Blue for right
+      color: "#ef4444", // Red for right
     },
     {
       name: "Unknown",

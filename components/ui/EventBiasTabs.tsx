@@ -11,7 +11,8 @@ type BiasDirection =
   | "FAR_RIGHT"
   | "UNKNOWN";
 type BiasAnalysisStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-import { BiasIndicator } from "./BiasIndicator";
+
+
 
 interface Article {
   id: string;
@@ -55,9 +56,9 @@ const tabLabels: Record<BiasTab, string> = {
 };
 
 const tabColors: Record<BiasTab, string> = {
-  left: "text-red-600 border-red-600",
-  center: "text-yellow-600 border-yellow-600",
-  right: "text-blue-600 border-blue-600",
+  left: "text-blue-600 border-blue-600",
+  center: "text-zinc-600 border-zinc-600",
+  right: "text-red-600 border-red-600",
   unknown: "text-gray-600 border-gray-600",
 };
 
@@ -169,18 +170,7 @@ export function EventBiasTabs({
                         <h4 className="text-lg font-medium text-gray-900 truncate">
                           {article.title}
                         </h4>
-                        <BiasIndicator
-                          biasAnalysis={
-                            article.biasAnalysis
-                              ? {
-                                  ...article.biasAnalysis,
-                                  reasoning:
-                                    article.biasAnalysis.reasoning || undefined,
-                                }
-                              : undefined
-                          }
-                          showDetails={true}
-                        />
+
                       </div>
                       <p className="text-sm text-gray-600 mb-3 line-clamp-3">
                         {article.excerpt}

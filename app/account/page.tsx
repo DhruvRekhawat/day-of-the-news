@@ -100,7 +100,7 @@ export default async function AccountPage() {
           <CardContent className="flex items-center gap-3 p-4">
             <BookmarkIcon className="h-5 w-5 text-blue-600" />
             <div>
-              <p className="text-2xl font-bold">{userData._count.Bookmark}</p>
+              <p className="text-2xl font-bold">{userData._count.eventBookmarks}</p>
               <p className="text-sm text-muted-foreground">Bookmarks</p>
             </div>
           </CardContent>
@@ -109,7 +109,7 @@ export default async function AccountPage() {
           <CardContent className="flex items-center gap-3 p-4">
             <HeartIcon className="h-5 w-5 text-red-600" />
             <div>
-              <p className="text-2xl font-bold">{userData._count.Like}</p>
+              <p className="text-2xl font-bold">{userData._count.eventLikes}</p>
               <p className="text-sm text-muted-foreground">Likes</p>
             </div>
           </CardContent>

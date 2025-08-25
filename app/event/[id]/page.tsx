@@ -12,6 +12,7 @@ import { formatDistanceToNow } from "date-fns"
 import { TrendingUp } from "lucide-react"
 import { notFound } from "next/navigation"
 import { BiasIndicator } from "@/components/ui/BiasIndicator"
+import { EventActions } from "@/components/event-actions"
 
 type BiasDirection = 'FAR_LEFT' | 'LEFT' | 'CENTER_LEFT' | 'CENTER' | 'CENTER_RIGHT' | 'RIGHT' | 'FAR_RIGHT' | 'UNKNOWN';
 type BiasAnalysisStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
@@ -25,6 +26,12 @@ export default async function EventPage({ params }: EventPageProps) {
   const event = await prisma.event.findUnique({
     where: { id },
     include: {
+      _count: {
+        select: {
+          bookmarks: true,
+          likes: true,
+        },
+      },
       articles: {
         include: {
           article: {
@@ -32,8 +39,6 @@ export default async function EventPage({ params }: EventPageProps) {
               _count: {
                 select: {
                   interactions: true,
-                  Bookmark: true,
-                  Like: true,
                 },
               },
               biasAnalysis: true,
@@ -109,15 +114,94 @@ export default async function EventPage({ params }: EventPageProps) {
     notFound()
   }
 
+  // Function to convert database bias analysis to proper bias scores
+  const convertBiasAnalysisToScores = (biasAnalysis: any) => {
+    const { biasDirection, biasStrength } = biasAnalysis;
+    const strength = Math.min(biasStrength / 5, 1); // Normalize strength to 0-1 range
+    
+    let left = 0, center = 0, right = 0;
+    
+    switch (biasDirection) {
+      case 'FAR_LEFT':
+        left = 0.9;
+        center = 0.1;
+        right = 0;
+        break;
+      case 'LEFT':
+        left = 0.7;
+        center = 0.3;
+        right = 0;
+        break;
+      case 'CENTER_LEFT':
+        left = 0.6;
+        center = 0.4;
+        right = 0;
+        break;
+      case 'CENTER':
+        left = 0.1;
+        center = 0.8;
+        right = 0.1;
+        break;
+      case 'CENTER_RIGHT':
+        left = 0;
+        center = 0.4;
+        right = 0.6;
+        break;
+      case 'RIGHT':
+        left = 0;
+        center = 0.3;
+        right = 0.7;
+        break;
+      case 'FAR_RIGHT':
+        left = 0;
+        center = 0.1;
+        right = 0.9;
+        break;
+      default:
+        left = 0.1;
+        center = 0.8;
+        right = 0.1;
+    }
+    
+    // Apply strength multiplier to make the bias more or less pronounced
+    const baseCenter = center;
+    center = center * (1 - strength * 0.5);
+    
+    if (left > 0) {
+      left = left + (baseCenter - center) * 0.8;
+    }
+    if (right > 0) {
+      right = right + (baseCenter - center) * 0.8;
+    }
+    
+    // Normalize to ensure sum is 1
+    const total = left + center + right;
+    return {
+      left: left / total,
+      center: center / total,
+      right: right / total
+    };
+  };
+
   // Transform articles to include bias analysis
-  const transformedArticles = event.articles.map(ea => ({
-    ...ea.article,
-    biasAnalysis: ea.article.biasAnalysis || {
+  const transformedArticles = event.articles.map(ea => {
+    const articleBiasAnalysis = ea.article.biasAnalysis || {
       ...getFallbackBiasAnalysis(ea.article.source),
       biasDirection: getFallbackBiasAnalysis(ea.article.source).biasDirection as BiasDirection,
       status: getFallbackBiasAnalysis(ea.article.source).status as BiasAnalysisStatus,
-    },
-  }));
+    };
+    
+    return {
+      ...ea.article,
+      biasAnalysis: articleBiasAnalysis,
+      // Add aiBiasReport for compatibility with chart components
+      aiBiasReport: {
+        bias: articleBiasAnalysis.biasDirection === 'LEFT' || articleBiasAnalysis.biasDirection === 'FAR_LEFT' || articleBiasAnalysis.biasDirection === 'CENTER_LEFT' ? 'left' : 
+              articleBiasAnalysis.biasDirection === 'RIGHT' || articleBiasAnalysis.biasDirection === 'FAR_RIGHT' || articleBiasAnalysis.biasDirection === 'CENTER_RIGHT' ? 'right' : 'center',
+        biasScores: convertBiasAnalysisToScores(articleBiasAnalysis)
+      }
+    };
+  });
 
   // Get bias data for the main article
   const biasData = mainArticle.biasAnalysis || getFallbackBiasAnalysis(mainArticle.source)
@@ -179,6 +263,15 @@ export default async function EventPage({ params }: EventPageProps) {
                   className="text-xs"
                 />
               </div>
+              
+              {/* Event Actions - Bookmark and Like */}
+              <div className="mt-4">
+                <EventActions 
+                  eventId={event.id}
+                  initialBookmarkCount={event._count.bookmarks}
+                  initialLikeCount={event._count.likes}
+                />
+              </div>
             </div>
 
             {/* Main Article */}
@@ -197,11 +290,7 @@ export default async function EventPage({ params }: EventPageProps) {
               aiBiasReport: {
                 bias: biasData.biasDirection === 'LEFT' || biasData.biasDirection === 'FAR_LEFT' || biasData.biasDirection === 'CENTER_LEFT' ? 'left' : 
                       biasData.biasDirection === 'RIGHT' || biasData.biasDirection === 'FAR_RIGHT' || biasData.biasDirection === 'CENTER_RIGHT' ? 'right' : 'center',
-                biasScores: {
-                  left: biasData.biasDirection === 'LEFT' || biasData.biasDirection === 'FAR_LEFT' || biasData.biasDirection === 'CENTER_LEFT' ? biasData.biasStrength : 0,
-                  center: biasData.biasDirection === 'CENTER' ? biasData.biasStrength : 0,
-                  right: biasData.biasDirection === 'RIGHT' || biasData.biasDirection === 'FAR_RIGHT' || biasData.biasDirection === 'CENTER_RIGHT' ? biasData.biasStrength : 0,
-                }
+                biasScores: convertBiasAnalysisToScores(biasData)
               },
               createdAt: mainArticle.createdAt.toISOString(),
               updatedAt: mainArticle.updatedAt.toISOString()
@@ -268,6 +357,14 @@ export default async function EventPage({ params }: EventPageProps) {
                   <div>
                     <span className="text-muted-foreground">Total Sources:</span>
                     <span className="ml-2">{event.articles.length}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Bookmarks:</span>
+                    <span className="ml-2">{event._count.bookmarks}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Likes:</span>
+                    <span className="ml-2">{event._count.likes}</span>
                   </div>
                 </div>
               </div>

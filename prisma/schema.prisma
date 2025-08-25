@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
@@ -23,10 +24,10 @@ model User {
   // Your custom relations
   interactions  Interaction[]
   followedTopics FollowedTopic[]
+  eventBookmarks EventBookmark[]
+  eventLikes    EventLike[]
 
   @@map("user")
-  Bookmark Bookmark[]
-  Like Like[]
 }
 
 model Session {
@@ -129,6 +130,8 @@ model Event {
   updatedAt   DateTime      @updatedAt
   
   articles     EventArticle[]
+  bookmarks    EventBookmark[]
+  likes        EventLike[]
 
   @@index([publishedAt])
   @@index([topic])
@@ -169,8 +172,6 @@ model Article {
   events       EventArticle[]
 
   @@index([publishedAt])
-  Bookmark Bookmark[]
-  Like Like[]
   StoryArticle StoryArticle[]
 }
 
@@ -199,27 +200,27 @@ model BiasAnalysis {
 }
 
 
-model Bookmark {
+model EventBookmark {
   id        String   @id @default(cuid())
   userId    String
-  articleId String
+  eventId   String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId])
+  @@unique([userId, eventId])
   @@index([userId])
 }
 
-model Like {
+model EventLike {
   id        String   @id @default(cuid())
   userId    String
-  articleId String
+  eventId   String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId])
+  @@unique([userId, eventId])
   @@index([userId])
 }
 

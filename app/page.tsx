@@ -2,7 +2,6 @@ import { EventArticleCard } from "@/components/event-article-card";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { StickyCategories } from "@/components/sticky-categories";
-import { BiasDistributionSummary } from "@/components/ui/BiasDistributionSummary";
 import { BiasBar } from "@/components/ui/BiasBar";
 
 import { prisma } from "@/lib/prisma";
@@ -27,6 +26,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { isTrending: true },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -34,8 +39,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -50,6 +53,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { topic: "india" },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -57,8 +66,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -73,6 +80,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { topic: "politics" },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -80,8 +93,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -96,6 +107,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { topic: "global-conflicts" },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -103,8 +120,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -119,6 +134,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { topic: "business" },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -126,8 +147,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -142,6 +161,12 @@ export default async function HomePage() {
     prisma.event.findMany({
       where: { topic: "sports" },
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -149,8 +174,6 @@ export default async function HomePage() {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
               },
@@ -174,11 +197,11 @@ export default async function HomePage() {
     summary: event.summary,
     image: event.image,
     publishedAt: event.publishedAt,
+    bookmarkCount: event._count.bookmarks,
+    likeCount: event._count.likes,
     articles: event.articles.map((ea: any) => ({
       ...ea.article,
       interactionCount: ea.article._count.interactions,
-      bookmarkCount: ea.article._count.Bookmark,
-      likeCount: ea.article._count.Like,
       biasAnalysis: ea.article.biasAnalysis || getFallbackBiasAnalysis(ea.article.source),
       _count: undefined,
     })),
@@ -293,14 +316,9 @@ export default async function HomePage() {
                           leftPercentage={biasPercentages.left}
                           centerPercentage={biasPercentages.center}
                           rightPercentage={biasPercentages.right}
-                          height="h-1"
+                          height="h-3"
                           className="mb-2"
                         />
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                            {event.topic || event.category}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   );
@@ -316,11 +334,6 @@ export default async function HomePage() {
                 <div className="p-4">
                   <EventArticleCard event={featuredStories[0]} variant="featured" />
                   
-                  {/* Bias Distribution Summary */}
-                  <div className="mt-4">
-                    <BiasDistributionSummary events={allEvents} />
-                  </div>
-
                   {/* Additional Stories */}
                   <div className="mt-6 space-y-4">
                     {indiaEventsArray.slice(1, 3).map((event: any) => (

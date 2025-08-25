@@ -12,7 +12,7 @@ export function BiasBar({
   centerPercentage, 
   rightPercentage, 
   height = "h-2", 
-  showLabels = false,
+  showLabels = true,
   className = '' 
 }: BiasBarProps) {
   return (
@@ -49,13 +49,6 @@ export function BiasBar({
           )}
         </div>
       </div>
-      {showLabels && (
-        <div className="flex justify-between text-xs text-gray-600 mt-1">
-          <span>Left</span>
-          <span>Center</span>
-          <span>Right</span>
-        </div>
-      )}
     </div>
   );
 }

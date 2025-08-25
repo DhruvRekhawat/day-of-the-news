@@ -1,18 +1,28 @@
 "use client";
 
-import { SetStateAction, useState } from "react";
-import { signIn, signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { signIn, signUp } from "@/lib/auth-client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { SetStateAction, useState } from "react";
 
-export default function AuthModal() {
+interface AuthModalProps {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: React.ReactNode;
+}
+
+export default function AuthModal({ isOpen: externalIsOpen, onOpenChange: externalOnOpenChange, trigger }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("signin"); // "signin" or "signup"
+
+  // Use external state if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnOpenChange || setInternalIsOpen;
 
   // Form states
   const [email, setEmail] = useState("");
@@ -149,11 +159,11 @@ export default function AuthModal() {
   return (
     <div className="flex items-center justify-center ">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button variant="default" className="hover:cursor-pointer">
-            Login
-          </Button>
-        </DialogTrigger>
+        {trigger && (
+          <DialogTrigger asChild>
+            {trigger}
+          </DialogTrigger>
+        )}
         <DialogContent className="sm:max-w-md bg-background border-border p-0">
           <div className="flex flex-col items-center px-8 py-6 space-y-6">
             {/* Social Login */}

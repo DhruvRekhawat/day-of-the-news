@@ -31,8 +31,8 @@ export async function getUserAccountData() {
         updatedAt: true,
         _count: {
           select: {
-            Bookmark: true,
-            Like: true,
+            eventBookmarks: true,
+            eventLikes: true,
             followedTopics: true,
             interactions: true,
           },
@@ -53,15 +53,15 @@ export async function getUserBookmarks() {
     const userId = await getSessionUserId();
     if (!userId) return [];
 
-    const bookmarks = await prisma.bookmark.findMany({
+    const bookmarks = await prisma.eventBookmark.findMany({
       where: { userId },
       include: {
-        article: {
+        event: {
           select: {
             id: true,
             title: true,
-            excerpt: true,
-            source: true,
+            summary: true,
+            topic: true,
             publishedAt: true,
             image: true,
           },
@@ -75,7 +75,7 @@ export async function getUserBookmarks() {
     return bookmarks.map((b) => ({
       id: b.id,
       createdAt: b.createdAt,
-      article: b.article,
+      event: b.event,
     }));
   } catch (error) {
     console.error("Error fetching bookmarks:", error);
@@ -89,15 +89,15 @@ export async function getUserLikes() {
     const userId = await getSessionUserId();
     if (!userId) return [];
 
-    const likes = await prisma.like.findMany({
+    const likes = await prisma.eventLike.findMany({
       where: { userId },
       include: {
-        article: {
+        event: {
           select: {
             id: true,
             title: true,
-            excerpt: true,
-            source: true,
+            summary: true,
+            topic: true,
             publishedAt: true,
             image: true,
           },
@@ -111,7 +111,7 @@ export async function getUserLikes() {
     return likes.map((like) => ({
       id: like.id,
       createdAt: like.createdAt,
-      article: like.article,
+      event: like.event,
     }));
   } catch (error) {
     console.error("Error fetching likes:", error);

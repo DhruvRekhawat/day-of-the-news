@@ -31,6 +31,12 @@ export async function GET(request: NextRequest) {
     const events = await prisma.event.findMany({
       where,
       include: {
+        _count: {
+          select: {
+            bookmarks: true,
+            likes: true,
+          },
+        },
         articles: {
           include: {
             article: {
@@ -38,8 +44,6 @@ export async function GET(request: NextRequest) {
                 _count: {
                   select: {
                     interactions: true,
-                    Bookmark: true,
-                    Like: true,
                   },
                 },
                 biasAnalysis: true, // Include bias analysis for articles
@@ -74,8 +78,6 @@ export async function GET(request: NextRequest) {
             return {
               ...article,
               interactionCount: article._count.interactions,
-              bookmarkCount: article._count.Bookmark,
-              likeCount: article._count.Like,
               biasAnalysis: article.biasAnalysis,
               _count: undefined, // Remove the _count object
             };
@@ -95,6 +97,8 @@ export async function GET(request: NextRequest) {
           summary: event.summary,
           image: event.image,
           publishedAt: event.publishedAt,
+          bookmarkCount: event._count.bookmarks,
+          likeCount: event._count.likes,
           articles: articlesWithBias,
           biasDistribution,
         };

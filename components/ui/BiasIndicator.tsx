@@ -13,13 +13,13 @@ interface BiasIndicatorProps {
 }
 
 const biasColors: Record<BiasDirection, string> = {
-  FAR_LEFT: 'bg-red-600',
-  LEFT: 'bg-red-500',
-  CENTER_LEFT: 'bg-orange-400',
-  CENTER: 'bg-yellow-500',
-  CENTER_RIGHT: 'bg-blue-400',
-  RIGHT: 'bg-blue-500',
-  FAR_RIGHT: 'bg-blue-600',
+  FAR_LEFT: 'bg-blue-600',
+  LEFT: 'bg-blue-500',
+  CENTER_LEFT: 'bg-zinc-400',
+  CENTER: 'bg-zinc-500',
+  CENTER_RIGHT: 'bg-zinc-400',
+  RIGHT: 'bg-red-500',
+  FAR_RIGHT: 'bg-red-600',
   UNKNOWN: 'bg-gray-400',
 };
 

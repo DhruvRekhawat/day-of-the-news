@@ -25,13 +25,14 @@ export default async function TopicPage({ params }: TopicPageProps) {
   
   // Fetch events for this topic
   const events = await prisma.event.findMany({
-    where: { 
-      topic: {
-        equals: topic,
-        mode: 'insensitive' // Case insensitive search
-      }
-    },
+    where: { topic: slug },
     include: {
+      _count: {
+        select: {
+          bookmarks: true,
+          likes: true,
+        },
+      },
       articles: {
         include: {
           article: {
@@ -39,8 +40,6 @@ export default async function TopicPage({ params }: TopicPageProps) {
               _count: {
                 select: {
                   interactions: true,
-                  Bookmark: true,
-                  Like: true,
                 },
               },
               biasAnalysis: true,
@@ -68,11 +67,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
     summary: event.summary,
     image: event.image,
     publishedAt: event.publishedAt,
+    bookmarkCount: event._count.bookmarks,
+    likeCount: event._count.likes,
     articles: event.articles.map((ea: any) => ({
       ...ea.article,
       interactionCount: ea.article._count.interactions,
-      bookmarkCount: ea.article._count.Bookmark,
-      likeCount: ea.article._count.Like,
       biasAnalysis: ea.article.biasAnalysis || getFallbackBiasAnalysis(ea.article.source),
       _count: undefined,
     })),

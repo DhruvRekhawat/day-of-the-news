@@ -28,8 +28,8 @@ export async function GET() {
         updatedAt: true,
         _count: {
           select: {
-            Bookmark: true,
-            Like: true,
+            eventBookmarks: true,
+            eventLikes: true,
             followedTopics: true,
             interactions: true,
           },

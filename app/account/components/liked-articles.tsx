@@ -34,29 +34,29 @@ export async function LikedArticles() {
           <Card key={like.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex gap-4">
-                {like.article.image && (
+                {like.event.image && (
                   <img
-                    src={like.article.image || "/placeholder.svg"}
-                    alt={like.article.title}
+                    src={like.event.image || "/placeholder.svg"}
+                    alt={like.event.title}
                     className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
                   />
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-2">{like.article.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{like.article.excerpt}</p>
+                      <h3 className="font-semibold text-lg mb-2 line-clamp-2">{like.event.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{like.event.summary}</p>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="font-medium">{like.article.source}</span>
+                        <span className="font-medium">{like.event.topic}</span>
                         <div className="flex items-center gap-1">
                           <CalendarIcon className="h-3 w-3" />
-                          {new Date(like.article.publishedAt).toLocaleDateString()}
+                          {new Date(like.event.publishedAt).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="outline" size="sm" asChild>
-                        <a href={`/article/${like.article.id}`} target="_blank" rel="noopener noreferrer">
+                        <a href={`/event/${like.event.id}`} target="_blank" rel="noopener noreferrer">
                           <ExternalLinkIcon className="h-4 w-4" />
                         </a>
                       </Button>

@@ -19,49 +19,49 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { articleId } = body;
+    const { eventId } = body;
 
-    if (!articleId) {
+    if (!eventId) {
       return NextResponse.json(
-        { error: 'Article ID is required' },
+        { error: 'Event ID is required' },
         { status: 400 }
       );
     }
 
-    // Check if article exists
-    const article = await prisma.article.findUnique({
-      where: { id: articleId }
+    // Check if event exists
+    const event = await prisma.event.findUnique({
+      where: { id: eventId }
     });
 
-    if (!article) {
+    if (!event) {
       return NextResponse.json(
-        { error: 'Article not found' },
+        { error: 'Event not found' },
         { status: 404 }
       );
     }
 
     // Check if bookmark already exists
-    const existingBookmark = await prisma.bookmark.findUnique({
+    const existingBookmark = await prisma.eventBookmark.findUnique({
       where: {
-        userId_articleId: {
+        userId_eventId: {
           userId: session.user.id,
-          articleId: articleId
+          eventId: eventId
         }
       }
     });
 
     if (existingBookmark) {
       return NextResponse.json(
-        { error: 'Article already bookmarked' },
+        { error: 'Event already bookmarked' },
         { status: 409 }
       );
     }
 
     // Create bookmark
-    const bookmark = await prisma.bookmark.create({
+    const bookmark = await prisma.eventBookmark.create({
       data: {
         userId: session.user.id,
-        articleId: articleId
+        eventId: eventId
       }
     });
 
@@ -97,20 +97,20 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { articleId } = body;
+    const { eventId } = body;
 
-    if (!articleId) {
+    if (!eventId) {
       return NextResponse.json(
-        { error: 'Article ID is required' },
+        { error: 'Event ID is required' },
         { status: 400 }
       );
     }
 
     // Find and delete bookmark
-    const deletedBookmark = await prisma.bookmark.deleteMany({
+    const deletedBookmark = await prisma.eventBookmark.deleteMany({
       where: {
         userId: session.user.id,
-        articleId: articleId
+        eventId: eventId
       }
     });
 
@@ -150,15 +150,15 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const articleId = searchParams.get('articleId');
+    const eventId = searchParams.get('eventId');
 
-    if (articleId) {
-      // Check if specific article is bookmarked
-      const bookmark = await prisma.bookmark.findUnique({
+    if (eventId) {
+      // Check if specific event is bookmarked
+      const bookmark = await prisma.eventBookmark.findUnique({
         where: {
-          userId_articleId: {
+          userId_eventId: {
             userId: session.user.id,
-            articleId: articleId
+            eventId: eventId
           }
         }
       });
@@ -169,17 +169,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all user's bookmarks
-    const bookmarks = await prisma.bookmark.findMany({
+    const bookmarks = await prisma.eventBookmark.findMany({
       where: {
         userId: session.user.id
       },
       include: {
-        article: {
+        event: {
           select: {
             id: true,
             title: true,
-            excerpt: true,
-            source: true,
+            summary: true,
+            topic: true,
             publishedAt: true,
             image: true
           }
@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
       bookmarks: bookmarks.map(bookmark => ({
         id: bookmark.id,
         createdAt: bookmark.createdAt,
-        article: bookmark.article
+        event: bookmark.event
       }))
     });
 
