@@ -1,19 +1,15 @@
 import { AlternativeSourcesDropdown } from "@/components/alternative-sources-dropdown"
 import { ArticleContent } from "@/components/article-content"
 import { EventAISummary } from "@/components/event-ai-summary"
-import { EventBiasChart } from "@/components/ui/EventBiasChart"
-import { EventBiasTabs } from "@/components/ui/EventBiasTabs"
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
 import { SimilarNewsArticles } from "@/components/similar-news-articles"
-import { Badge } from "@/components/ui/badge"
+import { EventBiasChart } from "@/components/ui/EventBiasChart"
+import { EventBiasTabs } from "@/components/ui/EventBiasTabs"
 import { prisma } from "@/lib/prisma"
 import { formatDistanceToNow } from "date-fns"
-import { TrendingUp } from "lucide-react"
-import { notFound } from "next/navigation"
-import { BiasIndicator } from "@/components/ui/BiasIndicator"
-import { EventActions } from "@/components/event-actions"
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 type BiasDirection = 'FAR_LEFT' | 'LEFT' | 'CENTER_LEFT' | 'CENTER' | 'CENTER_RIGHT' | 'RIGHT' | 'FAR_RIGHT' | 'UNKNOWN';
 type BiasAnalysisStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
@@ -298,6 +294,31 @@ export default async function EventPage({ params }: EventPageProps) {
   // Get bias data for the main article
   const biasData = mainArticle.biasAnalysis || getFallbackBiasAnalysis(mainArticle.source)
 
+  // Calculate aggregated bias distribution from all articles (same logic as pie chart)
+  const biasCounts = event.articles.reduce((acc, ea) => {
+    const articleBiasAnalysis = ea.article.biasAnalysis || getFallbackBiasAnalysis(ea.article.source);
+    if (articleBiasAnalysis.status === 'COMPLETED') {
+      const direction = articleBiasAnalysis.biasDirection;
+      acc[direction] = (acc[direction] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Group into left, center, right (same logic as pie chart)
+  const leftCount = (biasCounts.FAR_LEFT || 0) + (biasCounts.LEFT || 0) + (biasCounts.CENTER_LEFT || 0);
+  const centerCount = biasCounts.CENTER || 0;
+  const rightCount = (biasCounts.CENTER_RIGHT || 0) + (biasCounts.RIGHT || 0) + (biasCounts.FAR_RIGHT || 0);
+  const unknownCount = biasCounts.UNKNOWN || 0;
+
+  const total = leftCount + centerCount + rightCount + unknownCount;
+
+  // Calculate percentages for aggregated bias bar
+  const aggregatedBiasScores = {
+    left: total > 0 ? leftCount / total : 0,
+    center: total > 0 ? centerCount / total : 0,
+    right: total > 0 ? rightCount / total : 0
+  };
+
   // Fetch similar articles (for now, we'll use articles from the same category)
   // In a real implementation, you'd want to use semantic similarity or topic matching
   const similarArticles = await prisma.article.findMany({
@@ -334,44 +355,6 @@ export default async function EventPage({ params }: EventPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Article Content */}
           <div className="lg:col-span-2">
-            {/* Event Header */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                {event.isTrending && (
-                  <Badge variant="destructive">
-                    <TrendingUp className="w-4 h-4 mr-1" />
-                    Trending
-                  </Badge>
-                )}
-                <Badge variant="secondary">{event.category}</Badge>
-                {event.topic && (
-                  <Badge variant="outline">{event.topic}</Badge>
-                )}
-                <Badge variant="outline">+{alternativeSources.length} sources</Badge>
-                <BiasIndicator 
-                  
-                  biasAnalysis={mainArticle.biasAnalysis ? {
-                    ...mainArticle.biasAnalysis,
-                    reasoning: mainArticle.biasAnalysis.reasoning || undefined
-                  } : {
-                    ...getFallbackBiasAnalysis(mainArticle.source),
-                    biasDirection: getFallbackBiasAnalysis(mainArticle.source).biasDirection as BiasDirection,
-                    status: getFallbackBiasAnalysis(mainArticle.source).status as BiasAnalysisStatus,
-                  }}
-                  className="text-xs"
-                />
-              </div>
-              
-              {/* Event Actions - Bookmark and Like */}
-              <div className="mt-4">
-                <EventActions 
-                  eventId={event.id}
-                  initialBookmarkCount={event._count.bookmarks}
-                  initialLikeCount={event._count.likes}
-                />
-              </div>
-            </div>
-
             {/* Main Article */}
             <ArticleContent article={{
               id: mainArticle.id,
@@ -392,7 +375,18 @@ export default async function EventPage({ params }: EventPageProps) {
               },
               createdAt: mainArticle.createdAt.toISOString(),
               updatedAt: mainArticle.updatedAt.toISOString()
-            }} />
+            }} 
+            aggregatedBiasScores={aggregatedBiasScores}
+            eventHeader={{
+              isTrending: event.isTrending,
+              category: event.category || '',
+              topic: event.topic || undefined,
+              alternativeSourcesCount: alternativeSources.length,
+              eventId: event.id,
+              initialBookmarkCount: event._count.bookmarks,
+              initialLikeCount: event._count.likes
+            }}
+            />
 
             {/* Event Summary and AI Summary */}
             <div className="mt-8">

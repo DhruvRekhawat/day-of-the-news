@@ -189,7 +189,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
           {/* Left Column - RECENT NEWS */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-4 text-red-600 dark:text-red-400">RECENT {topic.toUpperCase()}</h2>
               <div className="space-y-3">
                 {eventsArray.slice(0, 10).map((event: any, index: number) => {
@@ -227,7 +227,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
           {/* Middle Column - TOP STORY */}
           <div className="lg:col-span-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm overflow-hidden">
               <h2 className="text-lg font-bold mb-4 p-4 pb-0">TOP STORY</h2>
               {featuredStory && (
                 <div className="p-4">
@@ -296,7 +296,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
           {/* Right Column - UNCOVERED */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
               <h2 className="text-lg font-bold mb-2">UNCOVERED</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">News covered by both sides of the political spectrum.</p>
               

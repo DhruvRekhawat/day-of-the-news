@@ -115,7 +115,7 @@ const user = session?.user
                  </button>
                  
                  {isCategoriesDropdownOpen && (
-                   <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                   <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                      <div className="p-4">
                        <div className="mb-4">
                          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Categories</h3>

@@ -63,7 +63,7 @@ export function BiasReport({ article }: BiasReportProps) {
   const dominantBias = bias;
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+    <div className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-lg">
       {/* Bias Report */}
       <div className="mb-8">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">

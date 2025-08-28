@@ -62,7 +62,7 @@ export default async function CategoriesPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Categories Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-sm">
             <h2 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">Categories</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Browse news by general categories
@@ -86,7 +86,7 @@ export default async function CategoriesPage() {
           </div>
 
           {/* Topics Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-sm">
             <h2 className="text-2xl font-bold mb-4 text-green-600 dark:text-green-400">Topics</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Browse news by specific topics

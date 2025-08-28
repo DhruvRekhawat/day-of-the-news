@@ -109,9 +109,9 @@ export function EventBiasTabs({
   }
 
   return (
-    <div className={`bg-white rounded-lg border ${className}`}>
+    <div className={`bg-white dark:bg-zinc-800 rounded-lg border dark:border-gray-700 ${className}`}>
       {/* Tabs Header */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="-mb-px flex space-x-8 px-6">
           {availableTabs.map((tab) => {
             const count = groupedArticles[tab].length;
@@ -124,11 +124,11 @@ export function EventBiasTabs({
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   isActive
                     ? `${tabColors[tab]} border-b-2`
-                    : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
+                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 {tabLabels[tab]}
-                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
                   {count}
                 </span>
               </button>
@@ -142,10 +142,10 @@ export function EventBiasTabs({
         {availableTabs.map((tab) => (
           <div key={tab} className={activeTab === tab ? "block" : "hidden"}>
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {tabLabels[tab]} Perspective
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {groupedArticles[tab].length} source
                 {groupedArticles[tab].length !== 1 ? "s" : ""} with {tab} bias
               </p>
@@ -155,7 +155,7 @@ export function EventBiasTabs({
               {groupedArticles[tab].map((article) => (
                 <div
                   key={article.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/20 transition-shadow bg-white dark:bg-zinc-800"
                 >
                   <div className="flex items-start space-x-4">
                     {article.image && (
@@ -167,23 +167,23 @@ export function EventBiasTabs({
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-lg font-medium text-gray-900 truncate">
+                        <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate">
                           {article.title}
                         </h4>
 
                       </div>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-3">
                         {article.excerpt}
                       </p>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-500">
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           {article.source}
                         </span>
                         <a
                           href={article.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                         >
                           Read Article →
                         </a>

@@ -115,7 +115,7 @@ export function SocialShare({ title, excerpt, url }: SocialShareProps) {
         size="sm"
         onClick={handleNativeShare}
         disabled={isSharing}
-        className="text-gray-600 hover:text-gray-700"
+        className="text-gray-200 hover:text-gray-700"
       >
         <Share2 className="h-4 w-4" />
       </Button>
@@ -129,7 +129,7 @@ export function SocialShare({ title, excerpt, url }: SocialShareProps) {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+          <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
             <div className="p-4">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Share this article

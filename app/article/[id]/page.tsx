@@ -62,6 +62,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       },
     }
   } catch (error) {
+    console.error(error)
     return {
       title: 'Article Not Found',
       description: 'The requested article could not be found.',

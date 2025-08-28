@@ -38,7 +38,7 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
 
   if (total === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+      <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg border">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
           {title}
         </h3>
@@ -82,7 +82,7 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 border rounded-lg shadow-lg">
+        <div className="bg-white dark:bg-zinc-800 p-3 border rounded-lg shadow-lg">
           <p className="font-medium">{payload[0].name}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {payload[0].payload.percentage}% ({payload[0].value} articles)
@@ -94,7 +94,7 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg border">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
         {title}
       </h3>

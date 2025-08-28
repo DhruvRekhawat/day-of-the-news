@@ -19,7 +19,7 @@ export function BiasBar({
     <div className={className}>
       <div className={`flex ${height} overflow-hidden`}>
         <div 
-          className="bg-red-600 flex items-center justify-center"
+          className="bg-blue-600 flex items-center justify-center"
           style={{ width: `${leftPercentage}%` }}
         >
           {showLabels && leftPercentage > 10 && (
@@ -29,17 +29,17 @@ export function BiasBar({
           )}
         </div>
         <div 
-          className="bg-gray-200 flex items-center justify-center"
+          className="bg-zinc-600 flex items-center justify-center"
           style={{ width: `${centerPercentage}%` }}
         >
           {showLabels && centerPercentage > 10 && (
-            <span className="text-gray-700 text-xs font-medium">
+            <span className="text-white text-xs font-medium">
               {Math.round(centerPercentage)}%
             </span>
           )}
         </div>
         <div 
-          className="bg-blue-600 flex items-center justify-center"
+          className="bg-red-600 flex items-center justify-center"
           style={{ width: `${rightPercentage}%` }}
         >
           {showLabels && rightPercentage > 10 && (

@@ -153,7 +153,7 @@ export function SearchOverlay({
                                 key={article.id}
                                 href={article.url}
                                 onClick={onClose}
-                                className="block p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                className="block p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
                               >
                                 <div className="flex gap-3">
                                   {article.image && (

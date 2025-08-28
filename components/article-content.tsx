@@ -1,11 +1,10 @@
 "use client"
 
-import { SocialShare } from "./social-share";
-import { Button } from "@/components/ui/button";
-import { Bookmark, ThumbsUp } from "lucide-react";
-import { useState, useEffect } from "react";
-import { getArticleActionsState, toggleBookmark, toggleLike } from "@/actions/articleActions";
+import { TrendingUp } from "lucide-react";
 import { BiasBar } from "@/components/ui/BiasBar";
+import { Badge } from "@/components/ui/badge";
+import { EventActions } from "@/components/event-actions";
+import { SocialShare } from "./social-share";
 
 interface BiasAnalysis {
   bias: "left" | "center" | "right";
@@ -35,32 +34,23 @@ interface Article {
 
 interface ArticleContentProps {
   article: Article;
+  aggregatedBiasScores?: {
+    left: number;
+    center: number;
+    right: number;
+  };
+  eventHeader?: {
+    isTrending?: boolean;
+    category: string;
+    topic?: string;
+    alternativeSourcesCount: number;
+    eventId: string;
+    initialBookmarkCount: number;
+    initialLikeCount: number;
+  };
 }
 
-export function ArticleContent({ article }: ArticleContentProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Load initial state
-  useEffect(() => {
-    const loadInitialState = async () => {
-      try {
-        const state = await getArticleActionsState(article.id);
-        setIsBookmarked(state.isBookmarked);
-        setIsLiked(state.isLiked);
-        setTotalLikes(state.totalLikes);
-      } catch (error) {
-        console.error('Error loading initial state:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadInitialState();
-  }, [article.id]);
-
+export function ArticleContent({ article, aggregatedBiasScores, eventHeader }: ArticleContentProps) {
   const formatContent = (content: string) => {
     // Split content into bullet points if it contains bullet-like formatting
     const sentences = content
@@ -80,38 +70,48 @@ export function ArticleContent({ article }: ArticleContentProps) {
   };
   const { bias, biasScores } = biasData;
 
-  // Bookmark functionality
-  const handleBookmark = async () => {
-    try {
-      const newBookmarkState = await toggleBookmark(article.id, isBookmarked);
-      setIsBookmarked(newBookmarkState);
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
-      // You could show a toast notification here
-    }
-  };
-
-  // Like functionality
-  const handleLike = async () => {
-    try {
-      const result = await toggleLike(article.id, isLiked);
-      setIsLiked(result.isLiked);
-      setTotalLikes(result.totalLikes);
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      // You could show a toast notification here
-    }
-  };
-
   console.log(article);
 
   return (
-    <article className="">
+    <article>
       {/* Article Header */}
       <div className="mb-6">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight font-mono">
           {article.title}
         </h1>
+        {/* Event Header */}
+        {eventHeader && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {eventHeader.isTrending && (
+                  <Badge variant="destructive">
+                    <TrendingUp className="w-4 h-4 mr-1" />
+                    Trending
+                  </Badge>
+                )}
+                <Badge variant="secondary">{eventHeader.category}</Badge>
+                {eventHeader.topic && (
+                  <Badge variant="outline">{eventHeader.topic}</Badge>
+                )}
+                <Badge variant="outline">+{eventHeader.alternativeSourcesCount} sources</Badge>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <EventActions 
+                  eventId={eventHeader.eventId}
+                  initialBookmarkCount={eventHeader.initialBookmarkCount}
+                  initialLikeCount={eventHeader.initialLikeCount}
+                />
+                <SocialShare 
+                  title={article.title}
+                  excerpt={article.excerpt}
+                  url={article.url}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bias Indicators */}
         <div className="flex items-center space-x-8 mb-6">
@@ -123,13 +123,13 @@ export function ArticleContent({ article }: ArticleContentProps) {
               <div
                 className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "left"
-                    ? "bg-red-500 ring-2 ring-red-300"
-                    : "bg-red-200"
+                    ? "bg-blue-500 ring-2 ring-blue-300"
+                    : "bg-blue-200"
                 }`}
               >
                 <span
                   className={`text-xs font-bold ${
-                    bias === "left" ? "text-white" : "text-red-700"
+                    bias === "left" ? "text-white" : "text-blue-700"
                   }`}
                 >
                   {Math.round((biasScores?.left || 0) * 100)}%
@@ -143,13 +143,13 @@ export function ArticleContent({ article }: ArticleContentProps) {
               <div
                 className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "center"
-                    ? "bg-gray-500 ring-2 ring-gray-300"
-                    : "bg-gray-200"
+                    ? "bg-zinc-500 ring-2 ring-zinc-300"
+                    : "bg-zinc-200"
                 }`}
               >
                 <span
                   className={`text-xs font-bold ${
-                    bias === "center" ? "text-white" : "text-gray-700"
+                    bias === "center" ? "text-white" : "text-zinc-700"
                   }`}
                 >
                   {Math.round((biasScores?.center || 0) * 100)}%
@@ -163,13 +163,13 @@ export function ArticleContent({ article }: ArticleContentProps) {
               <div
                 className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
                   bias === "right"
-                    ? "bg-blue-500 ring-2 ring-blue-300"
-                    : "bg-blue-200"
+                    ? "bg-red-500 ring-2 ring-red-300"
+                    : "bg-red-200"
                 }`}
               >
                 <span
                   className={`text-xs font-bold ${
-                    bias === "right" ? "text-white" : "text-blue-700"
+                    bias === "right" ? "text-white" : "text-red-700"
                   }`}
                 >
                   {Math.round((biasScores?.right || 0) * 100)}%
@@ -177,57 +177,19 @@ export function ArticleContent({ article }: ArticleContentProps) {
               </div>
             </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2 ml-auto">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleBookmark}
-              disabled={isLoading}
-              className={`transition-colors ${
-                isBookmarked 
-                  ? 'text-blue-600 hover:text-blue-700' 
-                  : 'text-gray-600 hover:text-gray-700'
-              }`}
-            >
-              <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
-            </Button>
-            <SocialShare 
-              title={article.title}
-              excerpt={article.excerpt}
-              url={article.url}
-            />
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleLike}
-              disabled={isLoading}
-              className={`transition-colors flex items-center space-x-1 ${
-                isLiked 
-                  ? 'text-zinc-600 hover:text-zinc-700 dark:text-zinc-200 dark:hover:text-zinc-100' 
-                  : 'text-gray-600 hover:text-gray-700'
-              }`}
-            >
-              <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-              {totalLikes > 0 && (
-                <span className="text-xs">{totalLikes}</span>
-              )}
-            </Button>
-          </div>
         </div>
 
         {/* Bias Analysis Bar */}
         <div className="mb-6">
           <div className="flex items-center space-x-2 mb-2">
             <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-              Bias Analysis:
+              Event Bias Distribution:
             </span>
           </div>
           <BiasBar
-            leftPercentage={(biasScores?.left || 0) * 100}
-            centerPercentage={(biasScores?.center || 0) * 100}
-            rightPercentage={(biasScores?.right || 0) * 100}
+            leftPercentage={aggregatedBiasScores ? (aggregatedBiasScores.left * 100) : (biasScores?.left || 0) * 100}
+            centerPercentage={aggregatedBiasScores ? (aggregatedBiasScores.center * 100) : (biasScores?.center || 0) * 100}
+            rightPercentage={aggregatedBiasScores ? (aggregatedBiasScores.right * 100) : (biasScores?.right || 0) * 100}
             height="h-3"
             showLabels={true}
           />
@@ -262,7 +224,6 @@ export function ArticleContent({ article }: ArticleContentProps) {
               Source: {article.source}
             </span>
             <span className="text-sm text-gray-500">•</span>
-           
           </div>
         </div>
       </div>

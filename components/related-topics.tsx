@@ -33,7 +33,7 @@ export function RelatedTopics() {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800  p-6">
+    <div className="bg-gray-50 dark:bg-zinc-800  p-6">
       <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
         RELATED TOPICS
       </h3>
