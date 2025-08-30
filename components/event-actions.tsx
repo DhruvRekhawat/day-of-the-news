@@ -7,9 +7,8 @@ import { getEventActionsState, toggleEventBookmark, toggleEventLike } from "@/ac
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, signUp } from "@/lib/auth-client";
+import { signIn, signUp, useSession } from "@/lib/auth-client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
 
 interface EventActionsProps {
   eventId: string;
@@ -19,7 +18,7 @@ interface EventActionsProps {
 }
 
 export function EventActions({ eventId, initialBookmarkCount = 0, initialLikeCount = 0, className = "" }: EventActionsProps) {
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = useSession();
   const user = session?.user;
 
   const [isBookmarked, setIsBookmarked] = useState(false);

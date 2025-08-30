@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useSearch } from "@/hooks/useSearch";
-import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { ChevronDown, Menu, Search, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -56,7 +56,7 @@ export function Header() {
 
   const { 
     data: session, 
-} = authClient.useSession() 
+} = useSession() 
 
 const user = session?.user
 
@@ -120,7 +120,7 @@ const user = session?.user
                        <div className="mb-4">
                          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Categories</h3>
                          <div className="space-y-1">
-                                                       <Link
+                            <Link
                               href="/category/politics"
                               className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
                             >
@@ -138,41 +138,41 @@ const user = session?.user
                             >
                               Sports
                             </Link>
-                            <Link
-                              href="/category/technology"
-                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                            >
-                              Technology
-                            </Link>
                          </div>
                        </div>
                        
                        <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Topics</h3>
                          <div className="space-y-1">
-                                                       <Link
+                            <Link
                               href="/topic/india"
                               className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
                             >
                               India
                             </Link>
                             <Link
+                              href="/topic/politics"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Politics
+                            </Link>
+                            <Link
+                              href="/topic/sports"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Sports
+                            </Link>
+                            <Link
+                              href="/topic/business"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                            >
+                              Business
+                            </Link>
+                            <Link
                               href="/topic/global-conflicts"
                               className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
                             >
                               Global Conflicts
-                            </Link>
-                            <Link
-                              href="/topic/modi"
-                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                            >
-                              Modi
-                            </Link>
-                            <Link
-                              href="/topic/trump"
-                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                            >
-                              Trump
                             </Link>
                          </div>
                        </div>
@@ -300,64 +300,64 @@ const user = session?.user
                            >
                              Sports
                            </Link>
-                           <Link
-                             href="/category/technology"
-                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                             onClick={() => {
-                               setIsCategoriesDropdownOpen(false);
-                               setIsMobileMenuOpen(false);
-                             }}
-                           >
-                             Technology
-                           </Link>
                          </div>
                        </div>
                        
-                       <div className="mb-3">
-                         <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Topics</h4>
-                         <div className="space-y-1">
-                           <Link
-                             href="/topic/india"
-                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                             onClick={() => {
-                               setIsCategoriesDropdownOpen(false);
-                               setIsMobileMenuOpen(false);
-                             }}
-                           >
-                             India
-                           </Link>
-                           <Link
-                             href="/topic/global-conflicts"
-                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                             onClick={() => {
-                               setIsCategoriesDropdownOpen(false);
-                               setIsMobileMenuOpen(false);
-                             }}
-                           >
-                             Global Conflicts
-                           </Link>
-                           <Link
-                             href="/topic/modi"
-                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                             onClick={() => {
-                               setIsCategoriesDropdownOpen(false);
-                               setIsMobileMenuOpen(false);
-                             }}
-                           >
-                             Modi
-                           </Link>
-                           <Link
-                             href="/topic/trump"
-                             className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
-                             onClick={() => {
-                               setIsCategoriesDropdownOpen(false);
-                               setIsMobileMenuOpen(false);
-                             }}
-                           >
-                             Trump
-                           </Link>
-                         </div>
-                       </div>
+                                               <div className="mb-3">
+                          <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Topics</h4>
+                          <div className="space-y-1">
+                            <Link
+                              href="/topic/india"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                              onClick={() => {
+                                setIsCategoriesDropdownOpen(false);
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              India
+                            </Link>
+                            <Link
+                              href="/topic/politics"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                              onClick={() => {
+                                setIsCategoriesDropdownOpen(false);
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              Politics
+                            </Link>
+                            <Link
+                              href="/topic/sports"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                              onClick={() => {
+                                setIsCategoriesDropdownOpen(false);
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              Sports
+                            </Link>
+                            <Link
+                              href="/topic/business"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                              onClick={() => {
+                                setIsCategoriesDropdownOpen(false);
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              Business
+                            </Link>
+                            <Link
+                              href="/topic/global-conflicts"
+                              className="block text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 py-1"
+                              onClick={() => {
+                                setIsCategoriesDropdownOpen(false);
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              Global Conflicts
+                            </Link>
+                          </div>
+                        </div>
                        
                        <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                          <Link

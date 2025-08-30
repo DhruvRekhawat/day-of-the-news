@@ -26,6 +26,8 @@ model User {
   followedTopics FollowedTopic[]
   eventBookmarks EventBookmark[]
   eventLikes    EventLike[]
+  subscriptions Subscription[]
+  payments      Payment[]
 
   @@map("user")
 }
@@ -255,6 +257,9 @@ model PricingPlan {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Relations
+  subscriptions Subscription[]
+
   @@map("pricing_plan")
 }
 
@@ -274,4 +279,67 @@ enum BiasAnalysisStatus {
   PROCESSING
   COMPLETED
   FAILED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String
+  planId          String
+  status          SubscriptionStatus @default(PENDING)
+  startDate       DateTime           @default(now())
+  endDate         DateTime?
+  autoRenew       Boolean            @default(true)
+  razorpaySubscriptionId String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  // Relations
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            PricingPlan        @relation(fields: [planId], references: [id])
+  payments        Payment[]
+
+  @@unique([userId, planId])
+  @@index([userId])
+  @@index([status])
+  @@index([endDate])
+  @@map("subscription")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  subscriptionId        String?
+  userId                String
+  amount                Float
+  currency              String        @default("INR")
+  status                PaymentStatus @default(PENDING)
+  razorpayOrderId       String?
+  razorpayPaymentId     String?
+  razorpaySignature     String?
+  paymentMethod         String?
+  description           String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  // Relations
+  subscription          Subscription? @relation(fields: [subscriptionId], references: [id])
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([razorpayPaymentId])
+  @@map("payment")
 }

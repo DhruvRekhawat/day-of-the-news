@@ -208,6 +208,7 @@ export default async function HomePage() {
     }),
   ]);
 
+
   // Transform events to match the expected format
   const transformEvent = (event: any) => ({
     id: event.id,

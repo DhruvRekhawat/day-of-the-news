@@ -27,8 +27,35 @@ export async function POST(request: NextRequest) {
       key_secret: process.env.RAZORPAY_KEY_SECRET!,
     })
 
-    // Fetch order details from Razorpay (order object available if needed for future use)
-    await razorpay.orders.fetch(razorpay_order_id)
+    // Fetch order details from Razorpay
+    const order = await razorpay.orders.fetch(razorpay_order_id)
+    
+    // Get plan information from order notes
+    const planId = order.notes?.planId as string
+    const planName = order.notes?.planName as string
+    
+    if (!planId) {
+      return NextResponse.json(
+        { error: "Plan information not found in order" },
+        { status: 400 }
+      )
+    }
+
+    // Get the pricing plan
+    const plan = await prisma.pricingPlan.findUnique({
+      where: { id: planId }
+    })
+
+    if (!plan) {
+      return NextResponse.json(
+        { error: "Pricing plan not found" },
+        { status: 404 }
+      )
+    }
+
+    // For now, just update user role to PREMIUM
+    // TODO: Implement subscription tracking after database migration
+    console.log(`Payment successful for user ${userId}, plan: ${planName}`)
 
     // Update user role to PREMIUM
     await prisma.user.update({

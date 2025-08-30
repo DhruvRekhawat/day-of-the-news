@@ -151,7 +151,7 @@ export function SearchOverlay({
                             {categoryResults.slice(0, 5).map((article) => (
                               <Link
                                 key={article.id}
-                                href={article.url}
+                                href={`/article/${article.id}`}
                                 onClick={onClose}
                                 className="block p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
                               >

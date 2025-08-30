@@ -7,6 +7,8 @@ import { Check } from "lucide-react"
 import { useEffect, useState } from "react"
 import { usePayment } from "@/hooks/usePayment"
 import { useSession } from "@/lib/auth-client"
+import AuthModal from "@/components/sign-in-modal"
+import { toast } from "sonner"
 
 interface PricingPlan {
   id: string
@@ -23,8 +25,10 @@ interface PricingPlan {
 export default function PricingPage() {
   const [plans, setPlans] = useState<PricingPlan[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [pendingPlan, setPendingPlan] = useState<PricingPlan | null>(null)
   const { data: session } = useSession()
-  const { handlePayment, isLoading: isPaymentLoading } = usePayment()
+  const { handlePayment, isLoading: isPaymentLoading, isRazorpayLoaded, scriptLoadError } = usePayment()
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -46,11 +50,37 @@ export default function PricingPage() {
 
   const handleSubscribe = async (plan: PricingPlan) => {
     if (!session?.user?.id) {
-      // Handle not logged in case
+      // Show sign in modal if user is not logged in
+      setPendingPlan(plan)
+      setShowAuthModal(true)
       return
     }
 
-    await handlePayment(plan.id, session.user.id, plan.name)
+    if (scriptLoadError) {
+      toast.error(scriptLoadError)
+      return
+    }
+
+    if (!isRazorpayLoaded) {
+      toast.error("Payment gateway is still loading. Please try again in a moment.")
+      return
+    }
+
+    await handlePayment(plan.id, session.user.id, plan.name, {
+      name: session.user.name || undefined,
+      email: session.user.email || undefined
+    })
+  }
+
+  const handleAuthSuccess = async () => {
+    if (pendingPlan && session?.user?.id) {
+      // Retry the subscription after successful login
+      await handlePayment(pendingPlan.id, session.user.id, pendingPlan.name, {
+        name: session.user.name || undefined,
+        email: session.user.email || undefined
+      })
+      setPendingPlan(null)
+    }
   }
 
   return (
@@ -60,10 +90,9 @@ export default function PricingPage() {
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <p className="text-sm text-gray-600 dark:text-gray-200 mb-4">PRICING</p>
-          <h1 className="text-4xl font-bold  mb-4">Affordable pricing plans</h1>
+          <h1 className="text-4xl font-bold  mb-4">Choose your perfect plan</h1>
           <p className="text-gray-600 dark:text-gray-200 max-w-2xl mx-auto">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id arcu, convallis est sed. Proin nulla eu a vitae
-            lectus leo suscipit.
+            Get unlimited access to bias analysis, fact-checking, and AI-powered insights. Select the plan that best fits your needs and start exploring news from every perspective.
           </p>
         </div>
 
@@ -126,10 +155,31 @@ export default function PricingPage() {
                   className="w-full" 
                   variant={plan.isPopular ? "secondary" : "default"}
                   onClick={() => handleSubscribe(plan)}
-                  disabled={isPaymentLoading}
+                  disabled={isPaymentLoading || !isRazorpayLoaded || !!scriptLoadError}
                 >
-                  {isPaymentLoading ? "Processing..." : "Subscribe Now"}
+                  {isPaymentLoading ? "Processing..." : 
+                   scriptLoadError ? "Payment Unavailable" :
+                   !isRazorpayLoaded ? "Loading..." :
+                   session?.user?.id ? "Subscribe Now" : "Sign In to Subscribe"}
                 </Button>
+                
+                {!session?.user?.id && (
+                  <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+                    You&apos;ll need to sign in to subscribe to this plan
+                  </p>
+                )}
+                
+                {scriptLoadError && (
+                  <p className="text-xs text-center text-red-600 dark:text-red-400 mt-2">
+                    {scriptLoadError}
+                  </p>
+                )}
+                
+                {!isRazorpayLoaded && !scriptLoadError && (
+                  <p className="text-xs text-center text-yellow-600 dark:text-yellow-400 mt-2">
+                    Payment gateway is loading...
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -137,6 +187,19 @@ export default function PricingPage() {
       </main>
 
       <Footer />
+      
+      {/* Auth Modal for non-logged in users */}
+      <AuthModal 
+        isOpen={showAuthModal}
+        onOpenChange={(open) => {
+          setShowAuthModal(open)
+          if (!open) {
+            // Clear pending plan if modal is closed without signing in
+            setPendingPlan(null)
+          }
+        }}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   )
 }

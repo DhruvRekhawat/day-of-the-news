@@ -5,130 +5,152 @@ export function Footer() {
     <footer className="bg-[#242625] text-white">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {/* News Section */}
+        {/* Mobile Layout - Grid */}
+        <div className="grid grid-cols-2 gap-8 md:hidden">
+          {/* Topics Section */}
           <div>
-            <h3 className="font-semibold mb-4">News</h3>
+            <h3 className="font-semibold mb-4">Topics</h3>
             <ul className="space-y-2 text-sm ">
               <li>
-                <Link href="/" className="hover:text-white">
-                  Home Page
+                <Link href="/topic/india" className="hover:text-white">
+                  India
                 </Link>
               </li>
               <li>
-                <Link href="/topic/local-news" className="hover:text-white">
-                  Local News
+                <Link href="/topic/politics" className="hover:text-white">
+                  Politics
                 </Link>
               </li>
               <li>
-                <Link href="/topic/international" className="hover:text-white">
-                  International
+                <Link href="/topic/sports" className="hover:text-white">
+                  Sports
                 </Link>
               </li>
               <li>
-                <Link href="/topic/covid-19" className="hover:text-white">
-                  Covid-19
+                <Link href="/topic/business" className="hover:text-white">
+                  Business
+                </Link>
+              </li>
+              <li>
+                <Link href="/topic/global-conflicts" className="hover:text-white">
+                  Global Conflicts
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* International Section */}
+          {/* Company Section */}
           <div>
-            <h3 className="font-semibold mb-4">International</h3>
+            <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm ">
               <li>
-                <Link href="/topic/north-america" className="hover:text-white">
-                  North America
+                <Link href="/about" className="hover:text-white">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="/topic/south-america" className="hover:text-white">
-                  South America
+                <Link href="/pricing" className="hover:text-white">
+                  Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/topic/europe" className="hover:text-white">
-                  Europe
+                <Link href="/faq" className="hover:text-white">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/topic/asia" className="hover:text-white">
-                  Asia
+                <Link href="/contact" className="hover:text-white">
+                  Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/topic/australia" className="hover:text-white">
-                  Australia
+                <Link href="/terms" className="hover:text-white">
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/topic/africa" className="hover:text-white">
-                  Africa
+                <Link href="/privacy" className="hover:text-white">
+                  Privacy Policy
                 </Link>
               </li>
             </ul>
           </div>
+        </div>
 
-          {/* Trending in U.S. */}
+        {/* Desktop Layout - 3 Column Grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8">
+          {/* Logo */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center">
+              <span className="text-sm text-gray-400">DAY OF THE</span>
+              <span className="text-2xl font-bold">NEWS</span>
+            </div>
+          </div>
+          
+          {/* Topics */}
           <div>
-            <h3 className="font-semibold mb-4">Trending in U.S.</h3>
-            <ul className="space-y-2 text-sm ">
+            <h3 className="font-semibold mb-4">Topics</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/topic/israel-hamas-conflict" className="hover:text-white">
-                  Israel-Hamas Conflict
+                <Link href="/topic/india" className="hover:text-white">
+                  India
                 </Link>
               </li>
               <li>
-                <Link href="/topic/baseball" className="hover:text-white">
-                  Baseball
+                <Link href="/topic/politics" className="hover:text-white">
+                  Politics
                 </Link>
               </li>
               <li>
-                <Link href="/topic/golf" className="hover:text-white">
-                  Golf
+                <Link href="/topic/sports" className="hover:text-white">
+                  Sports
                 </Link>
               </li>
               <li>
-                <Link href="/topic/ncaa" className="hover:text-white">
-                  NCAA
+                <Link href="/topic/business" className="hover:text-white">
+                  Business
                 </Link>
               </li>
               <li>
-                <Link href="/topic/nfl" className="hover:text-white">
-                  NFL
+                <Link href="/topic/global-conflicts" className="hover:text-white">
+                  Global Conflicts
                 </Link>
               </li>
             </ul>
           </div>
-
-          {/* Trending in U.K. */}
+          
+          {/* Company */}
           <div>
-            <h3 className="font-semibold mb-4">Trending in U.K.</h3>
-            <ul className="space-y-2 text-sm ">
+            <h3 className="font-semibold mb-4">Company</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/topic/israel-hamas-conflict" className="hover:text-white">
-                  Israel-Hamas Conflict
+                <Link href="/about" className="hover:text-white">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="/topic/manchester-united" className="hover:text-white">
-                  Manchester United
+                <Link href="/pricing" className="hover:text-white">
+                  Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/topic/soccer" className="hover:text-white">
-                  Soccer
+                <Link href="/faq" className="hover:text-white">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/topic/uk-politics" className="hover:text-white">
-                  UK Politics
+                <Link href="/contact" className="hover:text-white">
+                  Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/topic/premier-league" className="hover:text-white">
-                  Premier League
+                <Link href="/terms" className="hover:text-white">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-white">
+                  Privacy Policy
                 </Link>
               </li>
             </ul>
@@ -136,140 +158,14 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <div className="border-t border-gray-800">
+      {/* Bottom Footer - Mobile Only */}
+      <div className="border-t border-gray-800 md:hidden">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="flex flex-col items-center justify-center">
             {/* Logo */}
             <div className="flex flex-col items-center justify-center">
               <span className="text-sm text-gray-400">DAY OF THE</span>
               <span className="text-3xl font-bold">NEWS</span>
-            </div>
-
-            {/* Company */}
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm ">
-                <li>
-                  <Link href="/about" className="hover:text-white">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/mission" className="hover:text-white">
-                    Mission
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="hover:text-white">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/testimonials" className="hover:text-white">
-                    Testimonials
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/subscribe" className="hover:text-white">
-                    Subscribe
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/gift" className="hover:text-white">
-                    Gift
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/free-trial" className="hover:text-white">
-                    Free Trial
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/careers" className="hover:text-white">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/affiliates" className="hover:text-white">
-                    Affiliates
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Help */}
-            <div>
-              <h4 className="font-semibold mb-4">Help</h4>
-              <ul className="space-y-2 text-sm ">
-                <li>
-                  <Link href="/help-center" className="hover:text-white">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/faq" className="hover:text-white">
-                    FAQ
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-white">
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/educators-libraries" className="hover:text-white">
-                    For Educators/Libraries
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/media-bias-ratings" className="hover:text-white">
-                    Media Bias Ratings
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/ownership-factuality-ratings" className="hover:text-white">
-                    Ownership and Factuality Ratings
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/referral-code" className="hover:text-white">
-                    Referral Code
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/news-sources" className="hover:text-white">
-                    News Sources
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/topics" className="hover:text-white">
-                    Topics
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Tools */}
-            <div>
-              <h4 className="font-semibold mb-4">Tools</h4>
-              <ul className="space-y-2 text-sm ">
-                <li>
-                  <Link href="/app" className="hover:text-white">
-                    App
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/browser-extension" className="hover:text-white">
-                    Browser Extension
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/daily-newsletter" className="hover:text-white">
-                    Daily Newsletter
-                  </Link>
-                </li>
-              </ul>
             </div>
           </div>
         </div>

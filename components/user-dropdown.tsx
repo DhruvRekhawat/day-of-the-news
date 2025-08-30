@@ -9,13 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth-client";
+import { useSession, signOut } from "@/lib/auth-client";
 import Link from "next/link";
 
 export default function UserDropdown() {
     const { 
         data: session, 
-    } = authClient.useSession() 
+    } = useSession() 
 
     const user = session?.user
 
@@ -23,7 +23,7 @@ export default function UserDropdown() {
 
 
     async function logout() {
-        await authClient.signOut();
+        await signOut();
     }
 
   return (

@@ -12,9 +12,10 @@ interface AuthModalProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   trigger?: React.ReactNode;
+  onSuccess?: () => void; // Callback for successful authentication
 }
 
-export default function AuthModal({ isOpen: externalIsOpen, onOpenChange: externalOnOpenChange, trigger }: AuthModalProps) {
+export default function AuthModal({ isOpen: externalIsOpen, onOpenChange: externalOnOpenChange, trigger, onSuccess }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -99,8 +100,13 @@ export default function AuthModal({ isOpen: externalIsOpen, onOpenChange: extern
         setTimeout(() => {
           setIsOpen(false);
           resetForm();
-          // You might want to redirect or refresh the page here
-          window.location.reload();
+          // Call onSuccess callback if provided
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            // Default behavior: reload the page
+            window.location.reload();
+          }
         }, 1000);
       }
     } catch (err) {
@@ -132,8 +138,13 @@ export default function AuthModal({ isOpen: externalIsOpen, onOpenChange: extern
         setTimeout(() => {
           setIsOpen(false);
           resetForm();
-          // You might want to redirect or refresh the page here
-          window.location.reload();
+          // Call onSuccess callback if provided
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            // Default behavior: reload the page
+            window.location.reload();
+          }
         }, 1000);
       }
     } catch (err) {

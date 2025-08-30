@@ -227,8 +227,11 @@ export class NewsApiClient {
   async fetchIndianEvents(): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       sourceLocationUri: "http://en.wikipedia.org/wiki/India",
+      lang: "eng", // English language only
       eventsSortBy: "date",
       eventsCount: "10",
+      // Exclude events from other countries
+      excludeLocationUri: "http://en.wikipedia.org/wiki/United_States,http://en.wikipedia.org/wiki/United_Kingdom,http://en.wikipedia.org/wiki/China",
     });
     return this.fetchEvents(params);
   }
@@ -237,6 +240,8 @@ export class NewsApiClient {
   async fetchGlobalConflictEvents(): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       conceptUri: "http://en.wikipedia.org/wiki/War",
+      sourceLocationUri: "http://en.wikipedia.org/wiki/India",
+      lang: "eng", // English language only
       eventsSortBy: "rel",
       eventsCount: "10",
     });
@@ -247,6 +252,8 @@ export class NewsApiClient {
   async fetchEventsByTopic(topic: string): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
       keyword: topic,
+      sourceLocationUri: "http://en.wikipedia.org/wiki/India",
+      lang: "eng", // English language only
       eventsSortBy: "rel",
       eventsCount: "10",
     });
@@ -255,8 +262,8 @@ export class NewsApiClient {
 
   // Fetch trending events
   async fetchTrendingEvents(): Promise<{ event: any; articles: any[] }[]> {
-    // Get trending concepts first
-    const trendingUrl = `${this.baseUrl}/trendingConcepts?apiKey=${this.apiKey}&sourceLocationUri=country/IN&conceptType=person,org,loc&_t=${Date.now()}`;
+    // Get trending concepts first for India
+    const trendingUrl = `${this.baseUrl}/trendingConcepts?apiKey=${this.apiKey}&sourceLocationUri=http://en.wikipedia.org/wiki/India&lang=eng&conceptType=person,org,loc&_t=${Date.now()}`;
     const trendingRes = await fetch(trendingUrl, {
       cache: 'no-store',
     });
@@ -274,6 +281,8 @@ export class NewsApiClient {
     // Build params for fetching related events
     const params = new URLSearchParams({
       conceptUri: conceptUris.join(","),
+      sourceLocationUri: "http://en.wikipedia.org/wiki/India",
+      lang: "eng", // English language only
       eventsSortBy: "date",
       eventsCount: "10",
     });

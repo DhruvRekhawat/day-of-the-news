@@ -209,7 +209,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
                           leftPercentage={biasPercentages.left}
                           centerPercentage={biasPercentages.center}
                           rightPercentage={biasPercentages.right}
-                          height="h-1"
+                          height="h-3"
                           className="mb-2"
                         />
                         <div className="flex items-center justify-between">
@@ -242,7 +242,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
                       leftPercentage={topicBiasPercentages.left}
                       centerPercentage={topicBiasPercentages.center}
                       rightPercentage={topicBiasPercentages.right}
-                      height="h-2"
+                      height="h-3"
                       showLabels={true}
                     />
                   </div>
@@ -274,7 +274,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
                                 leftPercentage={biasPercentages.left}
                                 centerPercentage={biasPercentages.center}
                                 rightPercentage={biasPercentages.right}
-                                height="h-1"
+                                height="h-3"
                                 className="mb-2"
                               />
                               <div className="flex items-center justify-between">
@@ -354,7 +354,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
                           leftPercentage={biasPercentages.left}
                           centerPercentage={biasPercentages.center}
                           rightPercentage={biasPercentages.right}
-                          height="h-1"
+                          height="h-3"
                           className="mb-2"
                         />
                         <div className="flex items-center justify-between">
