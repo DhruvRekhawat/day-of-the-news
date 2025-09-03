@@ -14,6 +14,7 @@ interface BiasAnalysis {
 interface EventBiasChartProps {
   articles: Array<{
     biasAnalysis?: BiasAnalysis | null;
+    source: string;
   }>;
   title?: string;
 }
@@ -35,6 +36,22 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
   const unknownCount = biasCounts.UNKNOWN || 0;
 
   const total = leftCount + centerCount + rightCount + unknownCount;
+
+  // Group articles by bias category for source display
+  const leftSources = articles.filter(article => 
+    article.biasAnalysis?.status === 'COMPLETED' && 
+    ['FAR_LEFT', 'LEFT', 'CENTER_LEFT'].includes(article.biasAnalysis.biasDirection)
+  ).map(article => article.source);
+
+  const centerSources = articles.filter(article => 
+    article.biasAnalysis?.status === 'COMPLETED' && 
+    article.biasAnalysis.biasDirection === 'CENTER'
+  ).map(article => article.source);
+
+  const rightSources = articles.filter(article => 
+    article.biasAnalysis?.status === 'COMPLETED' && 
+    ['CENTER_RIGHT', 'RIGHT', 'FAR_RIGHT'].includes(article.biasAnalysis.biasDirection)
+  ).map(article => article.source);
 
   if (total === 0) {
     return (
@@ -161,6 +178,71 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
             </span>
           </div>
         ))}
+      </div>
+
+      {/* Source Names by Bias Category */}
+      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          Sources by Bias Category
+        </h4>
+        <div className="grid grid-cols-3 gap-4">
+          {/* Left Sources */}
+          <div className="text-center">
+            <div className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-2">
+              L {Math.round((leftCount / total) * 100)}%
+            </div>
+            <div className="space-y-1">
+              {leftSources.slice(0, 5).map((source, index) => (
+                <div key={index} className="text-xs text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/20 rounded px-2 py-1">
+                  {source}
+                </div>
+              ))}
+              {leftSources.length > 5 && (
+                <div className="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 rounded-full px-2 py-1">
+                  +{leftSources.length - 5} more
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Center Sources */}
+          <div className="text-center">
+            <div className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">
+              C {Math.round((centerCount / total) * 100)}%
+            </div>
+            <div className="space-y-1">
+              {centerSources.slice(0, 5).map((source, index) => (
+                <div key={index} className="text-xs text-gray-600 dark:text-gray-400 bg-zinc-50 dark:bg-zinc-900/20 rounded px-2 py-1">
+                  {source}
+                </div>
+              ))}
+              {centerSources.length > 5 && (
+                <div className="text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/30 rounded-full px-2 py-1">
+                  +{centerSources.length - 5} more
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Sources */}
+          <div className="text-center">
+            <div className="text-xs font-medium text-red-600 dark:text-red-400 mb-2">
+              R {Math.round((rightCount / total) * 100)}%
+            </div>
+            <div className="space-y-1">
+              {rightSources.slice(0, 5).map((source, index) => (
+                <div key={index} className="text-xs text-gray-600 dark:text-gray-400 bg-red-50 dark:bg-red-900/20 rounded px-2 py-1">
+                  {source}
+                </div>
+              ))}
+              {rightSources.length > 5 && (
+                <div className="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 rounded-full px-2 py-1">
+                  +{rightSources.length - 5} more
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Summary */}

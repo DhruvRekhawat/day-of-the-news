@@ -299,11 +299,16 @@ model Subscription {
   id              String             @id @default(cuid())
   userId          String
   planId          String
+  planName        String             // Add plan name for easier access
   status          SubscriptionStatus @default(PENDING)
   startDate       DateTime           @default(now())
   endDate         DateTime?
   autoRenew       Boolean            @default(true)
   razorpaySubscriptionId String?
+  lastPaymentId   String?            // Add last payment tracking
+  lastOrderId     String?            // Add last order tracking
+  lastPaymentDate DateTime?          // Add last payment date
+  amount          Float?             // Add subscription amount
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
@@ -312,7 +317,7 @@ model Subscription {
   plan            PricingPlan        @relation(fields: [planId], references: [id])
   payments        Payment[]
 
-  @@unique([userId, planId])
+  @@unique([userId])
   @@index([userId])
   @@index([status])
   @@index([endDate])
@@ -323,6 +328,7 @@ model Payment {
   id                    String        @id @default(cuid())
   subscriptionId        String?
   userId                String
+  planId                String?       // Add plan ID for direct reference
   amount                Float
   currency              String        @default("INR")
   status                PaymentStatus @default(PENDING)
@@ -331,6 +337,7 @@ model Payment {
   razorpaySignature     String?
   paymentMethod         String?
   description           String?
+  paymentDate           DateTime?     // Add payment date
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
 

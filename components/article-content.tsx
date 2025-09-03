@@ -1,9 +1,8 @@
 "use client"
 
-import { TrendingUp } from "lucide-react";
-import { BiasBar } from "@/components/ui/BiasBar";
-import { Badge } from "@/components/ui/badge";
 import { EventActions } from "@/components/event-actions";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp } from "lucide-react";
 import { SocialShare } from "./social-share";
 
 interface BiasAnalysis {
@@ -50,7 +49,7 @@ interface ArticleContentProps {
   };
 }
 
-export function ArticleContent({ article, aggregatedBiasScores, eventHeader }: ArticleContentProps) {
+export function ArticleContent({ article, eventHeader }: ArticleContentProps) {
   const formatContent = (content: string) => {
     // Split content into bullet points if it contains bullet-like formatting
     const sentences = content
@@ -63,12 +62,11 @@ export function ArticleContent({ article, aggregatedBiasScores, eventHeader }: A
 
   const contentPoints = formatContent(article.aiSummary);
 
-  // Extract bias data with fallbacks
-  const biasData = article.aiBiasReport || {
-    bias: "center",
-    biasScores: { left: 0, center: 1, right: 0 },
-  };
-  const { bias, biasScores } = biasData;
+  // // Extract bias data with fallbacks
+  // const biasData = article.aiBiasReport || {
+  //   bias: "center",
+  //   biasScores: { left: 0, center: 1, right: 0 },
+  // };
 
   console.log(article);
 
@@ -113,87 +111,6 @@ export function ArticleContent({ article, aggregatedBiasScores, eventHeader }: A
           </div>
         )}
 
-        {/* Bias Indicators */}
-        <div className="flex items-center space-x-8 mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-                LEFT
-              </span>
-              <div
-                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
-                  bias === "left"
-                    ? "bg-blue-500 ring-2 ring-blue-300"
-                    : "bg-blue-200"
-                }`}
-              >
-                <span
-                  className={`text-xs font-bold ${
-                    bias === "left" ? "text-white" : "text-blue-700"
-                  }`}
-                >
-                  {Math.round((biasScores?.left || 0) * 100)}%
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-                CENTER
-              </span>
-              <div
-                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
-                  bias === "center"
-                    ? "bg-zinc-500 ring-2 ring-zinc-300"
-                    : "bg-zinc-200"
-                }`}
-              >
-                <span
-                  className={`text-xs font-bold ${
-                    bias === "center" ? "text-white" : "text-zinc-700"
-                  }`}
-                >
-                  {Math.round((biasScores?.center || 0) * 100)}%
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-                RIGHT
-              </span>
-              <div
-                className={`w-8 h-8 rounded-none flex items-center justify-center transition-all ${
-                  bias === "right"
-                    ? "bg-red-500 ring-2 ring-red-300"
-                    : "bg-red-200"
-                }`}
-              >
-                <span
-                  className={`text-xs font-bold ${
-                    bias === "right" ? "text-white" : "text-red-700"
-                  }`}
-                >
-                  {Math.round((biasScores?.right || 0) * 100)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bias Analysis Bar */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-2 mb-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-200">
-              Event Bias Distribution:
-            </span>
-          </div>
-          <BiasBar
-            leftPercentage={aggregatedBiasScores ? (aggregatedBiasScores.left * 100) : (biasScores?.left || 0) * 100}
-            centerPercentage={aggregatedBiasScores ? (aggregatedBiasScores.center * 100) : (biasScores?.center || 0) * 100}
-            rightPercentage={aggregatedBiasScores ? (aggregatedBiasScores.right * 100) : (biasScores?.right || 0) * 100}
-            height="h-3"
-            showLabels={true}
-          />
-        </div>
       </div>
 
       {/* Article Content */}
@@ -216,17 +133,7 @@ export function ArticleContent({ article, aggregatedBiasScores, eventHeader }: A
         )}
       </div>
 
-      {/* Article Footer */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">
-              Source: {article.source}
-            </span>
-            <span className="text-sm text-gray-500">•</span>
-          </div>
-        </div>
-      </div>
+
     </article>
   );
 }

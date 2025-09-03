@@ -4,8 +4,10 @@ import { useSession } from "@/lib/auth-client"
 interface SubscriptionData {
   id: string
   planName: string
+  startDate: string
   endDate: string
   autoRenew: boolean
+  amount?: number
 }
 
 interface SubscriptionStatus {
