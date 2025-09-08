@@ -253,6 +253,31 @@ export function EventBiasChart({ articles, title = "Bias Distribution" }: EventB
           </p>
         </div>
       </div>
+
+      {/* Coming Soon Cards */}
+      <div className="mt-6 space-y-4">
+        {/* Factuality Card */}
+        <div className="p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Factuality</h4>
+            <span className="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">Coming Soon</span>
+          </div>
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+            Detailed factuality analysis of the coverage will be available soon.
+          </p>
+        </div>
+
+        {/* Ownership Card */}
+        <div className="p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Ownership</h4>
+            <span className="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">Coming Soon</span>
+          </div>
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+            Media ownership and funding transparency data will be available soon.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

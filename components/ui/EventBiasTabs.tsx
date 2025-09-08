@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { Toaster, toast } from "sonner";
+
 type BiasDirection =
   | "FAR_LEFT"
   | "LEFT"
@@ -11,8 +13,6 @@ type BiasDirection =
   | "FAR_RIGHT"
   | "UNKNOWN";
 type BiasAnalysisStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-
-
 
 interface Article {
   id: string;
@@ -67,6 +67,7 @@ export function EventBiasTabs({
   className = "",
 }: EventBiasTabsProps) {
   const [activeTab, setActiveTab] = useState<BiasTab>("center");
+  const [userFeedback, setUserFeedback] = useState<Record<string, BiasTab>>({});
 
   // Group articles by bias
   const groupedArticles = articles.reduce(
@@ -100,6 +101,14 @@ export function EventBiasTabs({
     }
   }, [availableTabs, activeTab]);
 
+  const handleFeedback = (articleId: string, bias: BiasTab) => {
+    setUserFeedback(prev => ({
+      ...prev,
+      [articleId]: bias
+    }));
+    toast.success('Thank you for your feedback!');
+  };
+
   if (availableTabs.length === 0) {
     return (
       <div className={`p-4 text-center text-gray-500 ${className}`}>
@@ -110,6 +119,7 @@ export function EventBiasTabs({
 
   return (
     <div className={`bg-white dark:bg-zinc-800 rounded-lg border dark:border-gray-700 ${className}`}>
+      <Toaster position="bottom-right"  />
       {/* Tabs Header */}
       <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="-mb-px flex space-x-8 px-6">
@@ -170,7 +180,6 @@ export function EventBiasTabs({
                         <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate">
                           {article.title}
                         </h4>
-
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-3">
                         {article.excerpt}
@@ -187,6 +196,43 @@ export function EventBiasTabs({
                         >
                           Read Article →
                         </a>
+                      </div>
+                      
+                      {/* Feedback UI */}
+                      <div className="mt-3 flex items-center gap-2">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Do you think this article has:</span>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleFeedback(article.id, "left")}
+                            className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                              userFeedback[article.id] === "left"
+                                ? "bg-blue-100 border-blue-600 text-blue-600"
+                                : "border-gray-300 hover:border-blue-600"
+                            }`}
+                          >
+                            Left Bias
+                          </button>
+                          <button
+                            onClick={() => handleFeedback(article.id, "center")}
+                            className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                              userFeedback[article.id] === "center"
+                                ? "bg-zinc-100 border-zinc-600 text-zinc-600"
+                                : "border-gray-300 hover:border-zinc-600"
+                            }`}
+                          >
+                            Center Bias
+                          </button>
+                          <button
+                            onClick={() => handleFeedback(article.id, "right")}
+                            className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                              userFeedback[article.id] === "right"
+                                ? "bg-red-100 border-red-600 text-red-600"
+                                : "border-gray-300 hover:border-red-600"
+                            }`}
+                          >
+                            Right Bias
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
