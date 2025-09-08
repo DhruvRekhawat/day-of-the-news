@@ -65,7 +65,7 @@ export function SimilarNewsArticles({ articles }: SimilarNewsArticlesProps) {
                   leftPercentage={article.bias === "left" ? 100 : 0}
                   centerPercentage={article.bias === "center" ? 100 : 0}
                   rightPercentage={article.bias === "right" ? 100 : 0}
-                  height="h-1"
+                  height="h-3"
                   className="w-12"
                 />
               </div>
