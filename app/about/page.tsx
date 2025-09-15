@@ -26,36 +26,36 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   const stats = [
-    { number: "200+", label: "Worldwide offices" },
-    { number: "85+", label: "Team members" },
-    { number: "+10M", label: "Capital raised" },
-    { number: "+500k", label: "Active users" },
+    { number: "50+", label: "News Sources" },
+    { number: "1000+", label: "Daily Articles" },
+    { number: "100k+", label: "Monthly Users" },
+    { number: "99%", label: "Accuracy Rate" },
   ]
 
   const values = [
     {
       icon: Users,
-      title: "Team work",
+      title: "Integrity",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus ultrices",
+        "We maintain up-to-date information to prevent misrepresentation and errors, ensuring our users always have access to accurate news analysis.",
     },
     {
       icon: Target,
-      title: "OwnerShip",
+      title: "Innovation",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus ultrices",
+        "Continuously developing new features to enhance user experience and provide comprehensive, in-depth news coverage through advanced AI integration.",
     },
     {
       icon: Lightbulb,
-      title: "Innovation",
+      title: "User-oriented",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus ultrices",
+        "We prioritize user feedback and data transparency, ensuring our platform evolves to meet the needs of our community.",
     },
     {
       icon: Heart,
-      title: "Team work",
+      title: "Prudence",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus ultrices",
+        "Taking a careful approach to AI implementation, fact-checking, and bias analysis to maintain the highest standards of news reporting.",
     },
   ]
 
@@ -78,33 +78,32 @@ export default function AboutPage() {
               />
             </div>
             <div>
-              <h1 className="text-4xl font-bold  mb-6">About News of the Day</h1>
+              <h1 className="text-4xl font-bold mb-6">About Day of the News</h1>
               <p className="text-gray-600 dark:text-gray-200 mb-6">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
-                ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
-                etiam ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma
-                odio id risus ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl
-                accusam eget etiam ultrices.
+                Day of the News is a pioneering news platform dedicated to increasing transparency in the
+                Indian media landscape. Founded by Nikhil Garg, a recent Imperial College London graduate,
+                our mission is to hold mass media outlets accountable for biases in their reporting and
+                empower readers with unbiased news analysis.
               </p>
               <p className="text-gray-600 dark:text-gray-200">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
-                ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
-                etiam ultrices.
+                Through advanced AI integration and comprehensive data collection from various sources,
+                including the Ministry of Corporate Affairs for ownership data, we provide accurate
+                ratings for media agencies and deliver the latest news with transparency and integrity.
               </p>
             </div>
           </div>
         </section>
 
         {/* Team Section */}
-        <section className=" py-16">
+        <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold  mb-6">We&apos;re a team of experts</h2>
+                <h2 className="text-3xl font-bold mb-6">Our Expert Team</h2>
                 <p className="text-gray-600 dark:text-gray-200">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
-                  ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam
-                  eget etiam ultrices.
+                  Our dedicated team combines expertise in journalism, technology, and data analysis to
+                  deliver comprehensive news coverage. We leverage cutting-edge AI technology while
+                  maintaining human oversight to ensure accuracy and fairness in our reporting.
                 </p>
               </div>
               <div className="relative">
@@ -125,19 +124,18 @@ export default function AboutPage() {
         <section className="container mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl font-bold  mb-6">About us</h2>
+              <h2 className="text-3xl font-bold mb-6">Our Impact</h2>
               <p className="text-gray-600 dark:text-gray-200">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
-                ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam eget
-                etiam ultrices. Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma
-                odio id risus ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl
-                accusam eget etiam ultrices.
+                At Day of the News, we&apos;re committed to revolutionizing how news is consumed in India.
+                By providing bias analysis and comprehensive coverage, we help readers make informed
+                decisions about their news consumption. Our platform combines advanced AI technology
+                with human expertise to deliver accurate, unbiased news summaries and analysis.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-4xl font-bold  mb-2">{stat.number}</div>
+                  <div className="text-4xl font-bold mb-2">{stat.number}</div>
                   <div className="text-gray-600 dark:text-gray-200">{stat.label}</div>
                 </div>
               ))}
@@ -146,7 +144,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section */}
-        <section className=" py-16">
+        <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div className="relative">
@@ -159,17 +157,17 @@ export default function AboutPage() {
                   unoptimized
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-white p-6 rounded-b-lg">
-                  <h3 className="text-xl font-semibold mb-2">About us</h3>
-                  <p className="text-sm ">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit eium nec suscipit sit sed orma odio id risus
-                    ultrices convallis placerat vel tristique diam lorem placerat aliquet lorem a aliquam incl accusam
-                    eget etiam ultrices.
+                  <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
+                  <p className="text-sm">
+                    We strive to bring transparency to Indian media by providing unbiased news analysis
+                    and holding media outlets accountable through data-driven insights and advanced
+                    AI technology.
                   </p>
                 </div>
               </div>
 
               <div>
-                <h2 className="text-3xl font-bold  mb-8">Our values</h2>
+                <h2 className="text-3xl font-bold mb-8">Our Values</h2>
                 <div className="space-y-6">
                   {values.map((value, index) => (
                     <div key={index} className="flex items-start space-x-4">
@@ -177,7 +175,7 @@ export default function AboutPage() {
                         <value.icon className="w-6 h-6 text-gray-700" />
                       </div>
                       <div>
-                        <h3 className="font-semibold  mb-2">{value.title}</h3>
+                        <h3 className="font-semibold mb-2">{value.title}</h3>
                         <p className="text-gray-600 dark:text-gray-200 text-sm">{value.description}</p>
                       </div>
                     </div>
