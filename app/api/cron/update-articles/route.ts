@@ -9,6 +9,7 @@ const newsClient = new NewsApiClient({
 export async function POST() {
   try {
     console.log("[CRON] Starting events update...")
+    console.log("[CRON] API Key present:", !!process.env.EVENTREGISTRY_API_KEY)
 
     // Fetch all topics for homepage sections
     const topics = [

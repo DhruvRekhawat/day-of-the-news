@@ -47,7 +47,10 @@ export class NewsApiClient {
     params.append("_t", Date.now().toString());
     url.search = params.toString();
 
+    console.log(`[NewsAPI] API Key present: ${!!this.apiKey}`);
     console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
+    console.log(`[NewsAPI] Full URL params: ${params.toString()}`);
+    
     const response = await fetch(url.toString(), {
       cache: 'no-store',
     });
