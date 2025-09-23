@@ -42,7 +42,7 @@ export class NewsApiClient {
   // Fetch events for India with higher limit (10 events)
   async fetchEventsForIndia(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
     const url = new URL(`${this.baseUrl}/event/getEvents`);
-    params.append("apiKey", this.apiKey);
+    // Don't append apiKey here since it's already in params from fetchIndianEvents
     params.append("resultType", "events");
     params.append("_t", Date.now().toString());
     url.search = params.toString();
@@ -283,6 +283,7 @@ export class NewsApiClient {
   // Fetch Indian events
   async fetchIndianEvents(): Promise<{ event: any; articles: any[] }[]> {
     const params = new URLSearchParams({
+      apiKey: this.apiKey,
       sourceLocationUri: "http://en.wikipedia.org/wiki/India",
       lang: "eng", // English language only
       eventsSortBy: "date",

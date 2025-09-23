@@ -142,26 +142,6 @@ export async function POST() {
       console.log("[CRON] Continuing with other topics...")
     }
 
-    // Delete month-old events and articles
-    console.log("[CRON] Cleaning up old events and articles...")
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
-    // Delete old events (this will cascade to EventArticle and Article relations)
-    const deletedEvents = await prisma.event.deleteMany({
-      where: {
-        publishedAt: { lt: thirtyDaysAgo },
-      },
-    })
-    
-    // Also delete orphaned articles (not linked to any events)
-    const deletedOrphanedArticles = await prisma.article.deleteMany({
-      where: {
-        publishedAt: { lt: thirtyDaysAgo },
-        events: { none: {} },
-      },
-    })
-    
-    console.log(`[CRON] Deleted ${deletedEvents.count} old events and ${deletedOrphanedArticles.count} orphaned articles.`)
 
     // Get final counts
     const eventCount = await prisma.event.count()
@@ -176,9 +156,7 @@ export async function POST() {
       stats: {
         events: eventCount,
         articles: articleCount,
-        eventArticles: eventArticleCount,
-        deletedEvents: deletedEvents.count,
-        deletedArticles: deletedOrphanedArticles.count
+        eventArticles: eventArticleCount
       }
     })
   } catch (error) {
