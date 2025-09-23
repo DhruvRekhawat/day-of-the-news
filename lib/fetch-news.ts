@@ -39,6 +39,63 @@ export class NewsApiClient {
     };
   }
 
+  // Fetch events for India with higher limit (10 events)
+  async fetchEventsForIndia(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
+    const url = new URL(`${this.baseUrl}/event/getEvents`);
+    params.append("apiKey", this.apiKey);
+    params.append("resultType", "events");
+    params.append("_t", Date.now().toString());
+    url.search = params.toString();
+
+    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
+    const response = await fetch(url.toString(), {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`News API error: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
+    
+    const events = data.events?.results || [];
+    const eventsWithArticles: { event: any; articles: any[] }[] = [];
+
+    // Limit to first 10 events for India
+    const limitedEvents = events.slice(0, 10);
+    console.log(`[NewsAPI] Processing ${limitedEvents.length} events (limited from ${events.length})`);
+
+    // Process events in parallel with concurrency limit
+    const batchSize = 2; // Process 2 events at a time
+    for (let i = 0; i < limitedEvents.length; i += batchSize) {
+      const batch = limitedEvents.slice(i, i + batchSize);
+      const batchPromises = batch.map(async (event: any) => {
+        try {
+          const eventWithArticles = await this.fetchEventWithArticles(event.uri);
+          // Only add events that have articles
+          if (eventWithArticles.articles.length > 0) {
+            return eventWithArticles;
+          }
+        } catch (error) {
+          console.error(`[NewsAPI] Error fetching articles for event ${event.uri}:`, error);
+        }
+        return null;
+      });
+
+      const batchResults = await Promise.all(batchPromises);
+      eventsWithArticles.push(...batchResults.filter(Boolean));
+      
+      // Small delay between batches to avoid rate limiting
+      if (i + batchSize < limitedEvents.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    console.log(`[NewsAPI] Successfully processed ${eventsWithArticles.length} events with articles`);
+    return eventsWithArticles;
+  }
+
   // Fetch events with their related articles (optimized with limits)
   async fetchEvents(params: URLSearchParams): Promise<{ event: any; articles: any[] }[]> {
     const url = new URL(`${this.baseUrl}/event/getEvents`);
@@ -233,7 +290,7 @@ export class NewsApiClient {
       // Exclude events from other countries
       excludeLocationUri: "http://en.wikipedia.org/wiki/United_States,http://en.wikipedia.org/wiki/United_Kingdom,http://en.wikipedia.org/wiki/China",
     });
-    return this.fetchEvents(params);
+    return this.fetchEventsForIndia(params);
   }
 
   // Fetch global conflict events
