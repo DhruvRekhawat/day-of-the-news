@@ -19,10 +19,14 @@ async function updateEventsAndArticles() {
     { name: "global-conflicts", fetcher: () => newsClient.fetchGlobalConflictEvents() },
   ]
 
+  let totalEvents = 0;
+  const categoryStats: { [key: string]: number } = {};
+
   // Fetch & store events by topic
   for (const { name, fetcher } of topics) {
     const eventsWithArticles = await fetcher()
-    console.log(`[CRON] ${name}: ${eventsWithArticles.length} events`)
+    categoryStats[name] = eventsWithArticles.length;
+    totalEvents += eventsWithArticles.length;
 
     for (const { event, articles } of eventsWithArticles) {
       let dbEvent;
@@ -75,7 +79,8 @@ async function updateEventsAndArticles() {
   // Fetch trending events for homepage featured/sidebar sections
   try {
     const trendingEventsWithArticles = await newsClient.fetchTrendingEvents()
-    console.log(`[CRON] trending: ${trendingEventsWithArticles.length} events`)
+    categoryStats["trending"] = trendingEventsWithArticles.length;
+    totalEvents += trendingEventsWithArticles.length;
     
     for (const { event, articles } of trendingEventsWithArticles) {
       let dbEvent;
@@ -132,6 +137,12 @@ async function updateEventsAndArticles() {
   const articleCount = await prisma.article.count()
   const eventArticleCount = await prisma.eventArticle.count()
   
+  // Log summary
+  console.log(`[CRON] Events fetched by category:`)
+  Object.entries(categoryStats).forEach(([category, count]) => {
+    console.log(`  ${category}: ${count} events`)
+  })
+  console.log(`[CRON] Total events fetched: ${totalEvents}`)
   console.log(`[CRON] Final database state: ${eventCount} events, ${articleCount} articles, ${eventArticleCount} event-article links`)
 
   return {
@@ -140,7 +151,9 @@ async function updateEventsAndArticles() {
     stats: {
       events: eventCount,
       articles: articleCount,
-      eventArticles: eventArticleCount
+      eventArticles: eventArticleCount,
+      categoryStats,
+      totalFetched: totalEvents
     }
   }
 }

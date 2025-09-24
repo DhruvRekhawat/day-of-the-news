@@ -47,9 +47,7 @@ export class NewsApiClient {
     params.append("_t", Date.now().toString());
     url.search = params.toString();
 
-    console.log(`[NewsAPI] API Key present: ${!!this.apiKey}`);
-    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
-    console.log(`[NewsAPI] Full URL params: ${params.toString()}`);
+    console.log(`[NewsAPI] Fetching events for India...`);
     
     const response = await fetch(url.toString(), {
       cache: 'no-store',
@@ -60,14 +58,11 @@ export class NewsApiClient {
     }
     
     const data = await response.json();
-    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
-    
     const events = data.events?.results || [];
     const eventsWithArticles: { event: any; articles: any[] }[] = [];
 
     // Limit to first 10 events for India
     const limitedEvents = events.slice(0, 10);
-    console.log(`[NewsAPI] Processing ${limitedEvents.length} events (limited from ${events.length})`);
 
     // Process events in parallel with concurrency limit
     const batchSize = 2; // Process 2 events at a time
@@ -95,7 +90,6 @@ export class NewsApiClient {
       }
     }
 
-    console.log(`[NewsAPI] Successfully processed ${eventsWithArticles.length} events with articles`);
     return eventsWithArticles;
   }
 
@@ -107,7 +101,6 @@ export class NewsApiClient {
     params.append("_t", Date.now().toString());
     url.search = params.toString();
 
-    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
     const response = await fetch(url.toString(), {
       cache: 'no-store',
     });
@@ -117,14 +110,12 @@ export class NewsApiClient {
     }
     
     const data = await response.json();
-    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
     
     const events = data.events?.results || [];
     const eventsWithArticles: { event: any; articles: any[] }[] = [];
 
     // Limit to first 5 events to avoid timeout
     const limitedEvents = events.slice(0, 5);
-    console.log(`[NewsAPI] Processing ${limitedEvents.length} events (limited from ${events.length})`);
 
     // Process events in parallel with concurrency limit
     const batchSize = 2; // Process 2 events at a time
@@ -152,7 +143,6 @@ export class NewsApiClient {
       }
     }
 
-    console.log(`[NewsAPI] Successfully processed ${eventsWithArticles.length} events with articles`);
     return eventsWithArticles;
   }
 
@@ -164,7 +154,6 @@ export class NewsApiClient {
     params.append("_t", Date.now().toString());
     url.search = params.toString();
 
-    console.log(`[NewsAPI] Making events request to: ${url.toString().replace(this.apiKey, '***')}`);
     const response = await fetch(url.toString(), {
       cache: 'no-store',
     });
@@ -174,7 +163,6 @@ export class NewsApiClient {
     }
     
     const data = await response.json();
-    console.log(`[NewsAPI] Received ${data.events?.results?.length || 0} events`);
     
     const events = data.events?.results || [];
     const eventsWithArticles: { event: any; articles: any[] }[] = [];
@@ -220,7 +208,6 @@ export class NewsApiClient {
     }
     
     const data = await res.json();
-    console.log(`[NewsAPI] Raw response for event ${eventUri}:`, JSON.stringify(data, null, 2));
 
     // Event Registry returns data in format: { 'eventUri': { articles: {...} } }
     const eventData = data[eventUri];
@@ -230,7 +217,6 @@ export class NewsApiClient {
     }
 
     const articles = eventData.articles?.results || [];
-    console.log(`[NewsAPI] Found ${articles.length} articles for event ${eventUri}`);
 
     // For events, we need to construct the event data from the articles
     // Use the first article to get event metadata
@@ -258,7 +244,6 @@ export class NewsApiClient {
   // Fetch individual article by ID (for backward compatibility)
   async fetchArticleById(id: string): Promise<any> {
     const articleUri = base64url.decode(id);
-    console.log(articleUri);
     
     const url = `${this.baseUrl}/article/getArticle`;
     const body = JSON.stringify({
