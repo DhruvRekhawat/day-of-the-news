@@ -121,7 +121,7 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-4 left-4 right-4 text-white">
             <Link href={`/event/${event.id}`}>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 leading-tight hover:text-blue-200 transition-colors cursor-pointer">
+              <h1 className="text-xl sm:text-2xl lg:text-2xl font-bold mb-2 leading-tight hover:text-blue-200 transition-colors cursor-pointer">
                 {event.title}
               </h1>
             </Link>
@@ -130,7 +130,7 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
                 leftPercentage={leftPercentage}
                 centerPercentage={centerPercentage}
                 rightPercentage={rightPercentage}
-                height="h-2"
+                height="h-5"
                 className="mb-2"
               />
             )}
