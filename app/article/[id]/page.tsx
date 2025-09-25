@@ -78,7 +78,6 @@ export default async function ArticlePage({
   // Fetch data from your API
   const article = await fetchFromApi(`articles?id=${id}`);
 
-  console.log(article)
 
   // Render the notifier component if the API returns a usage limit error
   if (article?.error) {

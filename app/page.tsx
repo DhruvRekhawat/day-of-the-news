@@ -310,10 +310,9 @@ export default async function HomePage() {
     ...sportsEventsArray
   ].slice(0, 20); // Take first 20 events
 
-  console.log(indiaEvents);
 
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 ">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
