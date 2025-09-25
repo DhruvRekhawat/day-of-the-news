@@ -189,7 +189,7 @@ export function EventArticleCard({ event, showTopic = true, variant = "default" 
                 leftPercentage={leftPercentage}
                 centerPercentage={centerPercentage}
                 rightPercentage={rightPercentage}
-                height="h-2"
+                height="h-3"
                 className="mt-2"
               />
             )}
